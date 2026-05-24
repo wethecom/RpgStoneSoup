@@ -1,0 +1,351 @@
+/* Crawl Web — styling. ASCII roguelike, dark terminal aesthetic. */
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #0c0c10;
+  color: #c8c8d0;
+  font-family: "DejaVu Sans Mono", "Consolas", "Menlo", monospace;
+}
+
+#app {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 12px 16px;
+}
+
+.screen { animation: fade .25s ease; }
+.hidden { display: none !important; }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+
+h1 {
+  font-size: 42px;
+  letter-spacing: 6px;
+  margin: 8px 0 4px;
+  color: #ffd24a;
+  text-shadow: 0 0 12px rgba(255, 210, 74, .35);
+}
+
+h2 {
+  font-size: 15px;
+  margin: 0 0 6px;
+  color: #ffd24a;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.tagline { color: #8a8a98; margin: 0 0 12px; }
+.hint { color: #777; font-size: 13px; margin-top: 14px; }
+.hint b { color: #aab; }
+
+.data-banner {
+  background: #16161d;
+  border: 1px solid #2a2a38;
+  border-left: 3px solid #4aa3ff;
+  padding: 7px 11px;
+  font-size: 13px;
+  color: #8fbce0;
+  margin-bottom: 16px;
+}
+
+/* ---- character creation ---- */
+.charsel { display: flex; gap: 20px; flex-wrap: wrap; }
+.charsel-col { flex: 1; min-width: 280px; }
+
+select {
+  width: 100%;
+  background: #14141c;
+  color: #c8c8d0;
+  border: 1px solid #2a2a38;
+  font-family: inherit;
+  font-size: 14px;
+  padding: 4px;
+}
+select:focus { outline: 1px solid #4aa3ff; }
+option { padding: 2px 4px; }
+option:checked { background: #2a4055; color: #fff; }
+
+.info-box {
+  background: #14141c;
+  border: 1px solid #2a2a38;
+  padding: 9px 11px;
+  margin-top: 8px;
+  font-size: 13px;
+  min-height: 64px;
+  line-height: 1.5;
+}
+.info-box .stat { color: #ffd24a; }
+.info-box .good { color: #6f6; }
+.info-box .bad { color: #f66; }
+
+/* ---- live character preview ---- */
+.preview-card {
+  background: #14141c;
+  border: 1px solid #2a2a38;
+  border-top: 3px solid #ffd24a;
+  padding: 14px;
+  margin-top: 8px;
+}
+#preview-sprite {
+  width: 96px;
+  height: 96px;
+  image-rendering: pixelated;
+  background: #0a0a10;
+  border: 1px solid #2a2a38;
+  display: block;
+  margin: 0 auto 10px;
+}
+.preview-name {
+  text-align: center;
+  color: #ffd24a;
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+.preview-body { font-size: 13px; line-height: 1.7; }
+.preview-body .row { display: flex; justify-content: space-between; }
+.preview-body .k { color: #8a8a98; }
+.preview-body .v { color: #c8c8d0; }
+.preview-body .stat { color: #ffd24a; }
+.preview-body hr { border: none; border-top: 1px solid #2a2a38; margin: 7px 0; }
+.preview-body .kit { color: #8fbce0; }
+.preview-body .spell { color: #c9a6ff; }
+
+/* ---- how-to-play panel (title screen) ---- */
+.howto {
+  margin-top: 18px;
+  background: #14141c;
+  border: 1px solid #2a2a38;
+  border-left: 3px solid #ffd24a;
+  padding: 12px 16px 14px;
+}
+.howto h3 {
+  font-size: 13px;
+  margin: 0 0 5px;
+  color: #8fbce0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.howto-goal { margin: 0 0 12px; font-size: 13px; line-height: 1.6; color: #c8c8d0; }
+.howto-cols { display: flex; gap: 28px; flex-wrap: wrap; }
+.howto-cols > div { flex: 1; min-width: 250px; }
+.howto ul { margin: 0; padding-left: 18px; }
+.howto li { font-size: 13px; line-height: 1.7; }
+.howto b { color: #ffd24a; }
+.howto-goal b { color: #ffd24a; }
+.howto-tip {
+  margin: 12px 0 0;
+  font-size: 12px;
+  color: #8a8a98;
+  font-style: italic;
+}
+.howto-tip + *, .howto-tip { line-height: 1.6; }
+
+/* compact controls strip on the game screen */
+.controls-bar {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #8a8a98;
+  background: #14141c;
+  border: 1px solid #2a2a38;
+  padding: 6px 11px;
+}
+.controls-bar b { color: #aab; }
+
+/* in-game How to Play overlay */
+.help-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 6, 10, 0.86);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+.help-panel {
+  background: #14141c;
+  border: 1px solid #2a2a38;
+  border-left: 3px solid #ffd24a;
+  padding: 18px 26px 22px;
+  max-width: 720px;
+  width: 92%;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, .6);
+}
+.help-panel h2 { margin-top: 0; }
+.help-panel .big-btn { margin-top: 18px; }
+
+/* inventory overlay list */
+.inv-body { font-size: 14px; line-height: 1.85; }
+.inv-body .inv-row { display: flex; gap: 10px; }
+.inv-body .inv-slot {
+  color: #8a8a98; min-width: 130px; text-transform: uppercase;
+  font-size: 12px; letter-spacing: 1px;
+}
+.inv-body .inv-val { color: #c8c8d0; }
+.inv-body .inv-val b { color: #ffd24a; }
+.inv-body .inv-empty { color: #5a5a66; }
+.inv-body hr { border: none; border-top: 1px solid #2a2a38; margin: 9px 0; }
+.inv-body .inv-here { color: #8fbce0; }
+
+/* "standing on" line in the sidebar */
+.sidebar .underfoot {
+  margin-top: 7px; font-size: 12px; color: #8fbce0;
+  background: #14141c; border: 1px solid #2a2a38; padding: 4px 7px;
+}
+
+.big-btn {
+  margin-top: 16px;
+  background: #2a4055;
+  color: #fff;
+  border: 1px solid #4aa3ff;
+  font-family: inherit;
+  font-size: 16px;
+  padding: 10px 22px;
+  cursor: pointer;
+  letter-spacing: 2px;
+}
+.big-btn:hover:not(:disabled) { background: #36567a; }
+.big-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+/* ---- game layout ---- */
+.game-layout { display: flex; gap: 14px; align-items: stretch; }
+
+/* left column: canvas + buttons stacked, sidebar lives to the right */
+.game-left {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.map {
+  background: #000;
+  border: 1px solid #2a2a38;
+  outline: none;
+  user-select: none;
+  image-rendering: pixelated;
+  display: block;
+  cursor: pointer;
+  /* fill the canvas column completely -- preserve aspect via the
+     intrinsic width/height attributes, but scale display so the map
+     uses every available pixel instead of leaving a black gap */
+  width: 100%;
+  height: auto;
+}
+
+/* clickable action buttons -- a full-width strip below the canvas +
+   sidebar row, grouped roughly by purpose (movement, consumables,
+   panels). Wraps across rows on narrow viewports. */
+.action-bar {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 10px 0 6px 0;
+  padding: 8px;
+  background: #11111a;
+  border: 1px solid #2a2a38;
+}
+.action-bar button {
+  background: #1c1c28;
+  color: #c8c8d0;
+  border: 1px solid #2a2a38;
+  font-family: inherit;
+  font-size: 12px;
+  padding: 5px 9px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.action-bar button:hover {
+  background: #2a4055;
+  border-color: #4aa3ff;
+  color: #fff;
+}
+.action-bar button:active { background: #36567a; }
+/* highlight the map button so users notice the world map exists */
+.action-bar button.btn-map {
+  background: #2a3550;
+  color: #ffd24a;
+  border-color: #4a5a80;
+}
+.action-bar button.btn-map:hover {
+  background: #3a5070;
+  border-color: #ffd24a;
+}
+
+.sidebar {
+  width: 215px;
+  flex: 0 0 215px;
+  align-self: stretch;
+  background: #14141c;
+  border: 1px solid #2a2a38;
+  padding: 10px 12px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  overflow-y: auto;
+}
+.sb-doll {
+  width: 84px;
+  height: 84px;
+  image-rendering: pixelated;
+  display: block;
+  margin: 8px auto 4px;
+  background: #0a0a10;
+  border: 1px solid #2a2a38;
+}
+.sidebar .name { color: #ffd24a; font-size: 15px; }
+.sidebar .sub { color: #8a8a98; }
+.sidebar hr { border: none; border-top: 1px solid #2a2a38; margin: 8px 0; }
+.sidebar .lbl { color: #8a8a98; display: inline-block; width: 78px; }
+.sidebar .val { color: #e8e8f0; }
+
+.bar {
+  height: 17px;
+  background: #222;
+  border: 1px solid #333;
+  margin: 3px 0 9px;
+  position: relative;
+}
+.bar > span {
+  display: block;
+  height: 100%;
+  transition: width .15s;
+}
+.bar.hp > span { background: linear-gradient(#7a3, #4a1); }
+.bar.hp.low > span { background: linear-gradient(#e55, #a22); }
+.bar.mp > span { background: linear-gradient(#46c, #239); }
+.bar.xp > span { background: linear-gradient(#c9c, #847); }
+.bar-label {
+  position: absolute; top: 0; left: 0; width: 100%; text-align: center;
+  font-size: 11px; line-height: 17px; color: #fff;
+  text-shadow: 0 0 3px #000, 0 0 2px #000;
+}
+
+.log {
+  margin-top: 12px;
+  background: #000;
+  border: 1px solid #2a2a38;
+  padding: 8px 11px;
+  height: 132px;
+  overflow-y: auto;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.log .msg-good { color: #6f6; }
+.log .msg-bad { color: #f66; }
+.log .msg-warn { color: #ffd24a; }
+.log .msg-sys { color: #8fbce0; }
+.log .msg-dim { color: #777; }
+.log .turn-sep { color: #333; }
+
+.provenance {
+  margin-top: 8px;
+  font-size: 11px;
+  color: #5a5a68;
+  border-top: 1px dashed #2a2a38;
+  padding-top: 6px;
+}
+.provenance b { color: #7a8aa0; }
+
+#over-title { color: #f66; }
+#over-title.win { color: #6f6; }

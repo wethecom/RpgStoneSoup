@@ -1,0 +1,7428 @@
+{
+ "source": "source/dat/des",
+ "count": 140,
+ "vaults": [
+  {
+   "name": "dpeg_arrival_tiny_c",
+   "source": "source/dat/des/arrival/simple.des",
+   "w": 5,
+   "h": 4,
+   "rows": [
+    ".....",
+    ".###.",
+    ".+.+.",
+    "#####"
+   ],
+   "entries": [
+    [
+     0,
+     0
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_crypt_small_crypt",
+   "source": "source/dat/des/branches/crypt.des",
+   "w": 5,
+   "h": 5,
+   "rows": [
+    "#####",
+    "##.##",
+    "#...#",
+    "#...#",
+    "##+##"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "minmay_shop_chei",
+   "source": "source/dat/des/builder/shops.des",
+   "w": 5,
+   "h": 5,
+   "rows": [
+    " ... ",
+    ".....",
+    ".#.#.",
+    ".....",
+    " ... "
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "serial_park_minivault_5x5_4",
+   "source": "source/dat/des/serial/park.des",
+   "w": 5,
+   "h": 5,
+   "rows": [
+    "t...t",
+    ".....",
+    ".....",
+    ".....",
+    "t...t"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "st_single_dragon_hoard_2",
+   "source": "source/dat/des/branches/zot.des",
+   "w": 5,
+   "h": 6,
+   "rows": [
+    "#####",
+    "##..#",
+    "#...#",
+    "#.###",
+    "#..##",
+    "##.##"
+   ],
+   "entries": [
+    [
+     2,
+     5
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "amcnicky_arrival_choice",
+   "source": "source/dat/des/arrival/simple.des",
+   "w": 7,
+   "h": 5,
+   "rows": [
+    "    ###",
+    "#####.#",
+    "#.....#",
+    "#####.#",
+    "    #+#"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "minmay_tetromino_t2",
+   "source": "source/dat/des/variable/polyominoes.des",
+   "w": 7,
+   "h": 5,
+   "rows": [
+    ".....  ",
+    ".###.. ",
+    "..#.#..",
+    " ..###.",
+    "  ....."
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "infiniplex_forest_clump_small",
+   "source": "source/dat/des/serial/forest.des",
+   "w": 6,
+   "h": 6,
+   "rows": [
+    "  ..  ",
+    " .... ",
+    "......",
+    "..tt..",
+    "......",
+    " .... "
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "serial_pan_hellions_two",
+   "source": "source/dat/des/branches/pan.des",
+   "w": 8,
+   "h": 5,
+   "rows": [
+    "  ...l. ",
+    " .lll.l.",
+    ".ll....l",
+    " .lll.l.",
+    "  ...l. "
+   ],
+   "entries": [],
+   "mons": [
+    [
+     3,
+     2,
+     "hellion"
+    ],
+    [
+     4,
+     2,
+     "any demon"
+    ],
+    [
+     6,
+     2,
+     "hellion"
+    ]
+   ],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "st_single_dragon_hoard_1",
+   "source": "source/dat/des/branches/zot.des",
+   "w": 7,
+   "h": 6,
+   "rows": [
+    " ##### ",
+    "##.#.##",
+    "##..###",
+    "#.#...#",
+    "##...##",
+    " ##.## "
+   ],
+   "entries": [
+    [
+     3,
+     5
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "bzr_entry_road",
+   "source": "source/dat/des/portals/bazaar.des",
+   "w": 9,
+   "h": 5,
+   "rows": [
+    "   ###   ",
+    "  ##.##  ",
+    "###.#.###",
+    ".........",
+    "#########"
+   ],
+   "entries": [
+    [
+     0,
+     3
+    ],
+    [
+     8,
+     3
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "sprint_mu_blade_basic",
+   "source": "source/dat/des/sprint/sprint_mu.des",
+   "w": 6,
+   "h": 8,
+   "rows": [
+    "#.....",
+    "#..#..",
+    "#.#.#.",
+    "#.....",
+    "#.....",
+    "#.#.#.",
+    "#..#..",
+    "#....."
+   ],
+   "entries": [],
+   "mons": [
+    [
+     3,
+     2,
+     "dancing weapon"
+    ],
+    [
+     5,
+     3,
+     "dancing weapon"
+    ],
+    [
+     1,
+     4,
+     "dancing weapon"
+    ],
+    [
+     3,
+     5,
+     "dancing weapon"
+    ]
+   ],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "gammafunk_temple_overflow_statue",
+   "source": "source/dat/des/altar/overflow.des",
+   "w": 7,
+   "h": 7,
+   "rows": [
+    "  ###  ",
+    "#######",
+    "#.....#",
+    "##...##",
+    "##...##",
+    " ##+## ",
+    "   .   "
+   ],
+   "entries": [
+    [
+     3,
+     6
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_pan_strange_glyph_acedia",
+   "source": "source/dat/des/branches/pan.des",
+   "w": 7,
+   "h": 7,
+   "rows": [
+    ".#....#",
+    "#.#...#",
+    "#.#...#",
+    ".######",
+    "..#....",
+    "..#....",
+    "..#...."
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_shoals_undead_eyrie",
+   "source": "source/dat/des/branches/shoals.des",
+   "w": 7,
+   "h": 7,
+   "rows": [
+    " ..... ",
+    ".......",
+    "...#...",
+    "..###..",
+    "...#...",
+    ".......",
+    " ..... "
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "vaults_dpeg_diagonal",
+   "source": "source/dat/des/branches/vaults_rooms_empty.des",
+   "w": 7,
+   "h": 7,
+   "rows": [
+    "####..#",
+    "###..##",
+    "##..###",
+    "#.....#",
+    "..#...#",
+    ".##...#",
+    "#######"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_shop_back_alley_shop",
+   "source": "source/dat/des/builder/shops.des",
+   "w": 7,
+   "h": 7,
+   "rows": [
+    "#######",
+    ".......",
+    "##.####",
+    "##.#..#",
+    "##.#..#",
+    "##....#",
+    "#######"
+   ],
+   "entries": [
+    [
+     0,
+     1
+    ],
+    [
+     6,
+     1
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "infiniplex_enter_wizlab_glasses",
+   "source": "source/dat/des/portals/wizlab.des",
+   "w": 7,
+   "h": 7,
+   "rows": [
+    ".......",
+    ".#####.",
+    ".#...#.",
+    ".##.##.",
+    ".#...#.",
+    ".##.##.",
+    "......."
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": [
+    [
+     2,
+     1,
+     "dngn_transparent_wall_green"
+    ],
+    [
+     3,
+     1,
+     "dngn_transparent_wall_green"
+    ],
+    [
+     4,
+     1,
+     "dngn_transparent_wall_green"
+    ],
+    [
+     1,
+     2,
+     "dngn_transparent_wall_green"
+    ],
+    [
+     2,
+     2,
+     "floor_rough_magenta"
+    ],
+    [
+     3,
+     2,
+     "floor_rough_magenta"
+    ],
+    [
+     4,
+     2,
+     "floor_rough_magenta"
+    ],
+    [
+     5,
+     2,
+     "dngn_transparent_wall_green"
+    ],
+    [
+     1,
+     3,
+     "dngn_transparent_wall_green"
+    ],
+    [
+     2,
+     3,
+     "dngn_statue_dragon"
+    ],
+    [
+     3,
+     3,
+     "floor_rough_magenta"
+    ],
+    [
+     4,
+     3,
+     "dngn_statue_dragon"
+    ],
+    [
+     5,
+     3,
+     "dngn_transparent_wall_green"
+    ],
+    [
+     1,
+     4,
+     "dngn_transparent_wall_green"
+    ],
+    [
+     2,
+     4,
+     "floor_rough_magenta"
+    ],
+    [
+     3,
+     4,
+     "floor_rough_magenta"
+    ],
+    [
+     4,
+     4,
+     "floor_rough_magenta"
+    ],
+    [
+     5,
+     4,
+     "dngn_transparent_wall_green"
+    ],
+    [
+     3,
+     5,
+     "floor_rough_magenta"
+    ]
+   ]
+  },
+  {
+   "name": "evilmike_ambush_inner_wall_1",
+   "source": "source/dat/des/variable/ambush.des",
+   "w": 7,
+   "h": 7,
+   "rows": [
+    " ..... ",
+    ".......",
+    "...#...",
+    "...#...",
+    "...#...",
+    ".......",
+    " ..... "
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "st_stairs_8",
+   "source": "source/dat/des/variable/mini_monsters.des",
+   "w": 7,
+   "h": 7,
+   "rows": [
+    "#.#.#.#",
+    ".......",
+    "#.#.#.#",
+    ".......",
+    "#.#.#.#",
+    ".......",
+    "#.#.#.#"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "infiniplex_forest_straight_5",
+   "source": "source/dat/des/serial/forest.des",
+   "w": 10,
+   "h": 5,
+   "rows": [
+    "tttttttttt",
+    "t........t",
+    "..........",
+    "t........t",
+    "tttttttttt"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "chequers_ecumenical_altar_twisty",
+   "source": "source/dat/des/altar/ecumenical.des",
+   "w": 5,
+   "h": 11,
+   "rows": [
+    " #.# ",
+    " #.##",
+    " ##.#",
+    "##.##",
+    "#.## ",
+    "##.##",
+    " ##.#",
+    "##.##",
+    "#.## ",
+    "##.# ",
+    " #.# "
+   ],
+   "entries": [
+    [
+     2,
+     0
+    ],
+    [
+     2,
+     10
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_lair_cache_of_fresh_prey",
+   "source": "source/dat/des/branches/lair.des",
+   "w": 8,
+   "h": 7,
+   "rows": [
+    "   .#.  ",
+    "  .###..",
+    ".###.#..",
+    "##..#.#.",
+    "##..##..",
+    ".####...",
+    " .##.   "
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "gnoll_camp_mini_hut",
+   "source": "source/dat/des/serial/gnoll_camp.des",
+   "w": 8,
+   "h": 7,
+   "rows": [
+    "........",
+    "..#++#..",
+    ".##..##.",
+    ".##..##.",
+    "..####..",
+    "...##...",
+    "........"
+   ],
+   "entries": [],
+   "mons": [
+    [
+     4,
+     3,
+     "gnoll"
+    ]
+   ],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_ru_path_of_blood",
+   "source": "source/dat/des/altar/overflow.des",
+   "w": 12,
+   "h": 5,
+   "rows": [
+    ".l##########",
+    "l........ll#",
+    ".l.l.l.l..l#",
+    "l........ll#",
+    ".l##########"
+   ],
+   "entries": [
+    [
+     0,
+     0
+    ],
+    [
+     0,
+     2
+    ],
+    [
+     0,
+     4
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "mainiacjoe_overflow_alcove_4",
+   "source": "source/dat/des/altar/overflow.des",
+   "w": 9,
+   "h": 7,
+   "rows": [
+    "#########",
+    "#.......#",
+    "#.......#",
+    "#.......#",
+    "#.......#",
+    "#.......#",
+    "###+++###"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "minmay_temple_entry_from_below_a",
+   "source": "source/dat/des/branches/temple.des",
+   "w": 9,
+   "h": 7,
+   "rows": [
+    "      .. ",
+    "######.##",
+    "#.......#",
+    "#...#...#",
+    "#.......#",
+    "##.######",
+    "  .      "
+   ],
+   "entries": [
+    [
+     6,
+     0
+    ],
+    [
+     2,
+     6
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "minmay_gauntlet_arena_77_tiled_triplets",
+   "source": "source/dat/des/portals/gauntlet.des",
+   "w": 9,
+   "h": 7,
+   "rows": [
+    "..##.##..",
+    ".#.....#.",
+    ".#.....#.",
+    ".........",
+    ".#.....#.",
+    " ....... ",
+    " .##.##. "
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "serial_ice_n",
+   "source": "source/dat/des/serial/ice.des",
+   "w": 9,
+   "h": 7,
+   "rows": [
+    "  .....  ",
+    ".........",
+    ".........",
+    "#########",
+    ".........",
+    ".........",
+    "  .....  "
+   ],
+   "entries": [
+    [
+     4,
+     0
+    ],
+    [
+     4,
+     6
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_crypt_gravecubes",
+   "source": "source/dat/des/branches/crypt.des",
+   "w": 8,
+   "h": 8,
+   "rows": [
+    "#......#",
+    "........",
+    "........",
+    "........",
+    "........",
+    "........",
+    "........",
+    "#......#"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_vaults_sesquioval_fish",
+   "source": "source/dat/des/branches/vaults_rooms_standard.des",
+   "w": 8,
+   "h": 8,
+   "rows": [
+    "##..###.",
+    "#....#..",
+    "#....#..",
+    "........",
+    "........",
+    "#....#..",
+    "#....#..",
+    "##..###."
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "kennysheep_generic_room_12",
+   "source": "source/dat/des/variable/mini_monsters.des",
+   "w": 8,
+   "h": 8,
+   "rows": [
+    "###..###",
+    "#~~..~~#",
+    "#~#.##~#",
+    "+.#.t...",
+    "+..t.#..",
+    "#~##.#~#",
+    "#~~..~~#",
+    "###..###"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "bzr_entry_lakeside",
+   "source": "source/dat/des/portals/bazaar.des",
+   "w": 13,
+   "h": 5,
+   "rows": [
+    "     ~.~..   ",
+    "   ~~~~..#...",
+    "  ~~~~.....#.",
+    "~~~~~~...#...",
+    "   ~~~~~~..  "
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_crypt_skeletal_stairs",
+   "source": "source/dat/des/branches/crypt.des",
+   "w": 10,
+   "h": 7,
+   "rows": [
+    "##########",
+    "######..##",
+    "##...#...#",
+    "##...+...+",
+    "##...#...#",
+    "######..##",
+    "##########"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "zin_statuary",
+   "source": "source/dat/des/altar/overflow.des",
+   "w": 9,
+   "h": 8,
+   "rows": [
+    " ....... ",
+    "..#####..",
+    ".##...##.",
+    "..##+##..",
+    ".........",
+    ".........",
+    " ..#.#.. ",
+    "  .....  "
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": [
+    [
+     2,
+     1,
+     "wall_church"
+    ],
+    [
+     3,
+     1,
+     "wall_church"
+    ],
+    [
+     4,
+     1,
+     "wall_church"
+    ],
+    [
+     5,
+     1,
+     "wall_church"
+    ],
+    [
+     6,
+     1,
+     "wall_church"
+    ],
+    [
+     1,
+     2,
+     "wall_church"
+    ],
+    [
+     2,
+     2,
+     "wall_church"
+    ],
+    [
+     3,
+     2,
+     "floor_limestone"
+    ],
+    [
+     4,
+     2,
+     "floor_limestone"
+    ],
+    [
+     5,
+     2,
+     "floor_limestone"
+    ],
+    [
+     6,
+     2,
+     "wall_church"
+    ],
+    [
+     7,
+     2,
+     "wall_church"
+    ],
+    [
+     2,
+     3,
+     "wall_church"
+    ],
+    [
+     3,
+     3,
+     "wall_church"
+    ],
+    [
+     4,
+     3,
+     "floor_limestone"
+    ],
+    [
+     5,
+     3,
+     "wall_church"
+    ],
+    [
+     6,
+     3,
+     "wall_church"
+    ],
+    [
+     3,
+     4,
+     "floor_limestone"
+    ],
+    [
+     4,
+     4,
+     "floor_limestone"
+    ],
+    [
+     5,
+     4,
+     "floor_limestone"
+    ],
+    [
+     3,
+     6,
+     "dngn_statue_triangle"
+    ],
+    [
+     5,
+     6,
+     "dngn_statue_triangle"
+    ]
+   ]
+  },
+  {
+   "name": "infiniplex_staircase_river",
+   "source": "source/dat/des/variable/float.des",
+   "w": 6,
+   "h": 12,
+   "rows": [
+    "######",
+    "#....#",
+    "#....#",
+    "#....#",
+    "#....#",
+    "#~~..#",
+    "#~..~#",
+    "#~..~#",
+    "#~..~#",
+    "#..~~#",
+    "#....#",
+    "#....#"
+   ],
+   "entries": [
+    [
+     1,
+     11
+    ],
+    [
+     4,
+     11
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "chequers_hall_statues_wall_a",
+   "source": "source/dat/des/serial/corridors.des",
+   "w": 19,
+   "h": 4,
+   "rows": [
+    "###################",
+    "#########.#########",
+    "...................",
+    "..................."
+   ],
+   "entries": [
+    [
+     0,
+     2
+    ],
+    [
+     18,
+     2
+    ],
+    [
+     0,
+     3
+    ],
+    [
+     18,
+     3
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "st_more_cells",
+   "source": "source/dat/des/branches/vaults_rooms_hard.des",
+   "w": 11,
+   "h": 7,
+   "rows": [
+    "...#...#...",
+    "...+...+...",
+    "...#...#...",
+    "#+###+###+#",
+    "...#...#...",
+    "...+...+...",
+    "...#...#..."
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "saegor_arrival_simple_e",
+   "source": "source/dat/des/arrival/simple.des",
+   "w": 10,
+   "h": 8,
+   "rows": [
+    "##########",
+    "#.......##",
+    "#.######.#",
+    "##....##.#",
+    "###...##.#",
+    "  #...##.#",
+    "  ##.##.##",
+    "  ###++###"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_cheibriados_the_sands_of_time",
+   "source": "source/dat/des/altar/overflow.des",
+   "w": 9,
+   "h": 9,
+   "rows": [
+    " ###+### ",
+    ".........",
+    ".........",
+    ".........",
+    ".........",
+    ".........",
+    ".........",
+    ".........",
+    " ###+### "
+   ],
+   "entries": [
+    [
+     0,
+     4
+    ],
+    [
+     8,
+     4
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": [
+    [
+     2,
+     1,
+     "floor_sand"
+    ],
+    [
+     3,
+     1,
+     "floor_sand"
+    ],
+    [
+     4,
+     1,
+     "floor_sand"
+    ],
+    [
+     5,
+     1,
+     "floor_sand"
+    ],
+    [
+     6,
+     1,
+     "floor_sand"
+    ],
+    [
+     3,
+     2,
+     "floor_sand"
+    ],
+    [
+     4,
+     2,
+     "floor_sand"
+    ],
+    [
+     5,
+     2,
+     "floor_sand"
+    ],
+    [
+     3,
+     6,
+     "floor_sand"
+    ],
+    [
+     4,
+     6,
+     "floor_sand"
+    ],
+    [
+     5,
+     6,
+     "floor_sand"
+    ],
+    [
+     2,
+     7,
+     "floor_sand"
+    ],
+    [
+     3,
+     7,
+     "floor_sand"
+    ],
+    [
+     4,
+     7,
+     "floor_sand"
+    ],
+    [
+     5,
+     7,
+     "floor_sand"
+    ],
+    [
+     6,
+     7,
+     "floor_sand"
+    ]
+   ]
+  },
+  {
+   "name": "nicolae_overflow_four_feature_corners",
+   "source": "source/dat/des/altar/overflow.des",
+   "w": 9,
+   "h": 9,
+   "rows": [
+    "####.####",
+    "###...###",
+    "##..#..##",
+    "#.......#",
+    "..#...#..",
+    "#.......#",
+    "##..#..##",
+    "###...###",
+    "####.####"
+   ],
+   "entries": [
+    [
+     4,
+     0
+    ],
+    [
+     0,
+     4
+    ],
+    [
+     8,
+     4
+    ],
+    [
+     4,
+     8
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "blue_anna_dwarven_crypt",
+   "source": "source/dat/des/branches/crypt.des",
+   "w": 9,
+   "h": 9,
+   "rows": [
+    "####.####",
+    "#.......#",
+    "#.#####.#",
+    "#.#...#.#",
+    "..#...#..",
+    "#.#...#.#",
+    "#.##+##.#",
+    "#.......#",
+    "####.####"
+   ],
+   "entries": [
+    [
+     4,
+     0
+    ],
+    [
+     0,
+     4
+    ],
+    [
+     8,
+     4
+    ],
+    [
+     4,
+     8
+    ]
+   ],
+   "mons": [
+    [
+     4,
+     3,
+     "shadow wraith"
+    ],
+    [
+     1,
+     7,
+     "death knight"
+    ],
+    [
+     7,
+     7,
+     "death knight"
+    ]
+   ],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_orc_beogh_chapel",
+   "source": "source/dat/des/branches/orc.des",
+   "w": 9,
+   "h": 9,
+   "rows": [
+    ".........",
+    ".##...##.",
+    ".#.....#.",
+    ".........",
+    ".........",
+    ".........",
+    ".#.....#.",
+    ".##...##.",
+    "........."
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "ontoclasm_vaults_shuriken",
+   "source": "source/dat/des/branches/vaults_rooms_empty.des",
+   "w": 9,
+   "h": 9,
+   "rows": [
+    ".###.....",
+    "..####..#",
+    "..#.#+###",
+    ".#+....##",
+    ".##...##.",
+    "##....+#.",
+    "###+#.#..",
+    "#..####..",
+    ".....###."
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_vaults_heist",
+   "source": "source/dat/des/branches/vaults_rooms_standard.des",
+   "w": 9,
+   "h": 9,
+   "rows": [
+    ".........",
+    ".........",
+    ".........",
+    "...###...",
+    "...#.#...",
+    "...###...",
+    ".........",
+    ".........",
+    "........."
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [
+    [
+     4,
+     4,
+     "weapon"
+    ]
+   ],
+   "art": []
+  },
+  {
+   "name": "portal_ice_cave_entry_ice_statue_one",
+   "source": "source/dat/des/portals/icecave.des",
+   "w": 9,
+   "h": 9,
+   "rows": [
+    " ####### ",
+    "##.....##",
+    "#.......#",
+    "#.......#",
+    "#.......#",
+    "#.......#",
+    "#.......#",
+    "#.......#",
+    "##..+..##"
+   ],
+   "entries": [],
+   "mons": [
+    [
+     4,
+     5,
+     "ice statue"
+    ]
+   ],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "serial_ice_m",
+   "source": "source/dat/des/serial/ice.des",
+   "w": 9,
+   "h": 9,
+   "rows": [
+    "####.####",
+    "#~~+.+~~#",
+    "#~+...+~#",
+    "#+.....+#",
+    ".........",
+    "#+.....+#",
+    "#~+...+~#",
+    "#~~+.+~~#",
+    "####.####"
+   ],
+   "entries": [
+    [
+     4,
+     0
+    ],
+    [
+     0,
+     4
+    ],
+    [
+     8,
+     4
+    ],
+    [
+     4,
+     8
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "infiniplex_staircase_x",
+   "source": "source/dat/des/variable/float.des",
+   "w": 9,
+   "h": 9,
+   "rows": [
+    ".##   ##.",
+    "#.## ##.#",
+    "##.###.##",
+    " ##...## ",
+    "  #...#  ",
+    " ##...## ",
+    "##.###.##",
+    "#.## ##.#",
+    ".##   ##."
+   ],
+   "entries": [
+    [
+     0,
+     0
+    ],
+    [
+     8,
+     0
+    ],
+    [
+     0,
+     8
+    ],
+    [
+     8,
+     8
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "due_unseen_surprise",
+   "source": "source/dat/des/variable/mini_features.des",
+   "w": 9,
+   "h": 9,
+   "rows": [
+    ".........",
+    ".........",
+    "..#####..",
+    "..#...#..",
+    "..#.#.#..",
+    "..#...#..",
+    "..#####..",
+    ".........",
+    "........."
+   ],
+   "entries": [
+    [
+     8,
+     0
+    ]
+   ],
+   "mons": [
+    [
+     4,
+     4,
+     "unseen horror"
+    ]
+   ],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "kennysheep_generic_room_9",
+   "source": "source/dat/des/variable/mini_monsters.des",
+   "w": 9,
+   "h": 9,
+   "rows": [
+    "####.####",
+    "#~~~.~~~#",
+    "#~##.##~#",
+    "#~#.#.#~#",
+    "+..#t#...",
+    "#~#.#.#~#",
+    "#~##.##~#",
+    "#~~~.~~~#",
+    "####.####"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "minmay_pentomino_x4",
+   "source": "source/dat/des/variable/polyominoes.des",
+   "w": 9,
+   "h": 9,
+   "rows": [
+    "    ...  ",
+    " ....#.. ",
+    "..#.###. ",
+    ".###.#.. ",
+    "..#.#.#..",
+    " ..#.###.",
+    " .###.#..",
+    " ..#.... ",
+    "  ...    "
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "ontoclasm_vaults_fault",
+   "source": "source/dat/des/branches/vaults_rooms_empty.des",
+   "w": 12,
+   "h": 7,
+   "rows": [
+    "......      ",
+    "......##....",
+    ".....#+#....",
+    ".....##.....",
+    "....#+#.....",
+    "....##......",
+    "      ......"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "skrybe_necro_troll_1",
+   "source": "source/dat/des/branches/crypt.des",
+   "w": 11,
+   "h": 8,
+   "rows": [
+    "###########",
+    "##.......##",
+    "##.......##",
+    "##.......##",
+    "##.......##",
+    "##.......##",
+    "##.......##",
+    "####+++####"
+   ],
+   "entries": [],
+   "mons": [
+    [
+     5,
+     1,
+     "deep troll shaman"
+    ]
+   ],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "heliophobic_arrival_battle_scene",
+   "source": "source/dat/des/arrival/small.des",
+   "w": 9,
+   "h": 10,
+   "rows": [
+    "##+###+##",
+    "##.###.##",
+    "#.......#",
+    "#...#...#",
+    "#...#...#",
+    "#...#...#",
+    "#.......#",
+    "#.......#",
+    "#.......#",
+    "#########"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": [
+    [
+     0,
+     0,
+     "wall_hall"
+    ],
+    [
+     1,
+     0,
+     "wall_hall"
+    ],
+    [
+     2,
+     0,
+     "floor_marble"
+    ],
+    [
+     3,
+     0,
+     "wall_hall"
+    ],
+    [
+     4,
+     0,
+     "wall_hall"
+    ],
+    [
+     5,
+     0,
+     "wall_hall"
+    ],
+    [
+     6,
+     0,
+     "floor_marble"
+    ],
+    [
+     7,
+     0,
+     "wall_hall"
+    ],
+    [
+     8,
+     0,
+     "wall_hall"
+    ],
+    [
+     0,
+     1,
+     "wall_hall"
+    ],
+    [
+     1,
+     1,
+     "wall_hall"
+    ],
+    [
+     3,
+     1,
+     "wall_hall"
+    ],
+    [
+     4,
+     1,
+     "wall_hall"
+    ],
+    [
+     5,
+     1,
+     "wall_hall"
+    ],
+    [
+     7,
+     1,
+     "wall_hall"
+    ],
+    [
+     8,
+     1,
+     "wall_hall"
+    ],
+    [
+     0,
+     2,
+     "wall_hall"
+    ],
+    [
+     8,
+     2,
+     "wall_hall"
+    ],
+    [
+     0,
+     3,
+     "wall_hall"
+    ],
+    [
+     4,
+     3,
+     "wall_hall"
+    ],
+    [
+     8,
+     3,
+     "wall_hall"
+    ],
+    [
+     0,
+     4,
+     "wall_hall"
+    ],
+    [
+     4,
+     4,
+     "wall_hall"
+    ],
+    [
+     8,
+     4,
+     "wall_hall"
+    ],
+    [
+     0,
+     5,
+     "wall_hall"
+    ],
+    [
+     4,
+     5,
+     "wall_hall"
+    ],
+    [
+     8,
+     5,
+     "wall_hall"
+    ],
+    [
+     0,
+     6,
+     "wall_hall"
+    ],
+    [
+     8,
+     6,
+     "wall_hall"
+    ],
+    [
+     0,
+     7,
+     "wall_hall"
+    ],
+    [
+     4,
+     7,
+     "floor_marble"
+    ],
+    [
+     8,
+     7,
+     "wall_hall"
+    ],
+    [
+     0,
+     8,
+     "wall_hall"
+    ],
+    [
+     8,
+     8,
+     "wall_hall"
+    ],
+    [
+     0,
+     9,
+     "wall_hall"
+    ],
+    [
+     1,
+     9,
+     "wall_hall"
+    ],
+    [
+     2,
+     9,
+     "wall_hall"
+    ],
+    [
+     3,
+     9,
+     "wall_hall"
+    ],
+    [
+     4,
+     9,
+     "wall_hall"
+    ],
+    [
+     5,
+     9,
+     "wall_hall"
+    ],
+    [
+     6,
+     9,
+     "wall_hall"
+    ],
+    [
+     7,
+     9,
+     "wall_hall"
+    ],
+    [
+     8,
+     9,
+     "wall_hall"
+    ]
+   ]
+  },
+  {
+   "name": "portal_ice_cave_demonic_guard",
+   "source": "source/dat/des/portals/icecave.des",
+   "w": 9,
+   "h": 10,
+   "rows": [
+    "#########",
+    "#.......#",
+    "#.......#",
+    "#.......#",
+    "#.......#",
+    "#.......#",
+    "#.......#",
+    "##.....##",
+    "##.....##",
+    "##.+.+.##"
+   ],
+   "entries": [],
+   "mons": [
+    [
+     3,
+     4,
+     "ice devil"
+    ],
+    [
+     5,
+     4,
+     "ice devil"
+    ]
+   ],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "grunt_ministairs_7",
+   "source": "source/dat/des/variable/mini_monsters.des",
+   "w": 9,
+   "h": 10,
+   "rows": [
+    "    .    ",
+    "  ##+##  ",
+    " ##...## ",
+    "###...###",
+    "#.......#",
+    "#...#...#",
+    "#.......#",
+    "###...###",
+    " ##...## ",
+    "  #####  "
+   ],
+   "entries": [
+    [
+     4,
+     0
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "beargit_kiku_chapel",
+   "source": "source/dat/des/branches/swamp.des",
+   "w": 13,
+   "h": 7,
+   "rows": [
+    "......###### ",
+    "..~..~#....##",
+    "..~~~~+~~...#",
+    "...~..+.~~..#",
+    "...~~.+..~..#",
+    "......#....##",
+    "......###### "
+   ],
+   "entries": [
+    [
+     0,
+     3
+    ]
+   ],
+   "mons": [
+    [
+     4,
+     1,
+     "bunyip zombie"
+    ],
+    [
+     7,
+     1,
+     "bog body"
+    ],
+    [
+     8,
+     1,
+     "bog body"
+    ],
+    [
+     9,
+     1,
+     "bog body"
+    ],
+    [
+     4,
+     3,
+     "ghost crab"
+    ],
+    [
+     5,
+     3,
+     "bunyip zombie"
+    ],
+    [
+     7,
+     3,
+     "spriggan berserker simulacrum"
+    ],
+    [
+     10,
+     3,
+     "necromancer"
+    ],
+    [
+     5,
+     4,
+     "bunyip zombie"
+    ],
+    [
+     7,
+     5,
+     "bog body"
+    ],
+    [
+     8,
+     5,
+     "bog body"
+    ],
+    [
+     9,
+     5,
+     "bog body"
+    ]
+   ],
+   "items": [],
+   "art": [
+    [
+     0,
+     0,
+     "floor_sandstone"
+    ],
+    [
+     0,
+     1,
+     "floor_sandstone"
+    ],
+    [
+     0,
+     2,
+     "floor_sandstone"
+    ],
+    [
+     9,
+     2,
+     "floor_sandstone"
+    ],
+    [
+     2,
+     3,
+     "floor_sandstone"
+    ],
+    [
+     0,
+     4,
+     "floor_sandstone"
+    ],
+    [
+     2,
+     4,
+     "floor_sandstone"
+    ],
+    [
+     7,
+     4,
+     "floor_sandstone"
+    ],
+    [
+     8,
+     4,
+     "floor_sandstone"
+    ],
+    [
+     0,
+     5,
+     "floor_sandstone"
+    ],
+    [
+     5,
+     5,
+     "floor_sandstone"
+    ],
+    [
+     0,
+     6,
+     "floor_sandstone"
+    ],
+    [
+     1,
+     6,
+     "floor_sandstone"
+    ],
+    [
+     2,
+     6,
+     "floor_sandstone"
+    ],
+    [
+     3,
+     6,
+     "floor_sandstone"
+    ]
+   ]
+  },
+  {
+   "name": "minmay_arrival_jagged",
+   "source": "source/dat/des/arrival/small.des",
+   "w": 12,
+   "h": 8,
+   "rows": [
+    "############",
+    "#...........",
+    "#...........",
+    "#...........",
+    "#...........",
+    "#...........",
+    "#...........",
+    "############"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_dithmenos_dark_matter_galaxy",
+   "source": "source/dat/des/altar/overflow.des",
+   "w": 9,
+   "h": 11,
+   "rows": [
+    " ......  ",
+    "..###... ",
+    ".##.##...",
+    "##.#.##..",
+    "#.###.#.#",
+    "#.##.##.#",
+    "#.#.###.#",
+    "..##.#.##",
+    "...##.##.",
+    " ...###..",
+    "  ...... "
+   ],
+   "entries": [
+    [
+     0,
+     2
+    ],
+    [
+     8,
+     8
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": [
+    [
+     2,
+     1,
+     "wall_pebble_darkgray"
+    ],
+    [
+     3,
+     1,
+     "wall_pebble_darkgray"
+    ],
+    [
+     4,
+     1,
+     "wall_pebble_darkgray"
+    ],
+    [
+     5,
+     1,
+     "floor_pebble_darkgray"
+    ],
+    [
+     1,
+     2,
+     "wall_pebble_darkgray"
+    ],
+    [
+     2,
+     2,
+     "wall_pebble_darkgray"
+    ],
+    [
+     3,
+     2,
+     "floor_pebble_darkgray"
+    ],
+    [
+     4,
+     2,
+     "wall_pebble_darkgray"
+    ],
+    [
+     5,
+     2,
+     "wall_pebble_darkgray"
+    ],
+    [
+     6,
+     2,
+     "floor_pebble_darkgray"
+    ],
+    [
+     0,
+     3,
+     "wall_pebble_darkgray"
+    ],
+    [
+     1,
+     3,
+     "wall_pebble_darkgray"
+    ],
+    [
+     2,
+     3,
+     "floor_pebble_darkgray"
+    ],
+    [
+     3,
+     3,
+     "wall_pebble_darkgray"
+    ],
+    [
+     4,
+     3,
+     "floor_pebble_darkgray"
+    ],
+    [
+     5,
+     3,
+     "wall_pebble_darkgray"
+    ],
+    [
+     6,
+     3,
+     "wall_pebble_darkgray"
+    ],
+    [
+     7,
+     3,
+     "floor_pebble_darkgray"
+    ],
+    [
+     0,
+     4,
+     "wall_pebble_darkgray"
+    ],
+    [
+     1,
+     4,
+     "floor_pebble_darkgray"
+    ],
+    [
+     2,
+     4,
+     "wall_pebble_darkgray"
+    ],
+    [
+     3,
+     4,
+     "wall_pebble_darkgray"
+    ],
+    [
+     4,
+     4,
+     "wall_pebble_darkgray"
+    ],
+    [
+     5,
+     4,
+     "floor_pebble_darkgray"
+    ],
+    [
+     6,
+     4,
+     "wall_pebble_darkgray"
+    ],
+    [
+     7,
+     4,
+     "floor_pebble_darkgray"
+    ],
+    [
+     8,
+     4,
+     "wall_pebble_darkgray"
+    ],
+    [
+     0,
+     5,
+     "wall_pebble_darkgray"
+    ],
+    [
+     1,
+     5,
+     "floor_pebble_darkgray"
+    ],
+    [
+     2,
+     5,
+     "wall_pebble_darkgray"
+    ],
+    [
+     3,
+     5,
+     "wall_pebble_darkgray"
+    ],
+    [
+     4,
+     5,
+     "floor_pebble_darkgray"
+    ],
+    [
+     5,
+     5,
+     "wall_pebble_darkgray"
+    ],
+    [
+     6,
+     5,
+     "wall_pebble_darkgray"
+    ],
+    [
+     7,
+     5,
+     "floor_pebble_darkgray"
+    ],
+    [
+     8,
+     5,
+     "wall_pebble_darkgray"
+    ],
+    [
+     0,
+     6,
+     "wall_pebble_darkgray"
+    ],
+    [
+     1,
+     6,
+     "floor_pebble_darkgray"
+    ],
+    [
+     2,
+     6,
+     "wall_pebble_darkgray"
+    ],
+    [
+     3,
+     6,
+     "floor_pebble_darkgray"
+    ],
+    [
+     4,
+     6,
+     "wall_pebble_darkgray"
+    ],
+    [
+     5,
+     6,
+     "wall_pebble_darkgray"
+    ],
+    [
+     6,
+     6,
+     "wall_pebble_darkgray"
+    ],
+    [
+     7,
+     6,
+     "floor_pebble_darkgray"
+    ],
+    [
+     8,
+     6,
+     "wall_pebble_darkgray"
+    ],
+    [
+     1,
+     7,
+     "floor_pebble_darkgray"
+    ],
+    [
+     2,
+     7,
+     "wall_pebble_darkgray"
+    ],
+    [
+     3,
+     7,
+     "wall_pebble_darkgray"
+    ],
+    [
+     4,
+     7,
+     "floor_pebble_darkgray"
+    ],
+    [
+     5,
+     7,
+     "wall_pebble_darkgray"
+    ],
+    [
+     6,
+     7,
+     "floor_pebble_darkgray"
+    ],
+    [
+     7,
+     7,
+     "wall_pebble_darkgray"
+    ],
+    [
+     8,
+     7,
+     "wall_pebble_darkgray"
+    ],
+    [
+     2,
+     8,
+     "floor_pebble_darkgray"
+    ],
+    [
+     3,
+     8,
+     "wall_pebble_darkgray"
+    ],
+    [
+     4,
+     8,
+     "wall_pebble_darkgray"
+    ],
+    [
+     5,
+     8,
+     "floor_pebble_darkgray"
+    ],
+    [
+     6,
+     8,
+     "wall_pebble_darkgray"
+    ],
+    [
+     7,
+     8,
+     "wall_pebble_darkgray"
+    ],
+    [
+     3,
+     9,
+     "floor_pebble_darkgray"
+    ],
+    [
+     4,
+     9,
+     "wall_pebble_darkgray"
+    ],
+    [
+     5,
+     9,
+     "wall_pebble_darkgray"
+    ],
+    [
+     6,
+     9,
+     "wall_pebble_darkgray"
+    ]
+   ]
+  },
+  {
+   "name": "sevenhm_arrival_forest_fort_small_4",
+   "source": "source/dat/des/arrival/small.des",
+   "w": 11,
+   "h": 9,
+   "rows": [
+    " ######### ",
+    " ###...### ",
+    " .t##.##t. ",
+    " ~~t#+#t~~ ",
+    ".~~~~~~~~~.",
+    " ~~t#+#t~~ ",
+    " .t##.##t. ",
+    " ###...### ",
+    " ######### "
+   ],
+   "entries": [
+    [
+     0,
+     4
+    ],
+    [
+     10,
+     4
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "temple_doors_cd",
+   "source": "source/dat/des/branches/temple.des",
+   "w": 11,
+   "h": 9,
+   "rows": [
+    "#########..",
+    "###.#####..",
+    "####...##..",
+    "...#.......",
+    "####...##..",
+    "#######.#..",
+    "#####.###..",
+    "#####.###..",
+    "#####.###.."
+   ],
+   "entries": [
+    [
+     0,
+     3
+    ],
+    [
+     5,
+     8
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_gauntlet_arena_grate_2",
+   "source": "source/dat/des/portals/gauntlet.des",
+   "w": 11,
+   "h": 9,
+   "rows": [
+    "...........",
+    "..#.#...#..",
+    "....#.#....",
+    "..#...#.#..",
+    "..#.#...#..",
+    "....#.#....",
+    " .#...#.#. ",
+    " .#.#...#. ",
+    " ......... "
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "grunt_decor_fettered",
+   "source": "source/dat/des/variable/mini_features.des",
+   "w": 11,
+   "h": 9,
+   "rows": [
+    "    #####  ",
+    "    #.#.###",
+    "    #......",
+    "#####.#.###",
+    "......###  ",
+    "#####.#####",
+    "    #......",
+    "    #.#####",
+    "    ###    "
+   ],
+   "entries": [
+    [
+     10,
+     2
+    ],
+    [
+     0,
+     4
+    ],
+    [
+     10,
+     6
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_elf_double_double_double_trouble",
+   "source": "source/dat/des/branches/elf.des",
+   "w": 10,
+   "h": 10,
+   "rows": [
+    "######    ",
+    "#....#... ",
+    "#....#... ",
+    "#........ ",
+    "#......###",
+    "###......#",
+    " ........#",
+    " ...#....#",
+    " ...#....#",
+    "    ######"
+   ],
+   "entries": [
+    [
+     8,
+     1
+    ],
+    [
+     1,
+     8
+    ]
+   ],
+   "mons": [
+    [
+     2,
+     2,
+     "deep elf blademaster"
+    ],
+    [
+     7,
+     7,
+     "deep elf blademaster"
+    ]
+   ],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_vaults_angled_halls",
+   "source": "source/dat/des/branches/vaults_rooms_empty.des",
+   "w": 10,
+   "h": 10,
+   "rows": [
+    "###....###",
+    "##....####",
+    "#....#####",
+    "......###.",
+    ".......#..",
+    "..#.......",
+    ".###......",
+    "#####....#",
+    "####....##",
+    "###....###"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "serial_library_hellmonk_u_bend",
+   "source": "source/dat/des/serial/library.des",
+   "w": 10,
+   "h": 10,
+   "rows": [
+    "  ######  ",
+    " ######## ",
+    "###....###",
+    "##......##",
+    "##..##..##",
+    "##..##..##",
+    "##..##..##",
+    "##..##..##",
+    "##..##..##",
+    "##..##..##"
+   ],
+   "entries": [
+    [
+     2,
+     9
+    ],
+    [
+     3,
+     9
+    ],
+    [
+     6,
+     9
+    ],
+    [
+     7,
+     9
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "grunt_runaround_depths",
+   "source": "source/dat/des/variable/d_encompass.des",
+   "w": 10,
+   "h": 10,
+   "rows": [
+    "  ......  ",
+    " ...##... ",
+    "..........",
+    "..........",
+    ".#......#.",
+    ".#..#...#.",
+    "..........",
+    "..........",
+    " ...##... ",
+    "  ......  "
+   ],
+   "entries": [],
+   "mons": [
+    [
+     2,
+     2,
+     "tengu warrior"
+    ],
+    [
+     7,
+     2,
+     "tengu warrior"
+    ],
+    [
+     5,
+     5,
+     "very ugly thing"
+    ],
+    [
+     2,
+     7,
+     "tengu warrior"
+    ],
+    [
+     7,
+     7,
+     "tengu warrior"
+    ]
+   ],
+   "items": [],
+   "art": [
+    [
+     2,
+     0,
+     "floor_depthstone"
+    ],
+    [
+     3,
+     0,
+     "floor_depthstone"
+    ],
+    [
+     4,
+     0,
+     "floor_depthstone"
+    ],
+    [
+     5,
+     0,
+     "floor_depthstone"
+    ],
+    [
+     6,
+     0,
+     "floor_depthstone"
+    ],
+    [
+     7,
+     0,
+     "floor_depthstone"
+    ],
+    [
+     1,
+     1,
+     "floor_depthstone"
+    ],
+    [
+     2,
+     1,
+     "floor_depthstone"
+    ],
+    [
+     3,
+     1,
+     "floor_depthstone"
+    ],
+    [
+     4,
+     1,
+     "stone_wall_depths_entry"
+    ],
+    [
+     5,
+     1,
+     "stone_wall_depths_entry"
+    ],
+    [
+     6,
+     1,
+     "floor_depthstone"
+    ],
+    [
+     7,
+     1,
+     "floor_depthstone"
+    ],
+    [
+     8,
+     1,
+     "floor_depthstone"
+    ],
+    [
+     0,
+     2,
+     "floor_depthstone"
+    ],
+    [
+     1,
+     2,
+     "floor_depthstone"
+    ],
+    [
+     2,
+     2,
+     "floor_depthstone"
+    ],
+    [
+     3,
+     2,
+     "floor_depthstone"
+    ],
+    [
+     4,
+     2,
+     "floor_depthstone"
+    ],
+    [
+     5,
+     2,
+     "floor_depthstone"
+    ],
+    [
+     6,
+     2,
+     "floor_depthstone"
+    ],
+    [
+     7,
+     2,
+     "floor_depthstone"
+    ],
+    [
+     8,
+     2,
+     "floor_depthstone"
+    ],
+    [
+     9,
+     2,
+     "floor_depthstone"
+    ],
+    [
+     0,
+     3,
+     "floor_depthstone"
+    ],
+    [
+     1,
+     3,
+     "floor_depthstone"
+    ],
+    [
+     2,
+     3,
+     "floor_depthstone"
+    ],
+    [
+     3,
+     3,
+     "floor_depthstone"
+    ],
+    [
+     4,
+     3,
+     "floor_depthstone"
+    ],
+    [
+     5,
+     3,
+     "floor_depthstone"
+    ],
+    [
+     6,
+     3,
+     "floor_depthstone"
+    ],
+    [
+     7,
+     3,
+     "floor_depthstone"
+    ],
+    [
+     8,
+     3,
+     "floor_depthstone"
+    ],
+    [
+     9,
+     3,
+     "floor_depthstone"
+    ],
+    [
+     0,
+     4,
+     "floor_depthstone"
+    ],
+    [
+     1,
+     4,
+     "stone_wall_depths_entry"
+    ],
+    [
+     2,
+     4,
+     "floor_depthstone"
+    ],
+    [
+     3,
+     4,
+     "floor_depthstone"
+    ],
+    [
+     4,
+     4,
+     "floor_depthstone"
+    ],
+    [
+     5,
+     4,
+     "floor_depthstone"
+    ],
+    [
+     6,
+     4,
+     "floor_depthstone"
+    ],
+    [
+     7,
+     4,
+     "floor_depthstone"
+    ],
+    [
+     8,
+     4,
+     "stone_wall_depths_entry"
+    ],
+    [
+     9,
+     4,
+     "floor_depthstone"
+    ],
+    [
+     0,
+     5,
+     "floor_depthstone"
+    ],
+    [
+     1,
+     5,
+     "stone_wall_depths_entry"
+    ],
+    [
+     2,
+     5,
+     "floor_depthstone"
+    ],
+    [
+     3,
+     5,
+     "floor_depthstone"
+    ],
+    [
+     4,
+     5,
+     "floor_depthstone"
+    ],
+    [
+     5,
+     5,
+     "floor_depthstone"
+    ],
+    [
+     6,
+     5,
+     "floor_depthstone"
+    ],
+    [
+     7,
+     5,
+     "floor_depthstone"
+    ],
+    [
+     8,
+     5,
+     "stone_wall_depths_entry"
+    ],
+    [
+     9,
+     5,
+     "floor_depthstone"
+    ],
+    [
+     0,
+     6,
+     "floor_depthstone"
+    ],
+    [
+     1,
+     6,
+     "floor_depthstone"
+    ],
+    [
+     2,
+     6,
+     "floor_depthstone"
+    ],
+    [
+     3,
+     6,
+     "floor_depthstone"
+    ],
+    [
+     4,
+     6,
+     "floor_depthstone"
+    ],
+    [
+     5,
+     6,
+     "floor_depthstone"
+    ],
+    [
+     6,
+     6,
+     "floor_depthstone"
+    ],
+    [
+     7,
+     6,
+     "floor_depthstone"
+    ],
+    [
+     8,
+     6,
+     "floor_depthstone"
+    ],
+    [
+     9,
+     6,
+     "floor_depthstone"
+    ],
+    [
+     0,
+     7,
+     "floor_depthstone"
+    ],
+    [
+     1,
+     7,
+     "floor_depthstone"
+    ],
+    [
+     2,
+     7,
+     "floor_depthstone"
+    ],
+    [
+     3,
+     7,
+     "floor_depthstone"
+    ],
+    [
+     4,
+     7,
+     "floor_depthstone"
+    ],
+    [
+     5,
+     7,
+     "floor_depthstone"
+    ],
+    [
+     6,
+     7,
+     "floor_depthstone"
+    ],
+    [
+     7,
+     7,
+     "floor_depthstone"
+    ],
+    [
+     8,
+     7,
+     "floor_depthstone"
+    ],
+    [
+     9,
+     7,
+     "floor_depthstone"
+    ],
+    [
+     1,
+     8,
+     "floor_depthstone"
+    ],
+    [
+     2,
+     8,
+     "floor_depthstone"
+    ],
+    [
+     3,
+     8,
+     "floor_depthstone"
+    ],
+    [
+     4,
+     8,
+     "stone_wall_depths_entry"
+    ],
+    [
+     5,
+     8,
+     "stone_wall_depths_entry"
+    ],
+    [
+     6,
+     8,
+     "floor_depthstone"
+    ],
+    [
+     7,
+     8,
+     "floor_depthstone"
+    ],
+    [
+     8,
+     8,
+     "floor_depthstone"
+    ],
+    [
+     2,
+     9,
+     "floor_depthstone"
+    ],
+    [
+     3,
+     9,
+     "floor_depthstone"
+    ],
+    [
+     4,
+     9,
+     "floor_depthstone"
+    ],
+    [
+     5,
+     9,
+     "floor_depthstone"
+    ],
+    [
+     6,
+     9,
+     "floor_depthstone"
+    ],
+    [
+     7,
+     9,
+     "floor_depthstone"
+    ]
+   ]
+  },
+  {
+   "name": "minmay_bisected",
+   "source": "source/dat/des/variable/mini_monsters.des",
+   "w": 10,
+   "h": 10,
+   "rows": [
+    ".....     ",
+    ".###..    ",
+    ".#.##..   ",
+    ".##.#...  ",
+    "..##..... ",
+    " .....##..",
+    "  ...#.##.",
+    "   ..##.#.",
+    "    ..###.",
+    "     ....."
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_vaults_trapezoid_layered",
+   "source": "source/dat/des/branches/vaults_rooms_empty.des",
+   "w": 13,
+   "h": 8,
+   "rows": [
+    "   .......   ",
+    "   .......   ",
+    "  .........  ",
+    "  ..##+##..  ",
+    " ...+...+... ",
+    " ..##...##.. ",
+    "...+.....+...",
+    "...#.....#..."
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "minmay_orc_barracks",
+   "source": "source/dat/des/branches/orc.des",
+   "w": 21,
+   "h": 5,
+   "rows": [
+    "#####################",
+    "#...............#...#",
+    "+...............+...#",
+    "#...............#...#",
+    "#####################"
+   ],
+   "entries": [],
+   "mons": [
+    [
+     1,
+     1,
+     "orc"
+    ],
+    [
+     3,
+     1,
+     "orc"
+    ],
+    [
+     5,
+     1,
+     "orc"
+    ],
+    [
+     7,
+     1,
+     "orc"
+    ],
+    [
+     9,
+     1,
+     "orc"
+    ],
+    [
+     11,
+     1,
+     "orc"
+    ],
+    [
+     13,
+     1,
+     "orc"
+    ],
+    [
+     15,
+     1,
+     "orc"
+    ],
+    [
+     18,
+     2,
+     "orc knight"
+    ],
+    [
+     1,
+     3,
+     "orc"
+    ],
+    [
+     3,
+     3,
+     "orc"
+    ],
+    [
+     5,
+     3,
+     "orc"
+    ],
+    [
+     7,
+     3,
+     "orc"
+    ],
+    [
+     9,
+     3,
+     "orc"
+    ],
+    [
+     11,
+     3,
+     "orc"
+    ],
+    [
+     13,
+     3,
+     "orc"
+    ],
+    [
+     15,
+     3,
+     "orc"
+    ]
+   ],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "dreamdust_arrival_sigmund_warning",
+   "source": "source/dat/des/arrival/small.des",
+   "w": 9,
+   "h": 12,
+   "rows": [
+    "   ###   ",
+    "####.####",
+    "#.......#",
+    "#...#...#",
+    "#.......#",
+    "#.l...l.#",
+    "#.l...l.#",
+    "#.l...l.#",
+    "#.l...l.#",
+    "#.l...l.#",
+    "#.......#",
+    "###...###"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": [
+    [
+     4,
+     3,
+     "dngn_statue_sigmund"
+    ]
+   ]
+  },
+  {
+   "name": "chequers_jeans",
+   "source": "source/dat/des/variable/mini_features.des",
+   "w": 9,
+   "h": 12,
+   "rows": [
+    ".........",
+    ".#######.",
+    ".#######.",
+    ".###.###.",
+    ".###.###.",
+    ".###.###.",
+    ".##...##.",
+    ".##...##.",
+    ".##...##.",
+    ".##...##.",
+    ".##...##.",
+    "........."
+   ],
+   "entries": [
+    [
+     4,
+     0
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_orc_lost_temple",
+   "source": "source/dat/des/branches/orc.des",
+   "w": 11,
+   "h": 10,
+   "rows": [
+    " ######.   ",
+    "#####..... ",
+    "###....... ",
+    "###......# ",
+    "##.......##",
+    "###.....###",
+    "###.....###",
+    "#####.#####",
+    " ######### ",
+    "   #####   "
+   ],
+   "entries": [
+    [
+     9,
+     1
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_lair_garden_over_the_wall_5",
+   "source": "source/dat/des/branches/lair.des",
+   "w": 14,
+   "h": 8,
+   "rows": [
+    "  ............",
+    "  .########...",
+    "  .########...",
+    "  ....##......",
+    "......##......",
+    "###########...",
+    "###########...",
+    ".............."
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "ncdulo_watergridlock",
+   "source": "source/dat/des/arrival/simple.des",
+   "w": 13,
+   "h": 9,
+   "rows": [
+    "#.#.#.#.#.#.#",
+    ".#.#.#.#.#.#.",
+    "#.#.~~~~~.#.#",
+    ".#.#~...~#.#.",
+    "#.#.~...~.#.#",
+    ".#.#~...~#.#.",
+    "#.#.~~~~~.#.#",
+    ".#.#.#.#.#.#.",
+    "#.#.#.#.#.#.#"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "minmay_snake_entry_guardpost_medium",
+   "source": "source/dat/des/branches/snake.des",
+   "w": 13,
+   "h": 9,
+   "rows": [
+    "   #######   ",
+    " ###.....### ",
+    "##.........##",
+    "#...#...#...#",
+    "....#...#....",
+    "#...#...#...#",
+    "##.........##",
+    " ###.....### ",
+    "   #######   "
+   ],
+   "entries": [
+    [
+     0,
+     4
+    ],
+    [
+     12,
+     4
+    ]
+   ],
+   "mons": [
+    [
+     7,
+     3,
+     "naga"
+    ],
+    [
+     5,
+     5,
+     "naga"
+    ]
+   ],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "minmay_misc_feat_roman",
+   "source": "source/dat/des/variable/mini_features.des",
+   "w": 13,
+   "h": 9,
+   "rows": [
+    ".............",
+    ".#.###.###.#.",
+    ".#...#.#...#.",
+    ".###.#.#.###.",
+    ".............",
+    ".###.#.#.###.",
+    ".#.#.....#.#.",
+    ".#.###.###.#.",
+    "............."
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_lair_planthole_trapezoid",
+   "source": "source/dat/des/branches/lair.des",
+   "w": 12,
+   "h": 10,
+   "rows": [
+    "      ......",
+    "    ....##..",
+    "  ....##..#.",
+    "....##....#.",
+    "..##.....#..",
+    ".#.......#..",
+    ".#......#.. ",
+    "..###...#.. ",
+    ".....###..  ",
+    "   .......  "
+   ],
+   "entries": [],
+   "mons": [
+    [
+     8,
+     2,
+     "plant"
+    ],
+    [
+     9,
+     2,
+     "plant"
+    ],
+    [
+     6,
+     3,
+     "plant"
+    ],
+    [
+     7,
+     3,
+     "plant"
+    ],
+    [
+     9,
+     3,
+     "plant"
+    ],
+    [
+     4,
+     4,
+     "plant"
+    ],
+    [
+     5,
+     4,
+     "plant"
+    ],
+    [
+     8,
+     4,
+     "plant"
+    ],
+    [
+     2,
+     5,
+     "plant"
+    ],
+    [
+     3,
+     5,
+     "plant"
+    ],
+    [
+     8,
+     5,
+     "plant"
+    ],
+    [
+     2,
+     6,
+     "plant"
+    ],
+    [
+     3,
+     6,
+     "plant"
+    ],
+    [
+     4,
+     6,
+     "plant"
+    ],
+    [
+     7,
+     6,
+     "plant"
+    ],
+    [
+     5,
+     7,
+     "plant"
+    ],
+    [
+     6,
+     7,
+     "plant"
+    ],
+    [
+     7,
+     7,
+     "plant"
+    ]
+   ],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "shapermc_ecumenical_altar_mp_ritualfount",
+   "source": "source/dat/des/altar/ecumenical.des",
+   "w": 11,
+   "h": 11,
+   "rows": [
+    "......#....",
+    "......#....",
+    "..######.~.",
+    "..#..#.#.~.",
+    "..#..#.#~~.",
+    "...~~.~~#..",
+    "..~..~..#..",
+    "..~...~.#..",
+    "...~~~~.#..",
+    ".......~.#.",
+    "...~~~~..#."
+   ],
+   "entries": [],
+   "mons": [
+    [
+     9,
+     2,
+     "plant"
+    ],
+    [
+     9,
+     3,
+     "plant"
+    ],
+    [
+     8,
+     4,
+     "plant"
+    ],
+    [
+     9,
+     4,
+     "plant"
+    ],
+    [
+     3,
+     5,
+     "plant"
+    ],
+    [
+     4,
+     5,
+     "plant"
+    ],
+    [
+     6,
+     5,
+     "plant"
+    ],
+    [
+     7,
+     5,
+     "plant"
+    ],
+    [
+     2,
+     6,
+     "plant"
+    ],
+    [
+     5,
+     6,
+     "plant"
+    ],
+    [
+     2,
+     7,
+     "plant"
+    ],
+    [
+     6,
+     7,
+     "plant"
+    ],
+    [
+     3,
+     8,
+     "plant"
+    ],
+    [
+     4,
+     8,
+     "plant"
+    ],
+    [
+     5,
+     8,
+     "plant"
+    ],
+    [
+     6,
+     8,
+     "plant"
+    ],
+    [
+     7,
+     9,
+     "plant"
+    ],
+    [
+     3,
+     10,
+     "plant"
+    ],
+    [
+     4,
+     10,
+     "plant"
+    ],
+    [
+     5,
+     10,
+     "plant"
+    ],
+    [
+     6,
+     10,
+     "plant"
+    ]
+   ],
+   "items": [],
+   "art": [
+    [
+     1,
+     1,
+     "floor_rough_brown"
+    ],
+    [
+     2,
+     1,
+     "floor_rough_brown"
+    ],
+    [
+     3,
+     1,
+     "floor_rough_brown"
+    ],
+    [
+     4,
+     1,
+     "floor_rough_brown"
+    ],
+    [
+     5,
+     1,
+     "floor_rough_brown"
+    ],
+    [
+     1,
+     2,
+     "floor_rough_brown"
+    ],
+    [
+     1,
+     3,
+     "floor_rough_brown"
+    ],
+    [
+     3,
+     3,
+     "floor_rough_brown"
+    ],
+    [
+     4,
+     3,
+     "floor_rough_brown"
+    ],
+    [
+     1,
+     4,
+     "floor_rough_brown"
+    ],
+    [
+     3,
+     4,
+     "floor_rough_brown"
+    ],
+    [
+     4,
+     4,
+     "floor_rough_brown"
+    ],
+    [
+     6,
+     4,
+     "floor_rough_brown"
+    ],
+    [
+     1,
+     5,
+     "floor_rough_brown"
+    ],
+    [
+     2,
+     5,
+     "floor_rough_brown"
+    ],
+    [
+     5,
+     5,
+     "floor_rough_brown"
+    ]
+   ]
+  },
+  {
+   "name": "okawaru_trees_2",
+   "source": "source/dat/des/altar/overflow.des",
+   "w": 11,
+   "h": 11,
+   "rows": [
+    "...........",
+    ".#...t...#.",
+    "....t.t....",
+    "...t.t.t...",
+    "..t.t.t.t..",
+    ".t.t...t.t.",
+    "..t.t.t.t..",
+    "...t.t.t...",
+    "....t.t....",
+    ".#...t...#.",
+    "..........."
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "scummos_arrival_simple_crosswalls",
+   "source": "source/dat/des/arrival/simple.des",
+   "w": 11,
+   "h": 11,
+   "rows": [
+    "...........",
+    "..#.....#..",
+    ".#########.",
+    "..#........",
+    "..#.....#..",
+    "..#.....#..",
+    "..#.....#..",
+    "........#..",
+    ".#########.",
+    ". #.....#..",
+    "..........."
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "minmay_crypt_entry_simple_corners",
+   "source": "source/dat/des/branches/crypt.des",
+   "w": 11,
+   "h": 11,
+   "rows": [
+    "...........",
+    ".##.....##.",
+    ".#.......#.",
+    "....#.#....",
+    "...##.##...",
+    "...........",
+    "...##.##...",
+    "....#.#....",
+    ".#.......#.",
+    ".##.....##.",
+    "..........."
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_lair_planthole_diamond",
+   "source": "source/dat/des/branches/lair.des",
+   "w": 11,
+   "h": 11,
+   "rows": [
+    "   .....   ",
+    "  ...#...  ",
+    " ...#.#... ",
+    "...#...#...",
+    "..#.....#..",
+    ".#.......#.",
+    "..#.....#..",
+    "...#...#...",
+    " ...#.#... ",
+    "  ...#...  ",
+    "   .....   "
+   ],
+   "entries": [],
+   "mons": [
+    [
+     5,
+     2,
+     "plant"
+    ],
+    [
+     4,
+     3,
+     "plant"
+    ],
+    [
+     6,
+     3,
+     "plant"
+    ],
+    [
+     3,
+     4,
+     "plant"
+    ],
+    [
+     7,
+     4,
+     "plant"
+    ],
+    [
+     2,
+     5,
+     "plant"
+    ],
+    [
+     8,
+     5,
+     "plant"
+    ],
+    [
+     3,
+     6,
+     "plant"
+    ],
+    [
+     7,
+     6,
+     "plant"
+    ],
+    [
+     4,
+     7,
+     "plant"
+    ],
+    [
+     6,
+     7,
+     "plant"
+    ],
+    [
+     5,
+     8,
+     "plant"
+    ]
+   ],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "shoals_garden_rune",
+   "source": "source/dat/des/branches/shoals.des",
+   "w": 11,
+   "h": 11,
+   "rows": [
+    "   .###.   ",
+    " ......... ",
+    " .......#. ",
+    "........#..",
+    "...........",
+    "...........",
+    "...........",
+    "..#........",
+    " .#....... ",
+    " ......... ",
+    "   .###.   "
+   ],
+   "entries": [],
+   "mons": [
+    [
+     5,
+     2,
+     "satyr"
+    ],
+    [
+     3,
+     3,
+     "satyr"
+    ],
+    [
+     4,
+     3,
+     "satyr"
+    ],
+    [
+     5,
+     3,
+     "satyr"
+    ],
+    [
+     6,
+     3,
+     "satyr"
+    ],
+    [
+     7,
+     3,
+     "satyr"
+    ],
+    [
+     3,
+     4,
+     "satyr"
+    ],
+    [
+     7,
+     4,
+     "satyr"
+    ],
+    [
+     2,
+     5,
+     "satyr"
+    ],
+    [
+     3,
+     5,
+     "satyr"
+    ],
+    [
+     7,
+     5,
+     "satyr"
+    ],
+    [
+     8,
+     5,
+     "satyr"
+    ],
+    [
+     3,
+     6,
+     "satyr"
+    ],
+    [
+     7,
+     6,
+     "satyr"
+    ],
+    [
+     3,
+     7,
+     "satyr"
+    ],
+    [
+     4,
+     7,
+     "satyr"
+    ],
+    [
+     5,
+     7,
+     "satyr"
+    ],
+    [
+     6,
+     7,
+     "satyr"
+    ],
+    [
+     7,
+     7,
+     "satyr"
+    ],
+    [
+     5,
+     8,
+     "satyr"
+    ]
+   ],
+   "items": [],
+   "art": [
+    [
+     5,
+     2,
+     "floor_grass"
+    ],
+    [
+     3,
+     3,
+     "floor_grass"
+    ],
+    [
+     4,
+     3,
+     "floor_grass"
+    ],
+    [
+     5,
+     3,
+     "floor_grass"
+    ],
+    [
+     6,
+     3,
+     "floor_grass"
+    ],
+    [
+     7,
+     3,
+     "floor_grass"
+    ],
+    [
+     3,
+     4,
+     "floor_grass"
+    ],
+    [
+     4,
+     4,
+     "floor_grass"
+    ],
+    [
+     5,
+     4,
+     "floor_grass"
+    ],
+    [
+     6,
+     4,
+     "floor_grass"
+    ],
+    [
+     7,
+     4,
+     "floor_grass"
+    ],
+    [
+     2,
+     5,
+     "floor_grass"
+    ],
+    [
+     3,
+     5,
+     "floor_grass"
+    ],
+    [
+     4,
+     5,
+     "floor_grass"
+    ],
+    [
+     5,
+     5,
+     "floor_grass"
+    ],
+    [
+     6,
+     5,
+     "floor_grass"
+    ],
+    [
+     7,
+     5,
+     "floor_grass"
+    ],
+    [
+     8,
+     5,
+     "floor_grass"
+    ],
+    [
+     3,
+     6,
+     "floor_grass"
+    ],
+    [
+     4,
+     6,
+     "floor_grass"
+    ],
+    [
+     5,
+     6,
+     "floor_grass"
+    ],
+    [
+     6,
+     6,
+     "floor_grass"
+    ],
+    [
+     7,
+     6,
+     "floor_grass"
+    ],
+    [
+     3,
+     7,
+     "floor_grass"
+    ],
+    [
+     4,
+     7,
+     "floor_grass"
+    ],
+    [
+     5,
+     7,
+     "floor_grass"
+    ],
+    [
+     6,
+     7,
+     "floor_grass"
+    ],
+    [
+     7,
+     7,
+     "floor_grass"
+    ],
+    [
+     5,
+     8,
+     "floor_grass"
+    ]
+   ]
+  },
+  {
+   "name": "hangedman_swamp_ravenous",
+   "source": "source/dat/des/branches/swamp.des",
+   "w": 11,
+   "h": 11,
+   "rows": [
+    " ..tttttt  ",
+    ".ttt~.~ttt ",
+    "tt.~.~.~.tt",
+    "t.~l.~t.~.t",
+    "..~l......t",
+    " ..l....~. ",
+    "t..l....~..",
+    "t.~.t~.t..t",
+    "tt.~.~.~.tt",
+    ".ttt~.~ttt.",
+    " ..ttttt.. "
+   ],
+   "entries": [
+    [
+     0,
+     4
+    ],
+    [
+     10,
+     6
+    ]
+   ],
+   "mons": [
+    [
+     2,
+     2,
+     "bog body"
+    ],
+    [
+     4,
+     2,
+     "small abomination"
+    ],
+    [
+     6,
+     2,
+     "small abomination"
+    ],
+    [
+     8,
+     2,
+     "bog body"
+    ],
+    [
+     1,
+     3,
+     "bog body"
+    ],
+    [
+     9,
+     3,
+     "bog body"
+    ],
+    [
+     5,
+     5,
+     "ghoul"
+    ],
+    [
+     1,
+     7,
+     "bog body"
+    ],
+    [
+     9,
+     7,
+     "bog body"
+    ],
+    [
+     2,
+     8,
+     "bog body"
+    ],
+    [
+     4,
+     8,
+     "small abomination"
+    ],
+    [
+     6,
+     8,
+     "small abomination"
+    ],
+    [
+     8,
+     8,
+     "bog body"
+    ]
+   ],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "v_misc_23",
+   "source": "source/dat/des/branches/vaults_rooms_empty.des",
+   "w": 11,
+   "h": 11,
+   "rows": [
+    "##.......##",
+    "##..###..##",
+    "...#####...",
+    "..#######..",
+    ".#########.",
+    ".#########.",
+    ".#########.",
+    "..#######..",
+    "...#####...",
+    "##..###..##",
+    "##.......##"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "v_pattern_5",
+   "source": "source/dat/des/branches/vaults_rooms_standard.des",
+   "w": 11,
+   "h": 11,
+   "rows": [
+    ".#.#...#.#.",
+    "#.#.#.#.#.#",
+    ".#.#.#.#.#.",
+    "#.#.#.#.#.#",
+    ".#.#...#.#.",
+    "..#.....#..",
+    ".#.#...#.#.",
+    "#.#.#.#.#.#",
+    ".#.#.#.#.#.",
+    "#.#.#.#.#.#",
+    ".#.#...#.#."
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_vaults_closet_pinwheel_3",
+   "source": "source/dat/des/branches/vaults_rooms_standard.des",
+   "w": 11,
+   "h": 11,
+   "rows": [
+    "...........",
+    "...#.#.....",
+    ".....#.#...",
+    "..##...#.#.",
+    "...........",
+    ".#####..##.",
+    "...........",
+    ".#.#...##..",
+    "...#.#.....",
+    ".....#.#...",
+    "..........."
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "mu_enter_wizlab_6",
+   "source": "source/dat/des/portals/wizlab.des",
+   "w": 11,
+   "h": 11,
+   "rows": [
+    "#.#.#######",
+    "#.#.#.#...#",
+    ".#.#.#.#..#",
+    "#.#.#.#.#.#",
+    ".#.#.#.#.##",
+    "#.#.#.#.#.#",
+    ".#.#.#.#.##",
+    "#.#.#.#.#..",
+    ".#.#.#.#.##",
+    "#.#.#.#.#..",
+    ".#.#.#.#.##"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": [
+    [
+     1,
+     0,
+     "floor_rough_magenta"
+    ],
+    [
+     3,
+     0,
+     "floor_rough_magenta"
+    ],
+    [
+     1,
+     1,
+     "floor_rough_magenta"
+    ],
+    [
+     3,
+     1,
+     "floor_rough_magenta"
+    ],
+    [
+     5,
+     1,
+     "floor_rough_magenta"
+    ],
+    [
+     7,
+     1,
+     "floor_rough_magenta"
+    ],
+    [
+     8,
+     1,
+     "floor_rough_magenta"
+    ],
+    [
+     9,
+     1,
+     "floor_rough_magenta"
+    ],
+    [
+     0,
+     2,
+     "floor_rough_magenta"
+    ],
+    [
+     2,
+     2,
+     "floor_rough_magenta"
+    ],
+    [
+     4,
+     2,
+     "floor_rough_magenta"
+    ],
+    [
+     6,
+     2,
+     "floor_rough_magenta"
+    ],
+    [
+     8,
+     2,
+     "floor_rough_magenta"
+    ],
+    [
+     9,
+     2,
+     "floor_rough_magenta"
+    ],
+    [
+     1,
+     3,
+     "floor_rough_magenta"
+    ],
+    [
+     3,
+     3,
+     "floor_rough_magenta"
+    ],
+    [
+     5,
+     3,
+     "floor_rough_magenta"
+    ],
+    [
+     7,
+     3,
+     "floor_rough_magenta"
+    ],
+    [
+     9,
+     3,
+     "floor_rough_magenta"
+    ],
+    [
+     0,
+     4,
+     "floor_rough_magenta"
+    ],
+    [
+     2,
+     4,
+     "floor_rough_magenta"
+    ],
+    [
+     4,
+     4,
+     "floor_rough_magenta"
+    ],
+    [
+     6,
+     4,
+     "floor_rough_magenta"
+    ],
+    [
+     8,
+     4,
+     "floor_rough_magenta"
+    ],
+    [
+     1,
+     5,
+     "floor_rough_magenta"
+    ],
+    [
+     3,
+     5,
+     "floor_rough_magenta"
+    ],
+    [
+     5,
+     5,
+     "floor_rough_magenta"
+    ],
+    [
+     7,
+     5,
+     "floor_rough_magenta"
+    ],
+    [
+     9,
+     5,
+     "floor_rough_magenta"
+    ],
+    [
+     0,
+     6,
+     "floor_rough_magenta"
+    ],
+    [
+     2,
+     6,
+     "floor_rough_magenta"
+    ],
+    [
+     4,
+     6,
+     "floor_rough_magenta"
+    ],
+    [
+     6,
+     6,
+     "floor_rough_magenta"
+    ],
+    [
+     8,
+     6,
+     "floor_rough_magenta"
+    ],
+    [
+     1,
+     7,
+     "floor_rough_magenta"
+    ],
+    [
+     3,
+     7,
+     "floor_rough_magenta"
+    ],
+    [
+     5,
+     7,
+     "floor_rough_magenta"
+    ],
+    [
+     7,
+     7,
+     "floor_rough_magenta"
+    ],
+    [
+     9,
+     7,
+     "floor_rough_magenta"
+    ],
+    [
+     10,
+     7,
+     "floor_rough_magenta"
+    ],
+    [
+     0,
+     8,
+     "floor_rough_magenta"
+    ],
+    [
+     2,
+     8,
+     "floor_rough_magenta"
+    ],
+    [
+     4,
+     8,
+     "floor_rough_magenta"
+    ],
+    [
+     6,
+     8,
+     "floor_rough_magenta"
+    ],
+    [
+     8,
+     8,
+     "floor_rough_magenta"
+    ],
+    [
+     1,
+     9,
+     "floor_rough_magenta"
+    ],
+    [
+     3,
+     9,
+     "floor_rough_magenta"
+    ],
+    [
+     5,
+     9,
+     "floor_rough_magenta"
+    ],
+    [
+     7,
+     9,
+     "floor_rough_magenta"
+    ],
+    [
+     9,
+     9,
+     "floor_rough_magenta"
+    ],
+    [
+     10,
+     9,
+     "floor_rough_magenta"
+    ],
+    [
+     0,
+     10,
+     "floor_rough_magenta"
+    ],
+    [
+     2,
+     10,
+     "floor_rough_magenta"
+    ],
+    [
+     4,
+     10,
+     "floor_rough_magenta"
+    ],
+    [
+     6,
+     10,
+     "floor_rough_magenta"
+    ],
+    [
+     8,
+     10,
+     "floor_rough_magenta"
+    ]
+   ]
+  },
+  {
+   "name": "minmay_misc_feat_cross",
+   "source": "source/dat/des/variable/mini_features.des",
+   "w": 11,
+   "h": 11,
+   "rows": [
+    "...........",
+    ".###.#.###.",
+    ".###.#.###.",
+    ".###.#.###.",
+    ".....#.....",
+    ".#########.",
+    ".....#.....",
+    ".###.#.###.",
+    ".###.#.###.",
+    ".###.#.###.",
+    "..........."
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": [
+    [
+     3,
+     3,
+     "wall_stone_magic_shelf"
+    ],
+    [
+     7,
+     3,
+     "wall_stone_magic_shelf"
+    ],
+    [
+     3,
+     7,
+     "wall_stone_magic_shelf"
+    ],
+    [
+     7,
+     7,
+     "wall_stone_magic_shelf"
+    ]
+   ]
+  },
+  {
+   "name": "grunt_tough_drop",
+   "source": "source/dat/des/variable/mini_monsters.des",
+   "w": 11,
+   "h": 11,
+   "rows": [
+    "   .....   ",
+    "   .#.#.   ",
+    "...........",
+    ".####+####.",
+    ".#.......#.",
+    ".##.#.#.##.",
+    ".#.......#.",
+    ".##.#.#.##.",
+    ".#.......#.",
+    ".####+####.",
+    "..........."
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "minmay_the_grid_octo_vomiting_pacman",
+   "source": "source/dat/des/variable/the_grid.des",
+   "w": 11,
+   "h": 11,
+   "rows": [
+    "   .....   ",
+    "  .......  ",
+    "    ...... ",
+    "#.#    ....",
+    ".#.#..   ..",
+    "###.##.....",
+    ".#.###   ..",
+    "#.#    ....",
+    "    ...... ",
+    "  .......  ",
+    "   .....   "
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_vaults_security_offices_6",
+   "source": "source/dat/des/branches/vaults_rooms_hard.des",
+   "w": 13,
+   "h": 10,
+   "rows": [
+    ".............",
+    ".............",
+    ".............",
+    "#...#...#...#",
+    "#...........#",
+    "#...........#",
+    "#...#...#...#",
+    ".............",
+    ".............",
+    "............."
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_tar_cuneiform_sun",
+   "source": "source/dat/des/branches/tar.des",
+   "w": 12,
+   "h": 11,
+   "rows": [
+    "............",
+    "....#.#####.",
+    "..###..###..",
+    ".####..###..",
+    "..###...#...",
+    "....#...#...",
+    "..###...#...",
+    ".####...#...",
+    "..###...#...",
+    "....#...#...",
+    "............"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "grunt_ministairs_11",
+   "source": "source/dat/des/variable/mini_monsters.des",
+   "w": 11,
+   "h": 12,
+   "rows": [
+    "     .     ",
+    " ####+#### ",
+    "##.......##",
+    "#.#######.#",
+    "#.##...##.#",
+    "#.#.#.#.#.#",
+    "#.#.....#.#",
+    "#.#.#.#.#.#",
+    "#.##...##.#",
+    "#.###+###.#",
+    "##.......##",
+    " ######### "
+   ],
+   "entries": [
+    [
+     5,
+     0
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_dis_fourth_circle",
+   "source": "source/dat/des/branches/dis.des",
+   "w": 15,
+   "h": 9,
+   "rows": [
+    "###############",
+    "#######.....###",
+    "#...##.......##",
+    "#...#.........#",
+    "#...+.........+",
+    "#...#.........#",
+    "#...##.......##",
+    "#######.....###",
+    "###############"
+   ],
+   "entries": [],
+   "mons": [
+    [
+     7,
+     1,
+     "stone giant"
+    ],
+    [
+     8,
+     1,
+     "stone giant"
+    ],
+    [
+     9,
+     1,
+     "stone giant"
+    ],
+    [
+     10,
+     1,
+     "stone giant"
+    ],
+    [
+     11,
+     1,
+     "stone giant"
+    ],
+    [
+     7,
+     7,
+     "ancient champion"
+    ],
+    [
+     8,
+     7,
+     "ancient champion"
+    ],
+    [
+     9,
+     7,
+     "ancient champion"
+    ],
+    [
+     10,
+     7,
+     "ancient champion"
+    ],
+    [
+     11,
+     7,
+     "ancient champion"
+    ]
+   ],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "zelgadis_glass_arrival_small",
+   "source": "source/dat/des/arrival/simple.des",
+   "w": 14,
+   "h": 10,
+   "rows": [
+    "...########...",
+    "..............",
+    ".##.######.##.",
+    ".##.#....#.##.",
+    ".##.#.##.#.##.",
+    ".##.#..#.#.##.",
+    ".##.#..#.#.##.",
+    ".##.####.#.##.",
+    ".........#.##.",
+    "...#######...."
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "evilmike_abyss_exit_5",
+   "source": "source/dat/des/branches/abyss.des",
+   "w": 13,
+   "h": 11,
+   "rows": [
+    "    #   #    ",
+    "  # # # # #  ",
+    " ########### ",
+    "  #.#.#.#.#  ",
+    "###+#+#+#+###",
+    "  #..........",
+    "###+#+#+#+###",
+    "  #.#.#.#.#  ",
+    " ########### ",
+    "  # # # # #  ",
+    "    #   #    "
+   ],
+   "entries": [
+    [
+     12,
+     5
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "temple_doors_e",
+   "source": "source/dat/des/branches/temple.des",
+   "w": 13,
+   "h": 11,
+   "rows": [
+    "######.######",
+    "######.######",
+    "######.######",
+    "####.########",
+    "#####...#####",
+    "....#...#....",
+    "#####...#####",
+    "########.####",
+    "######.######",
+    "######.######",
+    "######.######"
+   ],
+   "entries": [
+    [
+     6,
+     0
+    ],
+    [
+     0,
+     5
+    ],
+    [
+     12,
+     5
+    ],
+    [
+     6,
+     10
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "jmf_multi_god_temple2",
+   "source": "source/dat/des/altar/overflow.des",
+   "w": 12,
+   "h": 12,
+   "rows": [
+    "............",
+    "..########..",
+    ".##......##.",
+    ".#..#..#..#.",
+    ".#..#..#..#.",
+    ".#..#..#..#.",
+    ".#..#..#..#.",
+    ".####++####.",
+    "...##..##...",
+    "...+....+...",
+    "...######...",
+    "............"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "rand_demon_pan_entry_7",
+   "source": "source/dat/des/branches/pan.des",
+   "w": 12,
+   "h": 12,
+   "rows": [
+    "............",
+    ".###....###.",
+    ".#.##+###.#.",
+    ".##+....+##.",
+    "..#.#++#.#..",
+    "..#.+..+.+..",
+    "..+.+..+.#..",
+    "..#.#++#.#..",
+    ".##+....+##.",
+    ".#.###+##.#.",
+    ".###....###.",
+    "............"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_shoals_kraken_intersection",
+   "source": "source/dat/des/branches/shoals.des",
+   "w": 12,
+   "h": 12,
+   "rows": [
+    " ####..#### ",
+    "####....####",
+    "###..##..###",
+    "##..#~~#..##",
+    "#..#~~~~#..#",
+    "..#~~~.~~#..",
+    "..#~~~~~~#..",
+    "#..#~~~~#..#",
+    "##..#~~#..##",
+    "###..##..###",
+    "####....####",
+    " ####..#### "
+   ],
+   "entries": [
+    [
+     5,
+     0
+    ],
+    [
+     6,
+     0
+    ],
+    [
+     0,
+     5
+    ],
+    [
+     11,
+     5
+    ],
+    [
+     0,
+     6
+    ],
+    [
+     11,
+     6
+    ],
+    [
+     5,
+     11
+    ],
+    [
+     6,
+     11
+    ]
+   ],
+   "mons": [
+    [
+     6,
+     5,
+     "kraken"
+    ]
+   ],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_vaults_wrenched",
+   "source": "source/dat/des/branches/vaults_rooms_standard.des",
+   "w": 12,
+   "h": 12,
+   "rows": [
+    "............",
+    ".......#.#..",
+    ".##.##.###..",
+    "..###...#...",
+    ".##.##.###..",
+    ".......#.#..",
+    "..#.#.......",
+    "..###.##.##.",
+    "...#...###..",
+    "..###.##.##.",
+    "..#.#.......",
+    "............"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "desolation_ruin_nicolae_tower_intact",
+   "source": "source/dat/des/portals/desolation.des",
+   "w": 12,
+   "h": 12,
+   "rows": [
+    ".....##.....",
+    ".##########.",
+    ".#...##...#.",
+    ".#........#.",
+    ".#........#.",
+    "###......###",
+    "###......###",
+    ".#........#.",
+    "..........#.",
+    ".....##...#.",
+    "....#######.",
+    ".....##....."
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "desolation_ruin_nicolae_wiztower_intact",
+   "source": "source/dat/des/portals/desolation.des",
+   "w": 12,
+   "h": 12,
+   "rows": [
+    ".........###",
+    "..#######..#",
+    ".##..#...#.#",
+    "##........#.",
+    "#...#.#...#.",
+    "#..#####..#.",
+    "##..###..##.",
+    "#..#####..#.",
+    "#...#.#...#.",
+    "##.......##.",
+    ".##..#..##..",
+    "..#######..."
+   ],
+   "entries": [],
+   "mons": [
+    [
+     10,
+     1,
+     "peacekeeper"
+    ]
+   ],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "desolation_ruin_nicolae_bits",
+   "source": "source/dat/des/portals/desolation.des",
+   "w": 12,
+   "h": 12,
+   "rows": [
+    "............",
+    ".#####.#####",
+    ".#...#.#.#.#",
+    ".##...#....#",
+    ".#..#####..#",
+    ".##.#...####",
+    ".###..#..#..",
+    ".##.#...#.##",
+    ".#.###.##..#",
+    "..##..#.##.#",
+    ".#...#.#...#",
+    ".##.##.##.##"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "water_boxes_lemuel",
+   "source": "source/dat/des/variable/mini_features.des",
+   "w": 12,
+   "h": 12,
+   "rows": [
+    "  ~~~~~~~~  ",
+    " ~~~~~~~~~~ ",
+    "~~#.#~~###~~",
+    "~~...~~#.#~~",
+    "~~#.#~~###~~",
+    "~~~~~~~~~~~~",
+    "~~~~~~~~~~~~",
+    "~~#.#~~###~~",
+    "~~...~~#.#~~",
+    "~~#.#~~###~~",
+    " ~~~~~~~~~~ ",
+    "  ~~~~~~~~  "
+   ],
+   "entries": [],
+   "mons": [
+    [
+     3,
+     3,
+     "fungus"
+    ],
+    [
+     8,
+     3,
+     "fungus"
+    ],
+    [
+     3,
+     8,
+     "fungus"
+    ],
+    [
+     8,
+     8,
+     "fungus"
+    ]
+   ],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "lightli_elemental_guards",
+   "source": "source/dat/des/variable/mini_monsters.des",
+   "w": 12,
+   "h": 12,
+   "rows": [
+    "############",
+    "#..........#",
+    "#.......#..#",
+    "#........#.#",
+    "#..........#",
+    "#.....#....#",
+    "#....~l....#",
+    "#..........#",
+    "#.~~....ll.#",
+    "#.~~....l..#",
+    "#..........#",
+    "#####..#####"
+   ],
+   "entries": [
+    [
+     5,
+     11
+    ],
+    [
+     6,
+     11
+    ]
+   ],
+   "mons": [
+    [
+     3,
+     3,
+     "air elemental"
+    ],
+    [
+     8,
+     3,
+     "earth elemental"
+    ],
+    [
+     2,
+     9,
+     "water elemental"
+    ],
+    [
+     9,
+     9,
+     "fire elemental"
+    ]
+   ],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "eino_curves_03",
+   "source": "source/dat/des/serial/curves.des",
+   "w": 15,
+   "h": 10,
+   "rows": [
+    " ############# ",
+    " ###.#####.### ",
+    " ##...###...## ",
+    " ##...###...## ",
+    " #..#..#..#..# ",
+    " #.###.#.###.# ",
+    " ..###...###.. ",
+    "..#####.#####..",
+    " .#####.#####. ",
+    " ############# "
+   ],
+   "entries": [
+    [
+     0,
+     7
+    ],
+    [
+     14,
+     7
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "chequers_ossuary_entry_cave",
+   "source": "source/dat/des/portals/ossuary.des",
+   "w": 17,
+   "h": 9,
+   "rows": [
+    "#################",
+    "######.....######",
+    "######.....######",
+    "######.....######",
+    "########.########",
+    "########.########",
+    "########.########",
+    ".................",
+    "................."
+   ],
+   "entries": [
+    [
+     0,
+     8
+    ],
+    [
+     1,
+     8
+    ],
+    [
+     2,
+     8
+    ],
+    [
+     3,
+     8
+    ],
+    [
+     4,
+     8
+    ],
+    [
+     5,
+     8
+    ],
+    [
+     6,
+     8
+    ],
+    [
+     7,
+     8
+    ],
+    [
+     8,
+     8
+    ],
+    [
+     9,
+     8
+    ],
+    [
+     10,
+     8
+    ],
+    [
+     11,
+     8
+    ],
+    [
+     12,
+     8
+    ],
+    [
+     13,
+     8
+    ],
+    [
+     14,
+     8
+    ],
+    [
+     15,
+     8
+    ],
+    [
+     16,
+     8
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_underground_beach",
+   "source": "source/dat/des/variable/mini_monsters.des",
+   "w": 14,
+   "h": 11,
+   "rows": [
+    "      #####   ",
+    "    ###...### ",
+    "   ####...~~##",
+    "#######...~~~#",
+    "....###...~~~#",
+    "....###...~~~#",
+    "....###...~~~#",
+    "#######...~~~#",
+    "   ####...~~##",
+    "    ###...### ",
+    "      #####   "
+   ],
+   "entries": [
+    [
+     0,
+     5
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": [
+    [
+     10,
+     2,
+     "floor_sand"
+    ],
+    [
+     11,
+     2,
+     "floor_sand"
+    ],
+    [
+     10,
+     3,
+     "floor_sand"
+    ],
+    [
+     11,
+     3,
+     "floor_sand"
+    ],
+    [
+     12,
+     3,
+     "floor_sand"
+    ],
+    [
+     10,
+     4,
+     "floor_sand"
+    ],
+    [
+     11,
+     4,
+     "floor_sand"
+    ],
+    [
+     12,
+     4,
+     "floor_sand"
+    ],
+    [
+     10,
+     5,
+     "floor_sand"
+    ],
+    [
+     11,
+     5,
+     "floor_sand"
+    ],
+    [
+     12,
+     5,
+     "floor_sand"
+    ],
+    [
+     10,
+     6,
+     "floor_sand"
+    ],
+    [
+     11,
+     6,
+     "floor_sand"
+    ],
+    [
+     12,
+     6,
+     "floor_sand"
+    ],
+    [
+     10,
+     7,
+     "floor_sand"
+    ],
+    [
+     11,
+     7,
+     "floor_sand"
+    ],
+    [
+     12,
+     7,
+     "floor_sand"
+    ],
+    [
+     10,
+     8,
+     "floor_sand"
+    ],
+    [
+     11,
+     8,
+     "floor_sand"
+    ]
+   ]
+  },
+  {
+   "name": "regret_index_vaults_charnel_boxing",
+   "source": "source/dat/des/branches/vaults_rooms_standard.des",
+   "w": 13,
+   "h": 12,
+   "rows": [
+    " .....#      ",
+    " .....#######",
+    " .....+......",
+    " .....+......",
+    " .....+......",
+    "#######......",
+    "#.....+......",
+    "#.....+......",
+    "#.....+......",
+    "#.....#######",
+    "#.....#      ",
+    "#######      "
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_vaults_cooling_towers",
+   "source": "source/dat/des/branches/vaults_rooms_standard.des",
+   "w": 16,
+   "h": 10,
+   "rows": [
+    "      ....      ",
+    "   ..........   ",
+    " .............. ",
+    "................",
+    "..##...##...##..",
+    "..##...##...##..",
+    "................",
+    " .............. ",
+    "   ..........   ",
+    "      ....      "
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_snake_yet_another_squirming_detour",
+   "source": "source/dat/des/branches/snake.des",
+   "w": 15,
+   "h": 11,
+   "rows": [
+    "    ........   ",
+    "... ..#.#....  ",
+    "..####...#..#  ",
+    ".#........#.#..",
+    ".....##.....#..",
+    ".#..#.....#..#.",
+    "..#.....##.....",
+    "..#.#........#.",
+    "  #..#...####..",
+    "  ....#.#.. ...",
+    "   ........    "
+   ],
+   "entries": [
+    [
+     14,
+     3
+    ],
+    [
+     0,
+     7
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": [
+    [
+     7,
+     1,
+     "dngn_transparent_stone_green"
+    ],
+    [
+     12,
+     1,
+     "dngn_transparent_stone_green"
+    ],
+    [
+     1,
+     4,
+     "dngn_transparent_stone_green"
+    ],
+    [
+     7,
+     4,
+     "dngn_transparent_stone_green"
+    ],
+    [
+     10,
+     4,
+     "dngn_transparent_stone_green"
+    ],
+    [
+     4,
+     6,
+     "dngn_transparent_stone_green"
+    ],
+    [
+     7,
+     6,
+     "dngn_transparent_stone_green"
+    ],
+    [
+     13,
+     6,
+     "dngn_transparent_stone_green"
+    ],
+    [
+     2,
+     9,
+     "dngn_transparent_stone_green"
+    ],
+    [
+     7,
+     9,
+     "dngn_transparent_stone_green"
+    ]
+   ]
+  },
+  {
+   "name": "minmay_shoals_entry_lonely_mermaid",
+   "source": "source/dat/des/branches/shoals.des",
+   "w": 21,
+   "h": 8,
+   "rows": [
+    "     ##.......##     ",
+    "   ###~.......~###   ",
+    " ###.~~~.....~~~.### ",
+    "##~.~~~~#####~~~~.~##",
+    "#~~..~.##   ##.~..~~#",
+    "#~~~..##     ##..~~~#",
+    "##~~~##       ##~~~##",
+    " #####         ##### "
+   ],
+   "entries": [
+    [
+     10,
+     0
+    ]
+   ],
+   "mons": [
+    [
+     16,
+     4,
+     "merfolk siren"
+    ]
+   ],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_ashenzari_skychains",
+   "source": "source/dat/des/altar/overflow.des",
+   "w": 13,
+   "h": 13,
+   "rows": [
+    ".....   .....",
+    ".............",
+    "..#.......#..",
+    "...#.....#...",
+    "....#...#....",
+    " ....#.#.... ",
+    " ........... ",
+    " ....#.#.... ",
+    "....#...#....",
+    "...#.....#...",
+    "..#.......#..",
+    ".............",
+    ".....   ....."
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "dysonsfear_arrival_nine_rooms",
+   "source": "source/dat/des/arrival/simple.des",
+   "w": 13,
+   "h": 13,
+   "rows": [
+    "##.###.###.##",
+    "#...#...#...#",
+    "....+........",
+    "#...#...#...#",
+    "##+###+###+##",
+    "#...#...#...#",
+    "........+....",
+    "#...#...#...#",
+    "##.###.###+##",
+    "#...#...#...#",
+    "....+........",
+    "#...#...#...#",
+    "##.###.###.##"
+   ],
+   "entries": [
+    [
+     0,
+     6
+    ],
+    [
+     0,
+     10
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_lair_demoated_fort",
+   "source": "source/dat/des/branches/lair.des",
+   "w": 13,
+   "h": 13,
+   "rows": [
+    ".............",
+    ".............",
+    "..~.....~~~..",
+    "..~#.#.###~..",
+    "..~#.....#~..",
+    "..~#.....#~..",
+    "..~#..#..#~..",
+    "..~#.....#~..",
+    "..~#.....#~..",
+    "..~#######~..",
+    "..~~~~~~~~~..",
+    ".............",
+    "............."
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_snake_parade_wet_stairs",
+   "source": "source/dat/des/branches/snake.des",
+   "w": 13,
+   "h": 13,
+   "rows": [
+    "  .........  ",
+    " #..##.#..## ",
+    ".....#.....#.",
+    "...~.#.#.~...",
+    ".#..~.~.~....",
+    ".###.....#.#.",
+    "....~...~....",
+    ".#.#.....###.",
+    "....~.~.~..#.",
+    "...~.#.#.~...",
+    ".#.....#.....",
+    " ##..#.##..# ",
+    "  .........  "
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_tomb_entry_grand_gallery",
+   "source": "source/dat/des/branches/tomb.des",
+   "w": 13,
+   "h": 13,
+   "rows": [
+    "####.########",
+    "####.....####",
+    "####.....####",
+    "########+####",
+    "#..+..#..+..#",
+    "#..#.###.#..#",
+    "#..#######..#",
+    "#..#.###.#..#",
+    "#..+..#..+..#",
+    "####+###+####",
+    "####.....####",
+    "####.....####",
+    "#############"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_vaults_network_periphery",
+   "source": "source/dat/des/branches/vaults_rooms_standard.des",
+   "w": 13,
+   "h": 13,
+   "rows": [
+    ".............",
+    ".#.#.#.#.#.#.",
+    "...#.#.......",
+    ".#.#.#.#.###.",
+    ".............",
+    ".#.#.....###.",
+    ".............",
+    ".###.....#.#.",
+    ".............",
+    ".###.#.#.###.",
+    ".......#.#.#.",
+    ".#.#.#.#.###.",
+    "............."
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "co_window_2corner",
+   "source": "source/dat/des/serial/window.des",
+   "w": 13,
+   "h": 13,
+   "rows": [
+    "#######.#####",
+    "#######.#####",
+    "#######.#####",
+    "#######.#####",
+    "#######.#####",
+    "#######......",
+    "#############",
+    "......#######",
+    "#####.#######",
+    "#####.#######",
+    "#####.#######",
+    "#####.#######",
+    "#####.#######"
+   ],
+   "entries": [
+    [
+     7,
+     0
+    ],
+    [
+     12,
+     5
+    ],
+    [
+     0,
+     7
+    ],
+    [
+     5,
+     12
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_twisty_statue_hallways",
+   "source": "source/dat/des/variable/mini_features.des",
+   "w": 13,
+   "h": 13,
+   "rows": [
+    "    #####    ",
+    " ...#.#.#... ",
+    " ....#.#.... ",
+    " ..#.#.#.#.. ",
+    "##...#.#...##",
+    "#.###.#.###.#",
+    "##.#.###.#.##",
+    "#.###.#.###.#",
+    "##...#.#...##",
+    " ..#.#.#.#.. ",
+    " ....#.#.... ",
+    " ...#.#.#... ",
+    "    #####    "
+   ],
+   "entries": [
+    [
+     1,
+     1
+    ],
+    [
+     11,
+     1
+    ],
+    [
+     1,
+     11
+    ],
+    [
+     11,
+     11
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "brannock_guarded_unrand_thermic_engine",
+   "source": "source/dat/des/variable/mini_monsters.des",
+   "w": 17,
+   "h": 10,
+   "rows": [
+    "       ...       ",
+    " ######...###### ",
+    "##....##+##....##",
+    "#...............#",
+    "#...............#",
+    "#...............#",
+    "#......#.#......#",
+    "#......+.+......#",
+    "##....#####....##",
+    " ######   ###### "
+   ],
+   "entries": [
+    [
+     7,
+     0
+    ],
+    [
+     8,
+     0
+    ],
+    [
+     9,
+     0
+    ]
+   ],
+   "mons": [
+    [
+     1,
+     3,
+     "ice fiend"
+    ],
+    [
+     2,
+     3,
+     "blizzard demon"
+    ],
+    [
+     3,
+     3,
+     "ice devil"
+    ],
+    [
+     4,
+     3,
+     "ice devil"
+    ],
+    [
+     5,
+     3,
+     "ice devil"
+    ],
+    [
+     11,
+     3,
+     "sun demon"
+    ],
+    [
+     12,
+     3,
+     "sun demon"
+    ],
+    [
+     13,
+     3,
+     "sun demon"
+    ],
+    [
+     14,
+     3,
+     "balrug"
+    ],
+    [
+     15,
+     3,
+     "brimstone fiend"
+    ],
+    [
+     1,
+     4,
+     "ice fiend"
+    ],
+    [
+     2,
+     4,
+     "blizzard demon"
+    ],
+    [
+     3,
+     4,
+     "ice devil"
+    ],
+    [
+     4,
+     4,
+     "ice devil"
+    ],
+    [
+     5,
+     4,
+     "ice devil"
+    ],
+    [
+     11,
+     4,
+     "sun demon"
+    ],
+    [
+     12,
+     4,
+     "sun demon"
+    ],
+    [
+     13,
+     4,
+     "sun demon"
+    ],
+    [
+     14,
+     4,
+     "balrug"
+    ],
+    [
+     15,
+     4,
+     "brimstone fiend"
+    ],
+    [
+     1,
+     5,
+     "ice fiend"
+    ],
+    [
+     2,
+     5,
+     "blizzard demon"
+    ],
+    [
+     3,
+     5,
+     "ice devil"
+    ],
+    [
+     4,
+     5,
+     "ice devil"
+    ],
+    [
+     5,
+     5,
+     "ice devil"
+    ],
+    [
+     11,
+     5,
+     "sun demon"
+    ],
+    [
+     12,
+     5,
+     "sun demon"
+    ],
+    [
+     13,
+     5,
+     "sun demon"
+    ],
+    [
+     14,
+     5,
+     "balrug"
+    ],
+    [
+     15,
+     5,
+     "brimstone fiend"
+    ],
+    [
+     1,
+     6,
+     "ice fiend"
+    ],
+    [
+     2,
+     6,
+     "blizzard demon"
+    ],
+    [
+     3,
+     6,
+     "ice devil"
+    ],
+    [
+     4,
+     6,
+     "ice devil"
+    ],
+    [
+     5,
+     6,
+     "ice devil"
+    ],
+    [
+     11,
+     6,
+     "sun demon"
+    ],
+    [
+     12,
+     6,
+     "sun demon"
+    ],
+    [
+     13,
+     6,
+     "sun demon"
+    ],
+    [
+     14,
+     6,
+     "balrug"
+    ],
+    [
+     15,
+     6,
+     "brimstone fiend"
+    ],
+    [
+     1,
+     7,
+     "ice fiend"
+    ],
+    [
+     2,
+     7,
+     "blizzard demon"
+    ],
+    [
+     3,
+     7,
+     "ice devil"
+    ],
+    [
+     4,
+     7,
+     "ice devil"
+    ],
+    [
+     5,
+     7,
+     "ice devil"
+    ],
+    [
+     11,
+     7,
+     "sun demon"
+    ],
+    [
+     12,
+     7,
+     "sun demon"
+    ],
+    [
+     13,
+     7,
+     "sun demon"
+    ],
+    [
+     14,
+     7,
+     "balrug"
+    ],
+    [
+     15,
+     7,
+     "brimstone fiend"
+    ]
+   ],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "ontoclasm_vaults_tryst",
+   "source": "source/dat/des/branches/vaults_rooms_empty.des",
+   "w": 16,
+   "h": 11,
+   "rows": [
+    "....#########.. ",
+    "....#.......##..",
+    "....###+##..#.. ",
+    "....##...##.... ",
+    "#.###.....#.### ",
+    "#...#.....#...# ",
+    "###.#.....###.# ",
+    "....##...##.... ",
+    "..#..##+###.... ",
+    "..##......#.... ",
+    "..#########.... "
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_swamp_entry_spooky",
+   "source": "source/dat/des/branches/swamp.des",
+   "w": 15,
+   "h": 12,
+   "rows": [
+    "      ######   ",
+    "    ###tttt##  ",
+    "  ###ttt..tttt ",
+    "###ttt......ttt",
+    "#ttt...........",
+    "#t......tt.....",
+    "#t......tt.....",
+    "#ttt...........",
+    "###ttt......ttt",
+    "  ###ttt..tttt ",
+    "    ###tttt##  ",
+    "      ######   "
+   ],
+   "entries": [
+    [
+     14,
+     4
+    ],
+    [
+     14,
+     5
+    ],
+    [
+     14,
+     6
+    ],
+    [
+     14,
+     7
+    ]
+   ],
+   "mons": [
+    [
+     7,
+     3,
+     "spectral spriggan"
+    ],
+    [
+     10,
+     3,
+     "spectral spriggan"
+    ],
+    [
+     6,
+     4,
+     "spectral spriggan"
+    ],
+    [
+     11,
+     4,
+     "spectral spriggan"
+    ],
+    [
+     2,
+     5,
+     "ghost crab"
+    ],
+    [
+     5,
+     5,
+     "spectral spriggan"
+    ],
+    [
+     12,
+     5,
+     "spectral spriggan"
+    ],
+    [
+     2,
+     6,
+     "ghost crab"
+    ],
+    [
+     5,
+     6,
+     "spectral spriggan"
+    ],
+    [
+     12,
+     6,
+     "spectral spriggan"
+    ],
+    [
+     6,
+     7,
+     "spectral spriggan"
+    ],
+    [
+     11,
+     7,
+     "spectral spriggan"
+    ],
+    [
+     7,
+     8,
+     "spectral spriggan"
+    ],
+    [
+     10,
+     8,
+     "spectral spriggan"
+    ]
+   ],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_geh_lavamaze_oct_pocket",
+   "source": "source/dat/des/branches/geh_lava_maze.des",
+   "w": 14,
+   "h": 13,
+   "rows": [
+    "..            ",
+    "...           ",
+    "....          ",
+    ".....         ",
+    "......        ",
+    ".......       ",
+    ".l....l.      ",
+    ".l.....l.     ",
+    ".l......l.    ",
+    ".l.......l.   ",
+    ".ll.......l.  ",
+    "#..lllllll.## ",
+    "###.......####"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "minmay_clustersquares",
+   "source": "source/dat/des/variable/float.des",
+   "w": 14,
+   "h": 13,
+   "rows": [
+    "########      ",
+    ".......#######",
+    "#......+.....#",
+    "#......#.....#",
+    "#......#.....#",
+    "#......#.....#",
+    "#......#.....#",
+    "#.#####.###+##",
+    "#..+...#....# ",
+    "#..#...#....# ",
+    "##+#...+....# ",
+    " #..####....# ",
+    " ###   ###### "
+   ],
+   "entries": [
+    [
+     0,
+     1
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "grunt_ministairs_15",
+   "source": "source/dat/des/variable/mini_monsters.des",
+   "w": 17,
+   "h": 11,
+   "rows": [
+    "     .     .     ",
+    "    #+#   #+#    ",
+    "   ##.#   #.##   ",
+    "  ##..#####..##  ",
+    " ##...........## ",
+    ".+...#.....#...+.",
+    " ##...........## ",
+    "  ##..#####..##  ",
+    "   ##.#   #.##   ",
+    "    #+#   #+#    ",
+    "     .     .     "
+   ],
+   "entries": [
+    [
+     5,
+     0
+    ],
+    [
+     11,
+     0
+    ],
+    [
+     0,
+     5
+    ],
+    [
+     16,
+     5
+    ],
+    [
+     5,
+     10
+    ],
+    [
+     11,
+     10
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "regret_index_qazlal_sundered_split",
+   "source": "source/dat/des/altar/overflow.des",
+   "w": 15,
+   "h": 13,
+   "rows": [
+    "         ######",
+    "         .....#",
+    "          .#..#",
+    "        #####.#",
+    "######   ###..#",
+    "#.........###.#",
+    "#..#.......#..#",
+    "#.###.........#",
+    "#..###   ######",
+    "#.#####        ",
+    "#..#.          ",
+    "#.....         ",
+    "######         "
+   ],
+   "entries": [
+    [
+     9,
+     1
+    ],
+    [
+     7,
+     5
+    ],
+    [
+     7,
+     7
+    ],
+    [
+     5,
+     11
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": [
+    [
+     9,
+     0,
+     "wall_pebble_darkgray"
+    ],
+    [
+     10,
+     0,
+     "wall_pebble_darkgray"
+    ],
+    [
+     11,
+     2,
+     "wall_pebble_darkgray"
+    ],
+    [
+     8,
+     3,
+     "wall_pebble_darkgray"
+    ],
+    [
+     9,
+     3,
+     "wall_pebble_darkgray"
+    ],
+    [
+     10,
+     3,
+     "wall_pebble_darkgray"
+    ],
+    [
+     11,
+     3,
+     "wall_pebble_darkgray"
+    ],
+    [
+     12,
+     3,
+     "wall_pebble_darkgray"
+    ],
+    [
+     4,
+     4,
+     "wall_pebble_darkgray"
+    ],
+    [
+     5,
+     4,
+     "wall_pebble_darkgray"
+    ],
+    [
+     9,
+     4,
+     "wall_pebble_darkgray"
+    ],
+    [
+     10,
+     4,
+     "wall_pebble_darkgray"
+    ],
+    [
+     11,
+     4,
+     "wall_pebble_darkgray"
+    ],
+    [
+     10,
+     5,
+     "wall_pebble_darkgray"
+    ],
+    [
+     11,
+     5,
+     "wall_pebble_darkgray"
+    ],
+    [
+     12,
+     5,
+     "wall_pebble_darkgray"
+    ],
+    [
+     3,
+     6,
+     "wall_pebble_darkgray"
+    ],
+    [
+     11,
+     6,
+     "wall_pebble_darkgray"
+    ],
+    [
+     2,
+     7,
+     "wall_pebble_darkgray"
+    ],
+    [
+     3,
+     7,
+     "wall_pebble_darkgray"
+    ],
+    [
+     4,
+     7,
+     "wall_pebble_darkgray"
+    ],
+    [
+     3,
+     8,
+     "wall_pebble_darkgray"
+    ],
+    [
+     4,
+     8,
+     "wall_pebble_darkgray"
+    ],
+    [
+     5,
+     8,
+     "wall_pebble_darkgray"
+    ],
+    [
+     9,
+     8,
+     "wall_pebble_darkgray"
+    ],
+    [
+     10,
+     8,
+     "wall_pebble_darkgray"
+    ],
+    [
+     2,
+     9,
+     "wall_pebble_darkgray"
+    ],
+    [
+     3,
+     9,
+     "wall_pebble_darkgray"
+    ],
+    [
+     4,
+     9,
+     "wall_pebble_darkgray"
+    ],
+    [
+     5,
+     9,
+     "wall_pebble_darkgray"
+    ],
+    [
+     6,
+     9,
+     "wall_pebble_darkgray"
+    ],
+    [
+     3,
+     10,
+     "wall_pebble_darkgray"
+    ],
+    [
+     4,
+     12,
+     "wall_pebble_darkgray"
+    ],
+    [
+     5,
+     12,
+     "wall_pebble_darkgray"
+    ]
+   ]
+  },
+  {
+   "name": "minmay_temple_entry_waves",
+   "source": "source/dat/des/branches/temple.des",
+   "w": 15,
+   "h": 13,
+   "rows": [
+    "   .........   ",
+    "  ..#.....#..  ",
+    " ..##.....##.. ",
+    "..##..#.#..##..",
+    ".##..##.##..##.",
+    "....##...##....",
+    "...............",
+    "....##...##....",
+    ".##..##.##..##.",
+    "..##..#.#..##..",
+    " ..##.....##.. ",
+    "  ..#.....#..  ",
+    "   .........   "
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "david_orc_4",
+   "source": "source/dat/des/branches/orc.des",
+   "w": 22,
+   "h": 9,
+   "rows": [
+    "######################",
+    "##.###.###.###.#######",
+    "#...#########...#.lll#",
+    ".....########...#..ll#",
+    ".....########...+...l#",
+    ".....########...#..ll#",
+    "#...#########...#.lll#",
+    "##.###.###.###.#######",
+    "######################"
+   ],
+   "entries": [
+    [
+     0,
+     4
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_lair_garden_over_the_wall_2",
+   "source": "source/dat/des/branches/lair.des",
+   "w": 17,
+   "h": 12,
+   "rows": [
+    "    .##.         ",
+    ".....##...       ",
+    ".########.       ",
+    ".########.  .....",
+    ".##....##.  .####",
+    ".##.  .##.  .####",
+    ".##.  .##.  .##..",
+    ".##.  .##....##. ",
+    "      .########. ",
+    "      .########. ",
+    "      .......##. ",
+    "            .##. "
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "hangedman_vaults_hat",
+   "source": "source/dat/des/branches/vaults_rooms_standard.des",
+   "w": 19,
+   "h": 11,
+   "rows": [
+    "       #...#       ",
+    "       #...#       ",
+    "       #...#       ",
+    "    #####+#####    ",
+    "    #.........#    ",
+    "    #.#.#.#.#.#    ",
+    "    #.........#    ",
+    "#######..#..#######",
+    "...................",
+    "...................",
+    "..................."
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "minmay_chambers_of_threes",
+   "source": "source/dat/des/variable/float.des",
+   "w": 20,
+   "h": 11,
+   "rows": [
+    "####################",
+    "####......+..###...#",
+    "##.#......#...#+.#.#",
+    "#.##......##...#...#",
+    "#...###...+##..#...#",
+    "#...#.#...#.###+.#.+",
+    "#....##...#..#.#...#",
+    "#......###+##..#...#",
+    "#......#.##..##+.#.#",
+    "#.......####.###...#",
+    "####################"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_vaults_spaceships",
+   "source": "source/dat/des/branches/vaults_rooms_standard.des",
+   "w": 17,
+   "h": 13,
+   "rows": [
+    "................ ",
+    ".#....#....#.... ",
+    ".###..###..###.. ",
+    "..###..###..###. ",
+    ".###..###..###.. ",
+    ".#....#....#.... ",
+    ".................",
+    " ....#....#....#.",
+    " ..###..###..###.",
+    " .###..###..###..",
+    " ..###..###..###.",
+    " ....#....#....#.",
+    " ................"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "vgs_statue_spotlight",
+   "source": "source/dat/des/portals/volcano.des",
+   "w": 19,
+   "h": 12,
+   "rows": [
+    "         .         ",
+    "#########+#########",
+    "#########.#########",
+    "##......#........##",
+    "##......#....######",
+    "##.l...##.......###",
+    "##......+........##",
+    "##.l...##.......###",
+    "##......#....######",
+    "##......#........##",
+    "###################",
+    "###################"
+   ],
+   "entries": [],
+   "mons": [
+    [
+     2,
+     6,
+     "obsidian statue"
+    ]
+   ],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "nicolae_zen_rock_garden",
+   "source": "source/dat/des/variable/mini_features.des",
+   "w": 22,
+   "h": 11,
+   "rows": [
+    "######################",
+    "#ttttttttttt...#.....#",
+    "#tt...tttt.....+.....#",
+    "#t.............#.....#",
+    "#t.............###+###",
+    "#t...........tt##...##",
+    "#t...........tt###+###",
+    "#tt............#.....#",
+    "#ttt...tt....~~#.....+",
+    "#tttttttttt.~~~#.....#",
+    "######################"
+   ],
+   "entries": [],
+   "mons": [],
+   "items": [],
+   "art": [
+    [
+     1,
+     1,
+     "floor_sand"
+    ],
+    [
+     2,
+     1,
+     "floor_sand"
+    ],
+    [
+     3,
+     1,
+     "floor_sand"
+    ],
+    [
+     4,
+     1,
+     "floor_sand"
+    ],
+    [
+     5,
+     1,
+     "floor_sand"
+    ],
+    [
+     6,
+     1,
+     "floor_sand"
+    ],
+    [
+     7,
+     1,
+     "floor_sand"
+    ],
+    [
+     8,
+     1,
+     "floor_sand"
+    ],
+    [
+     9,
+     1,
+     "floor_sand"
+    ],
+    [
+     10,
+     1,
+     "floor_sand"
+    ],
+    [
+     11,
+     1,
+     "floor_sand"
+    ],
+    [
+     13,
+     1,
+     "floor_sand"
+    ],
+    [
+     14,
+     1,
+     "floor_sand"
+    ],
+    [
+     1,
+     2,
+     "floor_sand"
+    ],
+    [
+     2,
+     2,
+     "floor_sand"
+    ],
+    [
+     6,
+     2,
+     "floor_sand"
+    ],
+    [
+     7,
+     2,
+     "floor_sand"
+    ],
+    [
+     8,
+     2,
+     "floor_sand"
+    ],
+    [
+     9,
+     2,
+     "floor_sand"
+    ],
+    [
+     12,
+     2,
+     "floor_sand"
+    ],
+    [
+     13,
+     2,
+     "floor_sand"
+    ],
+    [
+     14,
+     2,
+     "floor_sand"
+    ],
+    [
+     1,
+     3,
+     "floor_sand"
+    ],
+    [
+     10,
+     3,
+     "floor_sand"
+    ],
+    [
+     11,
+     3,
+     "floor_sand"
+    ],
+    [
+     12,
+     3,
+     "floor_sand"
+    ],
+    [
+     13,
+     3,
+     "floor_sand"
+    ],
+    [
+     1,
+     4,
+     "floor_sand"
+    ],
+    [
+     4,
+     4,
+     "floor_sand"
+    ],
+    [
+     5,
+     4,
+     "floor_sand"
+    ],
+    [
+     6,
+     4,
+     "floor_sand"
+    ],
+    [
+     7,
+     4,
+     "floor_sand"
+    ],
+    [
+     8,
+     4,
+     "floor_sand"
+    ],
+    [
+     9,
+     4,
+     "floor_sand"
+    ],
+    [
+     10,
+     4,
+     "floor_sand"
+    ],
+    [
+     11,
+     4,
+     "floor_sand"
+    ],
+    [
+     1,
+     5,
+     "floor_sand"
+    ],
+    [
+     4,
+     5,
+     "floor_sand"
+    ],
+    [
+     5,
+     5,
+     "floor_sand"
+    ],
+    [
+     6,
+     5,
+     "floor_sand"
+    ],
+    [
+     7,
+     5,
+     "floor_sand"
+    ],
+    [
+     8,
+     5,
+     "floor_sand"
+    ],
+    [
+     9,
+     5,
+     "floor_sand"
+    ],
+    [
+     10,
+     5,
+     "floor_sand"
+    ],
+    [
+     13,
+     5,
+     "floor_sand"
+    ],
+    [
+     14,
+     5,
+     "floor_sand"
+    ],
+    [
+     1,
+     6,
+     "floor_sand"
+    ],
+    [
+     4,
+     6,
+     "floor_sand"
+    ],
+    [
+     5,
+     6,
+     "floor_sand"
+    ],
+    [
+     6,
+     6,
+     "floor_sand"
+    ],
+    [
+     9,
+     6,
+     "floor_sand"
+    ],
+    [
+     10,
+     6,
+     "floor_sand"
+    ],
+    [
+     11,
+     6,
+     "floor_sand"
+    ],
+    [
+     13,
+     6,
+     "floor_sand"
+    ],
+    [
+     14,
+     6,
+     "floor_sand"
+    ],
+    [
+     1,
+     7,
+     "floor_sand"
+    ],
+    [
+     2,
+     7,
+     "floor_sand"
+    ],
+    [
+     10,
+     7,
+     "floor_sand"
+    ],
+    [
+     11,
+     7,
+     "floor_sand"
+    ],
+    [
+     12,
+     7,
+     "floor_sand"
+    ],
+    [
+     1,
+     8,
+     "floor_sand"
+    ],
+    [
+     2,
+     8,
+     "floor_sand"
+    ],
+    [
+     3,
+     8,
+     "floor_sand"
+    ],
+    [
+     7,
+     8,
+     "floor_sand"
+    ],
+    [
+     8,
+     8,
+     "floor_sand"
+    ],
+    [
+     11,
+     8,
+     "floor_sand"
+    ],
+    [
+     12,
+     8,
+     "floor_sand"
+    ],
+    [
+     1,
+     9,
+     "floor_sand"
+    ],
+    [
+     2,
+     9,
+     "floor_sand"
+    ],
+    [
+     3,
+     9,
+     "floor_sand"
+    ],
+    [
+     4,
+     9,
+     "floor_sand"
+    ],
+    [
+     5,
+     9,
+     "floor_sand"
+    ],
+    [
+     6,
+     9,
+     "floor_sand"
+    ],
+    [
+     7,
+     9,
+     "floor_sand"
+    ],
+    [
+     8,
+     9,
+     "floor_sand"
+    ],
+    [
+     9,
+     9,
+     "floor_sand"
+    ],
+    [
+     10,
+     9,
+     "floor_sand"
+    ]
+   ]
+  },
+  {
+   "name": "corexii_hall_statues_t",
+   "source": "source/dat/des/serial/corridors.des",
+   "w": 19,
+   "h": 13,
+   "rows": [
+    "###################",
+    "#########.#########",
+    "...................",
+    "...................",
+    "...................",
+    "########...########",
+    "########...########",
+    "      ##...##      ",
+    "      ##...##      ",
+    "      ##...##      ",
+    "      ##...##      ",
+    "      ##...##      ",
+    "      ##...##      "
+   ],
+   "entries": [
+    [
+     0,
+     2
+    ],
+    [
+     18,
+     2
+    ],
+    [
+     0,
+     3
+    ],
+    [
+     18,
+     3
+    ],
+    [
+     0,
+     4
+    ],
+    [
+     18,
+     4
+    ],
+    [
+     8,
+     12
+    ],
+    [
+     9,
+     12
+    ],
+    [
+     10,
+     12
+    ]
+   ],
+   "mons": [],
+   "items": [],
+   "art": []
+  },
+  {
+   "name": "cheibrodos_lost_city_excavation",
+   "source": "source/dat/des/variable/mini_monsters.des",
+   "w": 20,
+   "h": 13,
+   "rows": [
+    "llllll              ",
+    "llllllllll          ",
+    ".l.#.llllllllllllll ",
+    "..+.#l##.lllllllllll",
+    ".l#..l..#l##.l####ll",
+    "lll.ll#...+.#l#..#ll",
+    "ll#.#lll.l..#l#..#ll",
+    "ll+..l.#.l#..l#..#ll",
+    "ll#.....+l..#l#..#ll",
+    "llllll.##l#.+.+..#ll",
+    "llllllllll.##l####ll",
+    "    llllllllllllllll",
+    "        lllllllllll "
+   ],
+   "entries": [
+    [
+     0,
+     3
+    ]
+   ],
+   "mons": [
+    [
+     3,
+     3,
+     "deep elf pyromancer"
+    ],
+    [
+     7,
+     4,
+     "deep elf pyromancer"
+    ],
+    [
+     11,
+     5,
+     "deep elf pyromancer"
+    ],
+    [
+     15,
+     6,
+     "arcanist"
+    ],
+    [
+     16,
+     6,
+     "arcanist"
+    ],
+    [
+     3,
+     7,
+     "deep elf pyromancer"
+    ],
+    [
+     7,
+     8,
+     "deep elf pyromancer"
+    ],
+    [
+     11,
+     9,
+     "deep elf pyromancer"
+    ]
+   ],
+   "items": [],
+   "art": [
+    [
+     14,
+     4,
+     "wall_stone_scorched"
+    ],
+    [
+     17,
+     4,
+     "wall_stone_scorched"
+    ],
+    [
+     14,
+     10,
+     "wall_stone_scorched"
+    ],
+    [
+     17,
+     10,
+     "wall_stone_scorched"
+    ]
+   ]
+  }
+ ]
+}

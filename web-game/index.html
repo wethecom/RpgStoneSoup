@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crawl Web — a browser roguelike on the DCSS export</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ===== Title / character creation ===== -->
+  <section id="screen-title" class="screen">
+    <h1>CRAWL&nbsp;WEB</h1>
+    <p class="tagline">A browser roguelike running entirely on the structured
+      DCSS export &mdash; no C++, no server at play time.</p>
+    <div id="data-banner" class="data-banner">loading game data&hellip;</div>
+
+    <div class="charsel">
+      <div class="charsel-col">
+        <h2>Species</h2>
+        <select id="sel-species" size="12"></select>
+        <div id="species-info" class="info-box"></div>
+      </div>
+      <div class="charsel-col">
+        <h2>Background</h2>
+        <select id="sel-job" size="12"></select>
+        <div id="job-info" class="info-box"></div>
+      </div>
+      <div class="charsel-col char-preview">
+        <h2>Your Adventurer</h2>
+        <div class="preview-card">
+          <canvas id="preview-sprite" width="64" height="64"></canvas>
+          <div id="preview-name" class="preview-name"></div>
+          <div id="preview-body" class="preview-body"></div>
+        </div>
+      </div>
+    </div>
+
+    <button id="btn-continue" class="big-btn hidden">Continue your run</button>
+    <button id="btn-start" class="big-btn" disabled>Enter the Dungeon</button>
+
+    <div class="howto">
+      <h2>How to play</h2>
+      <p class="howto-goal">Pick a <b>species</b> and a <b>background</b> above,
+        then enter the dungeon. Descend the <b>five-floor Dungeon</b> and
+        step onto the <b>Orb of Zot</b> at its bottom to win. Gold
+        <b>&gt;</b> tiles are <b>branch passages</b> &mdash; optional
+        detours into the Lair, Orcish Mines, Crypt, Vaults, Swamp or
+        Shoals for extra danger and loot. Careful play wins; careless
+        play dies.</p>
+      <div class="howto-cols">
+        <div>
+          <h3>Move &amp; attack</h3>
+          <ul>
+            <li><b>Arrow keys</b> &mdash; move up / down / left / right</li>
+            <li><b>h j k l</b> &mdash; move left / down / up / right</li>
+            <li><b>y u b n</b> &mdash; move the four diagonals</li>
+            <li>or the <b>numpad</b> (1-9)</li>
+            <li><b>Walk into a monster</b> to attack it in melee</li>
+            <li><b>,</b> or <b>.</b> &mdash; wait one turn (lets HP regen)</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Act &amp; survive</h3>
+          <ul>
+            <li><b>g</b> &mdash; pick up the item under you</li>
+            <li><b>&gt;</b> &mdash; take the down stairs (stand on <b>&gt;</b>)</li>
+            <li><b>q</b> then <b>h</b> &mdash; quaff a potion of healing</li>
+            <li><b>q</b> then <b>m</b> &mdash; quaff a potion of might</li>
+            <li><b>i</b> &mdash; show your inventory</li>
+            <li>Watch the <b>HP bar</b> &mdash; heal before it runs out</li>
+          </ul>
+        </div>
+      </div>
+      <p class="howto-tip">Tip: fight monsters one at a time in corridors
+        rather than wading into a room full of them. Grab every healing
+        potion you see &mdash; you will need them deeper down.</p>
+    </div>
+  </section>
+
+  <!-- ===== Game ===== -->
+  <section id="screen-game" class="screen hidden">
+    <div class="game-layout">
+      <div class="game-left">
+        <canvas id="map-canvas" class="map" tabindex="0"></canvas>
+      </div>
+      <aside id="sidebar" class="sidebar"></aside>
+    </div>
+    <div id="action-bar" class="action-bar">
+      <!-- movement / waiting -->
+      <button data-act="wait"     title="Wait one turn (,)">Wait&nbsp;(,)</button>
+      <button data-act="camp"     title="Rest until fully healed (s)">Camp&nbsp;(s)</button>
+      <button data-act="pickup"   title="Pick up the item here (g)">Pick&nbsp;Up&nbsp;(g)</button>
+      <!-- stairs / travel -->
+      <button data-act="descend"  title="Descend stairs / branch passage (&gt;)">Descend&nbsp;(&gt;)</button>
+      <button data-act="ascend"   title="Climb the up stairs (&lt;)">Ascend&nbsp;(&lt;)</button>
+      <!-- consumables / combat -->
+      <button data-act="heal"     title="Quaff healing (q h)">Heal</button>
+      <button data-act="might"    title="Quaff might (q m)">Might</button>
+      <button data-act="teleport" title="Read scroll of teleportation (r t)">Teleport</button>
+      <button data-act="fear"     title="Read scroll of fear (r f)">Fear</button>
+      <button data-act="evoke"    title="Evoke wand (v)">Evoke&nbsp;(v)</button>
+      <button data-act="throw"    title="Throw from quiver (f)">Throw&nbsp;(f)</button>
+      <button data-act="cast"     title="Cast a spell (z)">Cast&nbsp;(z)</button>
+      <!-- world / religion -->
+      <button data-act="pray"     title="Pray at altar (p)">Pray&nbsp;(p)</button>
+      <button data-act="invoke"   title="Invoke god ability (a)">Invoke&nbsp;(a)</button>
+      <!-- panels -->
+      <button data-act="inv"      title="Inventory (i)">Inventory&nbsp;(i)</button>
+      <button data-act="quests"   title="Quest log (Q)">Quests&nbsp;(Q)</button>
+      <button data-act="map"      title="World map (M)" class="btn-map">Map&nbsp;(M)</button>
+      <button data-act="music"    title="Toggle sound (m)">Sound&nbsp;(m)</button>
+      <button data-act="help"     title="How to play (?)">Help&nbsp;(?)</button>
+    </div>
+    <div id="log" class="log"></div>
+    <div class="controls-bar">
+      <b>click</b> a tile to walk / attack there &nbsp;&middot;&nbsp;
+      <b>click yourself</b> to wait or pick up &nbsp;&middot;&nbsp;
+      or use the buttons above &nbsp;&middot;&nbsp;
+      keys still work: <b>arrows</b>/<b>hjkl</b> move, <b>&gt;</b> descend,
+      <b>g</b> pick up, <b>z</b> cast, <b>v</b> wand, <b>f</b> throw,
+      <b>p</b> pray, <b>a</b> invoke, <b>s</b> camp, <b>m</b> mute, <b>?</b> help
+    </div>
+    <div id="provenance" class="provenance"></div>
+
+    <!-- in-game help overlay, toggled with ? -->
+    <div id="help-overlay" class="help-overlay hidden">
+      <div class="help-panel">
+        <h2>How to Play</h2>
+        <p class="howto-goal">Descend the <b>five-floor Dungeon</b> to the
+          <b>Orb of Zot</b> at its bottom. Gold <b>&gt;</b> tiles are
+          optional <b>branch passages</b> (Lair, Orcish Mines, Crypt,
+          Vaults, Swamp, Shoals); <b>&lt;</b> climbs back up.</p>
+        <div class="howto-cols">
+          <div>
+            <h3>Move &amp; attack</h3>
+            <ul>
+              <li><b>Arrow keys</b> &mdash; move up / down / left / right</li>
+              <li><b>h j k l</b> &mdash; move left / down / up / right</li>
+              <li><b>y u b n</b> &mdash; move the four diagonals</li>
+              <li>or the <b>numpad</b> (1-9)</li>
+              <li><b>Walk into a monster</b> to attack it in melee</li>
+              <li><b>,</b> or <b>.</b> &mdash; wait one turn (HP slowly regens)</li>
+              <li><b>s</b> &mdash; make camp: rest until fully healed (or enemies appear)</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Act &amp; survive</h3>
+            <ul>
+              <li><b>g</b> &mdash; pick up the item under you</li>
+              <li><b>&gt;</b> &mdash; descend stairs / enter a branch passage</li>
+              <li><b>&lt;</b> &mdash; climb back up the stairs</li>
+              <li><b>q</b> then <b>h</b> / <b>m</b> &mdash; quaff healing / might</li>
+              <li><b>r</b> then <b>t</b> / <b>f</b> &mdash; read teleport / fear</li>
+              <li><b>z</b> / <b>v</b> / <b>f</b> &mdash; cast / evoke wand / throw</li>
+              <li><b>p</b> at an altar &mdash; pray; <b>a</b> &mdash; invoke a god's ability</li>
+              <li><b>i</b> &mdash; open the <b>inventory</b>; a letter in it equips / quaffs / reads that item</li>
+              <li><b>?</b> &mdash; open / close this help</li>
+            </ul>
+          </div>
+        </div>
+        <p class="howto-tip">Tip: stop on each level to watch the
+          sidebar &mdash; the <b>Here:</b> line names what you stand on,
+          and a coloured row warns when you're <b>Poisoned</b>,
+          <b>Slowed</b> or <b>Hasted</b>. Spot the orange <b>^</b> &mdash;
+          that's a known trap. A healing potion also cures poison.</p>
+        <button id="btn-help-close" class="big-btn">Close&nbsp;&nbsp;(? or Esc)</button>
+      </div>
+    </div>
+
+    <!-- in-game inventory overlay, toggled with i -->
+    <div id="inv-overlay" class="help-overlay hidden">
+      <div class="help-panel">
+        <h2>Inventory</h2>
+        <div id="inv-body" class="inv-body"></div>
+        <button id="btn-inv-close" class="big-btn">Close&nbsp;&nbsp;(i or Esc)</button>
+      </div>
+    </div>
+
+    <!-- shop overlay, opened by stepping onto a shop -->
+    <div id="shop-overlay" class="help-overlay hidden">
+      <div class="help-panel">
+        <h2>Shop</h2>
+        <div id="shop-body" class="inv-body"></div>
+        <button id="btn-shop-close" class="big-btn">Leave&nbsp;&nbsp;(Esc)</button>
+      </div>
+    </div>
+
+    <!-- world map, toggled with M. Shows all visited Surface chunks. -->
+    <div id="map-overlay" class="help-overlay hidden">
+      <div class="help-panel">
+        <h2>World Map</h2>
+        <canvas id="world-map" width="640" height="420"
+          style="display:block;margin:0 auto;background:#0c1014;border:1px solid #333"></canvas>
+        <div id="map-legend" class="inv-empty"
+          style="margin-top:6px;text-align:center"></div>
+        <button id="btn-map-close" class="big-btn">Close&nbsp;&nbsp;(M or Esc)</button>
+      </div>
+    </div>
+
+    <!-- friendly NPC dialog, opened by bumping a questgiver -->
+    <div id="npc-overlay" class="help-overlay hidden">
+      <div class="help-panel">
+        <div id="npc-body" class="inv-body"></div>
+        <button id="btn-npc-close" class="big-btn">Leave&nbsp;&nbsp;(Esc)</button>
+      </div>
+    </div>
+
+    <!-- quest log + tracker, toggled with Q -->
+    <div id="quest-overlay" class="help-overlay hidden">
+      <div class="help-panel">
+        <h2>Quests</h2>
+        <div id="quest-body" class="inv-body"></div>
+        <button id="btn-quest-close" class="big-btn">Close&nbsp;&nbsp;(Q or Esc)</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Game over ===== -->
+  <section id="screen-over" class="screen hidden">
+    <h1 id="over-title">YOU DIE</h1>
+    <div id="over-body" class="info-box"></div>
+    <button id="btn-again" class="big-btn">Play Again</button>
+  </section>
+
+</div>
+<script src="game.js"></script>
+</body>
+</html>

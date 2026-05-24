@@ -1,0 +1,16 @@
+# PyInstaller artifacts
+web-game/build/
+web-game/dist/
+web-game/__pycache__/
+web-game/*.spec
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# editor junk
+*.swp
+*~
+.idea/
+.vscode/
