@@ -82,12 +82,17 @@
 
   <!-- ===== Game ===== -->
   <section id="screen-game" class="screen hidden">
-    <div class="game-layout">
-      <div class="game-left">
-        <canvas id="map-canvas" class="map" tabindex="0"></canvas>
-      </div>
-      <aside id="sidebar" class="sidebar"></aside>
+   <!-- two columns: everything stacks on the LEFT (banner, buttons,
+        log, canvas, control hint). The sidebar is a TRUE full-height
+        right column so it never gets cut off when the left grows. -->
+   <div class="game-shell">
+    <div class="game-main">
+    <!-- big stylised game banner -->
+    <div class="game-banner">
+      <h1 class="game-banner-title">RPG&nbsp;STONE&nbsp;SOUP</h1>
     </div>
+    <!-- buttons + log live ABOVE the game so the canvas is the
+         centre of attention; banner above the buttons. -->
     <div id="action-bar" class="action-bar">
       <!-- movement / waiting -->
       <button data-act="wait"     title="Wait one turn (,)">Wait&nbsp;(,)</button>
@@ -111,10 +116,14 @@
       <button data-act="inv"      title="Inventory (i)">Inventory&nbsp;(i)</button>
       <button data-act="quests"   title="Quest log (Q)">Quests&nbsp;(Q)</button>
       <button data-act="map"      title="World map (M)" class="btn-map">Map&nbsp;(M)</button>
+      <button data-act="build"    title="Build / paint your home (B)" class="btn-build">Build&nbsp;(B)</button>
+      <button data-act="sneak"    title="Toggle sneak (H)">Sneak&nbsp;(H)</button>
+      <button data-act="realtime" title="Toggle real-time mode (T)" class="btn-realtime">Real-time&nbsp;(T)</button>
       <button data-act="music"    title="Toggle sound (m)">Sound&nbsp;(m)</button>
       <button data-act="help"     title="How to play (?)">Help&nbsp;(?)</button>
     </div>
     <div id="log" class="log"></div>
+    <canvas id="map-canvas" class="map" tabindex="0"></canvas>
     <div class="controls-bar">
       <b>click</b> a tile to walk / attack there &nbsp;&middot;&nbsp;
       <b>click yourself</b> to wait or pick up &nbsp;&middot;&nbsp;
@@ -124,6 +133,9 @@
       <b>p</b> pray, <b>a</b> invoke, <b>s</b> camp, <b>m</b> mute, <b>?</b> help
     </div>
     <div id="provenance" class="provenance"></div>
+    </div><!-- /.game-main -->
+    <aside id="sidebar" class="sidebar"></aside>
+   </div><!-- /.game-shell -->
 
     <!-- in-game help overlay, toggled with ? -->
     <div id="help-overlay" class="help-overlay hidden">
@@ -223,6 +235,20 @@
         <h2>Quests</h2>
         <div id="quest-body" class="inv-body"></div>
         <button id="btn-quest-close" class="big-btn">Close&nbsp;&nbsp;(Q or Esc)</button>
+      </div>
+    </div>
+
+    <!-- build-mode HUD: a non-modal panel docked at the right when
+         build mode is on. Picks a brush, then click the map to paint. -->
+    <div id="build-hud" class="build-hud hidden">
+      <h3>Build</h3>
+      <div id="build-materials" class="build-materials"></div>
+      <div id="build-brushes" class="build-brushes"></div>
+      <div class="build-hint">
+        Click map to place &middot;
+        <b>Right-click</b> erases &mdash; chops <b>trees</b> for <b>wood</b>
+        and quarries <b>walls</b> for <b>stone</b>.<br>
+        <b>B</b> or <b>Esc</b> exits build mode.
       </div>
     </div>
   </section>

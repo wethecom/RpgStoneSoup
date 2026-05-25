@@ -26,14 +26,47 @@
       </div>
 
       <div class="ed-section">
+        <label class="ed-label">Branch</label>
+        <div class="ed-row">
+          <select id="ed-branch" style="width:100%">
+            <option value="Surface">Surface (world map)</option>
+            <option value="Castle">Castle (pocket interior)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="ed-section" id="ed-surface-coords">
         <label class="ed-label">Coord</label>
         <div class="ed-row">
           cx: <input id="ed-cx" type="number" value="0" step="1" style="width:60px">
           cy: <input id="ed-cy" type="number" value="0" step="1" style="width:60px">
         </div>
+      </div>
+
+      <div class="ed-section" id="ed-castle-coords" style="display:none">
+        <label class="ed-label">Castle coords</label>
         <div class="ed-row">
-          Floor: <select id="ed-floor">
-            <option value="0">Surface (0)</option>
+          sx: <input id="ed-sx" type="number" value="0" step="1" style="width:50px">
+          sy: <input id="ed-sy" type="number" value="0" step="1" style="width:50px">
+        </div>
+        <div class="ed-row">
+          icx: <input id="ed-icx" type="number" value="0" step="1" style="width:50px">
+          icy: <input id="ed-icy" type="number" value="0" step="1" style="width:50px">
+        </div>
+        <div class="ed-hint" style="padding-top:4px">
+          <b>sx, sy</b> = the Surface chunk that contains the entry
+          gate.<br>
+          <b>icx, icy</b> = which interior chunk of the castle to paint
+          (start at 0,0 just inside the gate; (1,0) is one chunk east,
+          etc).
+        </div>
+      </div>
+
+      <div class="ed-section">
+        <label class="ed-label">Floor</label>
+        <div class="ed-row">
+          <select id="ed-floor" style="width:100%">
+            <option value="0">Ground (0)</option>
             <option value="-1">Cellar (-1)</option>
             <option value="-2">Sub-cellar (-2)</option>
             <option value="1">Upper floor (+1)</option>
@@ -86,6 +119,7 @@
           <optgroup label="Friendly NPCs">
             <option value="npc:questgiver">Questgiver (man / woman)</option>
             <option value="npc:shopkeeper">Shopkeeper</option>
+            <option value="npc:blacksmith">Blacksmith (forges weapons)</option>
             <option value="npc:king">King (gives major quest)</option>
             <option value="npc:child">Child (ambient)</option>
           </optgroup>
@@ -132,8 +166,13 @@
         Click + drag to paint &middot; right-click to erase &middot;
         Custom chunks override the game's procedural generation at
         their coord. Open the game and walk to (cx,cy) to test.
-        Painting a TELEPORTER cell prompts for destination once -- it
+        Painting a <b>TELEPORTER</b> cell prompts for destination once -- it
         sticks until you reset it.
+        <b>CASTLE GATE</b> (cstgate): paint on a Surface chunk; stepping
+        on it in-game warps the player into the Castle pocket-branch
+        keyed by THIS chunk's (cx,cy). Inside the castle, paint an
+        <b>EXIT GATE</b> (exitgate) to send the player back to the
+        surface cell the entry gate occupied.
         Dropping an NPC opens a dialog editor; click the NPC again
         with the Entity tool to re-edit its speech.
         <b>Ctrl+Z</b> undo &middot; <b>Ctrl+Y</b> redo.

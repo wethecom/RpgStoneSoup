@@ -221,9 +221,24 @@ option:checked { background: #2a4055; color: #fff; }
 .big-btn:disabled { opacity: .4; cursor: not-allowed; }
 
 /* ---- game layout ---- */
-.game-layout { display: flex; gap: 14px; align-items: stretch; }
+/* outer two-column shell -- everything stacks vertically on the LEFT
+   (banner, buttons, log, canvas, controls hint). The sidebar is the
+   full-height RIGHT column so it doesn't get pinched by canvas size. */
+.game-shell {
+  display: flex;
+  gap: 14px;
+  align-items: stretch;
+  min-height: 0;
+}
+.game-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+}
 
-/* left column: canvas + buttons stacked, sidebar lives to the right */
+/* legacy class kept so old saves / overlays don't error if referenced */
+.game-layout { display: flex; gap: 14px; align-items: stretch; }
 .game-left {
   display: flex;
   flex-direction: column;
@@ -259,8 +274,8 @@ option:checked { background: #2a4055; color: #fff; }
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
-  margin: 10px 0 6px 0;
-  padding: 8px;
+  margin: 0 0 6px 0;
+  padding: 6px 8px;
   background: #11111a;
   border: 1px solid #2a2a38;
 }
@@ -290,6 +305,28 @@ option:checked { background: #2a4055; color: #fff; }
   background: #3a5070;
   border-color: #ffd24a;
 }
+.action-bar button.btn-build {
+  background: #2a3a55;
+  color: #9be0ff;
+  border-color: #4a6080;
+}
+.action-bar button.btn-build:hover {
+  background: #3a5070;
+  border-color: #9be0ff;
+}
+.action-bar button.btn-realtime {
+  background: #3a2a44;
+  color: #ffaa66;
+  border-color: #6a4a50;
+}
+.action-bar button.btn-realtime:hover {
+  background: #503550;
+  border-color: #ffaa66;
+}
+/* a subtle pulsing border on the canvas while real-time is running */
+.map.realtime-on {
+  box-shadow: 0 0 0 1px rgba(255, 170, 102, 0.55) inset;
+}
 
 .sidebar {
   width: 215px;
@@ -301,6 +338,9 @@ option:checked { background: #2a4055; color: #fff; }
   font-size: 12.5px;
   line-height: 1.55;
   overflow-y: auto;
+  /* full-height column: the sidebar spans the entire game-shell so
+     it stays visually anchored even when the left column grows */
+  max-height: calc(100vh - 30px);
 }
 .sb-doll {
   width: 84px;
@@ -341,11 +381,13 @@ option:checked { background: #2a4055; color: #fff; }
 }
 
 .log {
-  margin-top: 12px;
+  /* log lives ABOVE the canvas now (banner + buttons + log + game).
+     Smaller height so the canvas stays the centre of attention. */
+  margin: 4px 0 8px 0;
   background: #000;
   border: 1px solid #2a2a38;
-  padding: 8px 11px;
-  height: 132px;
+  padding: 6px 11px;
+  height: 88px;
   overflow-y: auto;
   font-size: 13px;
   line-height: 1.5;
@@ -373,3 +415,126 @@ option:checked { background: #2a4055; color: #fff; }
 
 #over-title { color: #f66; }
 #over-title.win { color: #6f6; }
+
+/* ---- in-game banner: the title card at the top of the screen ---- */
+.game-banner {
+  text-align: center;
+  margin: 0 0 8px 0;
+  padding: 4px 0 2px;
+  border-top: 1px solid #2a2a38;
+  border-bottom: 1px solid #2a2a38;
+  background:
+    radial-gradient(ellipse at center,
+      rgba(255, 210, 74, 0.10) 0%,
+      rgba(255, 210, 74, 0)    62%),
+    linear-gradient(180deg, #0a0a14 0%, #14141c 100%);
+}
+.game-banner-title {
+  margin: 0;
+  font-size: 38px;
+  letter-spacing: 9px;
+  font-weight: 800;
+  background: linear-gradient(180deg,
+    #fff1a6 0%,
+    #ffd24a 38%,
+    #c08020 72%,
+    #884510 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+  -webkit-text-stroke: 1px #3a1d05;
+  text-shadow:
+    0 0 16px rgba(255, 210, 74, 0.42),
+    0 0 36px rgba(255, 130, 40, 0.20),
+    2px 2px 0 #1a0e02;
+  font-family: "Georgia", "Cinzel", "Trajan Pro", serif;
+  user-select: none;
+  filter: drop-shadow(0 2px 0 #000);
+}
+@media (max-width: 760px) {
+  .game-banner-title { font-size: 24px; letter-spacing: 5px; }
+}
+
+/* ---- build-mode HUD (B key) ---- */
+.build-hud {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  width: 260px;
+  background: #14141c;
+  border: 1px solid #4aa3ff;
+  padding: 10px 12px;
+  z-index: 60;
+  box-shadow: 0 4px 22px rgba(0, 0, 0, 0.6);
+}
+.build-hud h3 {
+  margin: 0 0 6px;
+  color: #9be0ff;
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.build-hud .build-materials {
+  font-size: 12px;
+  color: #c8c8d0;
+  margin-bottom: 8px;
+  padding: 4px 6px;
+  background: #0c0c14;
+  border: 1px solid #2a2a38;
+}
+.build-hud .build-materials b { color: #ffd24a; }
+.build-hud .build-brushes {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3px;
+  margin-bottom: 8px;
+}
+.build-hud .build-brush {
+  background: #1c1c28;
+  border: 1px solid #2a2a38;
+  color: #c8c8d0;
+  font-family: inherit;
+  font-size: 10px;
+  padding: 4px 2px 3px;
+  cursor: pointer;
+  text-align: center;
+  line-height: 1.15;
+}
+.build-hud .build-brush:hover { background: #2a4055; }
+.build-hud .build-brush.active {
+  background: #36567a;
+  border-color: #4aa3ff;
+  color: #fff;
+}
+.build-hud .build-brush .glyph {
+  font-family: monospace;
+  font-size: 16px;
+  display: block;
+}
+.build-hud .build-brush .brush-img {
+  display: block;
+  width: 28px;
+  height: 28px;
+  margin: 0 auto 2px;
+  image-rendering: pixelated;
+  background: #0a0a10;
+  border: 1px solid #2a2a38;
+}
+.build-hud .build-brush .cost {
+  color: #8a8a98;
+  font-size: 9px;
+}
+.build-hud .build-brush.cant {
+  opacity: 0.45;
+}
+.build-hud .build-hint {
+  font-size: 11px;
+  color: #777;
+  line-height: 1.4;
+}
+/* a hint badge on the canvas while building, so the player remembers
+   they're not in normal-walk mode */
+.map.in-build-mode {
+  outline: 2px solid #4aa3ff;
+  outline-offset: -2px;
+}

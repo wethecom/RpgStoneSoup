@@ -135,7 +135,7 @@ const sandbox = {
   localStorage: storageStub,
   console,
   Math, JSON, Array, Object, String, Number, Boolean, Error,
-  Promise, setTimeout, clearTimeout,
+  Promise, setTimeout, clearTimeout, setInterval, clearInterval,
   globalThis: null,
 };
 sandbox.globalThis = sandbox;
@@ -156,6 +156,13 @@ src += `
   computeFOV, findPath, handleTileClick, onCanvasClick, doAction,
   tryAscend, turnInQuest, makeQuestForNPC, openNPCDialog,
   ensureSurfaceChunk, enterLevel,
+  tryStealth, stealthScore, dropCarriedBody,
+  timeOfDay, timeLabel, DAY_LENGTH,
+  paintBuildCell, ensurePlayerHome, savePlayerHome, loadPlayerHome,
+  toggleBuildMode, openBuildMode, closeBuildMode,
+  setRealtime, toggleRealtime, REALTIME_TICK_MS,
+  moonPhase, moonPhaseName, moonStealthMod,
+  maybeNightRaid,
   MAP_W, MAP_H, TRUNK_LEVELS, VIEW_W, VIEW_H, TILE,
 };
 `;
@@ -201,6 +208,188 @@ async function main() {
   check("items spawned", G.items.length > 0);
   check("FOV reveals player tile", G.visible[G.player.y][G.player.x] === true);
   check("player not stuck in wall", G.level.tiles[G.player.y][G.player.x] !== 0);
+  // stealth basics: score positive, toggle works, cooldown after break
+  check("stealthScore returns a positive integer",
+        api.stealthScore(G.player) > 0);
+  G.player.stealthCD = 0;
+  G.player.stealthed = false;
+  api.tryStealth();
+  check("tryStealth flips player into sneaking mode", G.player.stealthed === true);
+  // simulate detection break -- find a nearby monster and fire the
+  // wake check (we'll just call breakStealth indirectly by calling
+  // tryStealth a second time which toggles off, then verify CD path)
+  api.tryStealth();
+  check("toggling stealth a second time turns it off", !G.player.stealthed);
+  // carry-one-body cap: simulate a corpse on the player's tile, pick
+  // it up, try to pick up a second, verify the second is refused
+  G.player.carriedBody = null;
+  // clear anything else at the player's tile so doPickup grabs OUR corpse
+  G.items = G.items.filter(i => !(i.x === G.player.x && i.y === G.player.y));
+  const fakeCorpseA = {
+    key: "corpse", name: "rat's body", corpseName: "rat",
+    fromKill: true, x: G.player.x, y: G.player.y,
+    glyph: "%", colour: "ETC_BLOOD",
+  };
+  G.items.push(fakeCorpseA);
+  api.doPickup();
+  check("picking up a corpse fills player.carriedBody",
+        !!G.player.carriedBody && G.player.carriedBody.name === "rat's body");
+  // second corpse on the same tile
+  const fakeCorpseB = {
+    key: "corpse", name: "bat's body", corpseName: "bat",
+    fromKill: true, x: G.player.x, y: G.player.y,
+    glyph: "%", colour: "ETC_BLOOD",
+  };
+  G.items.push(fakeCorpseB);
+  api.doPickup();
+  check("a second body refuses to be carried (one-body cap)",
+        G.player.carriedBody && G.player.carriedBody.name === "rat's body");
+  // clean up the second corpse + drop the first
+  G.items = G.items.filter(i => i !== fakeCorpseB);
+  // carrying a body should penalise stealth
+  const sWithBody = api.stealthScore(G.player);
+  G.player.carriedBody = null;
+  const sNoBody = api.stealthScore(G.player);
+  check("stealthScore drops by 3 when carrying a body",
+        sNoBody - sWithBody === 3);
+  // restore for the rest of the run
+  G.items = G.items.filter(i => i.key !== "corpse");
+  // time-of-day cycles through dawn/day/dusk/night across 300 turns,
+  // and being outdoors at night gives the stealth bonus.
+  const day = api.DAY_LENGTH;
+  const saveTurn = G.turn;
+  const saveBranch = G.branch;
+  // force outdoors so the time bonus actually applies
+  G.branch = "Surface";
+  G.turn = 100;  check("dawn phase at turn 100",   api.timeOfDay().phase === "dawn");
+  G.turn = 600;  check("day phase at turn 600",    api.timeOfDay().phase === "day");
+  G.turn = 1600; check("dusk phase at turn 1600",  api.timeOfDay().phase === "dusk");
+  G.turn = 2000; check("night phase at turn 2000", api.timeOfDay().phase === "night");
+  // day 0 has a NEW moon (phase 0) -- +2 stealth mod at night on top
+  // of the +3 night-time bonus, so night sneak is +5 over noon.
+  const sNoon = (G.turn = 600, api.stealthScore(G.player));
+  const sNight = (G.turn = 2000, api.stealthScore(G.player));
+  check("stealth gains +5 on a new-moon night vs noon",
+        sNight - sNoon === 5);
+  // day 2 hits a quarter moon (phase 2) -- moon mod is 0, so just +3
+  const sNoon2 = (G.turn = 5400, api.stealthScore(G.player));
+  const sNight2 = (G.turn = 6600, api.stealthScore(G.player));
+  check("stealth gains +3 on a quarter-moon night vs noon",
+        sNight2 - sNoon2 === 3);
+  // moon phase rolls through 8 phases on consecutive days
+  const moonTurnSave = G.turn;
+  G.turn = 0;          check("moon phase day 0 = new", api.moonPhase() === 0);
+  G.turn = 2400 * 4;   check("moon phase day 4 = full", api.moonPhase() === 4);
+  G.turn = 2400 * 8;   check("moon phase day 8 wraps to new", api.moonPhase() === 0);
+  G.turn = moonTurnSave;
+  // night raids: at night, on the player's home chunk, hostiles
+  // occasionally drift in from a chunk edge. Stash and restore the
+  // live branch/level so later tests still see D:1.
+  const saveBranchR = G.branch;
+  const saveLevelR = G.level;
+  const saveMonstersR = G.monsters;
+  const saveCoordR = G.surfaceCoord ? { ...G.surfaceCoord } : null;
+  const savePlayerR = { x: G.player.x, y: G.player.y };
+  G.branch = "Surface";
+  G.surfaceCoord = { cx: 0, cy: 0 };
+  sandbox.ensureSurfaceChunk(0, 0);
+  const surfEntry = G.levels["Surface:0,0"];
+  G.level = surfEntry.level;
+  G.monsters = surfEntry.monsters;
+  const fakeHome = api.ensurePlayerHome();
+  fakeHome.hearth = { cx: 0, cy: 0, x: 5, y: 5 };
+  api.savePlayerHome(fakeHome);
+  // place player far from the edges so the raid spawn passes its
+  // "at least 12 tiles from player" guard
+  G.player.x = 28; G.player.y = 13;
+  G.turn = 2200;
+  const beforeCount = G.monsters.length;
+  for (let i = 0; i < 25; i++) {
+    G.turn = 2200;
+    api.maybeNightRaid();
+  }
+  check("night raid eventually spawns a hostile on the home chunk",
+        G.monsters.length > beforeCount);
+  // restore all the state we touched
+  sandbox.localStorage.removeItem("crawlweb.playerHome");
+  G.branch = saveBranchR;
+  G.level = saveLevelR;
+  G.monsters = saveMonstersR;
+  if (saveCoordR) G.surfaceCoord = saveCoordR;
+  G.player.x = savePlayerR.x; G.player.y = savePlayerR.y;
+  G.turn = saveTurn; G.branch = saveBranch;
+  // build mode: opens, paints a wall, persists into playerHome, closes
+  sandbox.localStorage.removeItem("crawlweb.playerHome");
+  api.openBuildMode();
+  check("buildMode flag flips on", G.buildMode === true);
+  // give materials so the wall is affordable
+  const h0 = api.ensurePlayerHome();
+  h0.materials = { wood: 50, stone: 50 };
+  api.savePlayerHome(h0);
+  // make sure we're on Surface so the snapshot path runs
+  G.branch = "Surface";
+  G.surfaceCoord = G.surfaceCoord || { cx: 0, cy: 0 };
+  // ensure the tile exists in G.level (paintBuildCell needs G.level.tiles)
+  if (G.level && G.level.tiles) {
+    G.level.tiles[5][5] = 1;
+    // pick the WALL brush by toggling the global G.buildBrush field
+    G.buildBrush = { t: 0, name: "Wall", costs: { stone: 1 } };
+    const painted = api.paintBuildCell(5, 5, false);
+    check("paintBuildCell places the brush", painted === true &&
+          G.level.tiles[5][5] === 0);
+    // affordability: drain stone and try again, should fail
+    const h1 = api.ensurePlayerHome();
+    h1.materials.stone = 0;
+    api.savePlayerHome(h1);
+    G.level.tiles[6][5] = 1;
+    const refused = api.paintBuildCell(5, 6, false);
+    check("paintBuildCell refuses when materials insufficient",
+          refused === false && G.level.tiles[6][5] === 1);
+    // erasing a wall should yield stone
+    const before = api.loadPlayerHome().materials.stone | 0;
+    api.paintBuildCell(5, 5, true);    // erase the wall we just placed
+    const after = api.loadPlayerHome().materials.stone | 0;
+    check("erasing a wall yields +1 stone",
+          after === before + 1);
+  }
+  api.closeBuildMode();
+  check("buildMode flag flips off", !G.buildMode);
+  sandbox.localStorage.removeItem("crawlweb.playerHome");
+  // real-time mode: flag flips, interval persists across toggles
+  api.setRealtime(true);
+  check("setRealtime(true) flips G.realtime on", G.realtime === true);
+  api.setRealtime(false);
+  check("setRealtime(false) flips G.realtime off", G.realtime === false);
+  api.toggleRealtime();
+  check("toggleRealtime swings the flag", G.realtime === true);
+  api.toggleRealtime();   // back off for the rest of the suite
+  check("toggleRealtime back off", G.realtime === false);
+  // murder-detection: a neutral guard who sees a `wasNpc` corpse
+  // turns hostile and alerts squadmates
+  const fakeGuard = {
+    name: "watchman",
+    def: { id: "MONS_WATCHMAN", hd: 5, attacks: [{ dam: 6 }] },
+    x: G.player.x + 2, y: G.player.y,
+    hp: 20, hpMax: 20, ac: 3, ev: 8,
+    awake: false, neutral: true, guardsChest: null,
+    glyph: "@", colour: "WHITE",
+  };
+  G.monsters.push(fakeGuard);
+  G.items.push({
+    key: "corpse", name: "villager's body", corpseName: "villager",
+    fromKill: true, wasNpc: true,
+    x: G.player.x + 3, y: G.player.y,
+    glyph: "%", colour: "ETC_BLOOD",
+  });
+  // run the guard's turn directly
+  if (sandbox.monsterAct) {
+    sandbox.monsterAct(fakeGuard);
+    check("a neutral guard who sees an NPC corpse turns hostile",
+          fakeGuard.neutral === false && fakeGuard.awake === true);
+  }
+  // clean up the test pieces
+  G.monsters = G.monsters.filter(m => m !== fakeGuard);
+  G.items = G.items.filter(i => i.key !== "corpse");
 
   // verify the level is connected: flood-fill from the player must
   // reach the down-stairs.
@@ -1118,6 +1307,124 @@ async function main() {
           largeBuildingSeen);
     check("Surface generates buildings with indoor stairs",
           stairBuildingSeen);
+    // rescue-quest captive must spawn in ANY cellar of the target
+    // chunk (the quest hook only names the region, not the specific
+    // building). Find a chunk with a cellar, plant a rescue quest
+    // pointing at that chunk but a DIFFERENT bidx, then walk into
+    // the first cellar and confirm the captive shows up.
+    if (sandbox.generateIndoorLevel) {
+      let captCellars = [];
+      for (let cx = -2; cx <= 2; cx++) {
+        for (let cy = -2; cy <= 2; cy++) {
+          const ch = sandbox.ensureSurfaceChunk(cx, cy);
+          const blds = ch.level.buildings || [];
+          for (let i = 0; i < blds.length; i++) {
+            if (blds[i].cellarStair) {
+              captCellars.push({ cx, cy, bidx: i, b: blds[i] });
+            }
+          }
+        }
+      }
+      // need a chunk with >= 2 cellars to test the wrong-bidx case
+      const chunkCounts = {};
+      for (const c of captCellars) {
+        const k = c.cx + "," + c.cy;
+        chunkCounts[k] = (chunkCounts[k] || 0) + 1;
+      }
+      const multiKey = Object.keys(chunkCounts).find(k => chunkCounts[k] >= 2);
+      if (multiKey) {
+        const [mcx, mcy] = multiKey.split(",").map(Number);
+        const mine = captCellars.filter(c => c.cx === mcx && c.cy === mcy);
+        // quest points at cellar #1; player walks into cellar #0
+        const target = mine[1], visited = mine[0];
+        const q = {
+          id: "qRescueRepro",
+          giver: { chunkCX: 0, chunkCY: 0, x: 5, y: 5, name: "T" },
+          type: "rescue",
+          rescueAt: { cx: target.cx, cy: target.cy,
+                      bidx: target.bidx, floor: -1 },
+          captiveCellarBidx: null,
+          captiveName: "TestVictim", kin: "sister",
+          count: 1, progress: 0, rescued: false,
+          reward: { gold: 100 }, status: "active",
+          hook: "", greeting: "",
+        };
+        api.G.quests.push(q);
+        const coord = {
+          cx: visited.cx, cy: visited.cy, bidx: visited.bidx, floor: -1,
+          returnAt: { x: visited.b.doorX, y: visited.b.doorY },
+        };
+        const lvl = sandbox.generateIndoorLevel(coord);
+        const captive = (lvl.npcs || []).find(n => n.kind === "captive"
+                                                && n.captiveQuestId === q.id);
+        check("captive spawns even if player enters a different cellar in the target chunk",
+              !!captive);
+        check("quest locks captiveCellarBidx to the first-visited cellar",
+              q.captiveCellarBidx === visited.bidx);
+        // visiting the originally-targeted cellar should now NOT
+        // double-spawn the captive
+        const coord2 = {
+          cx: target.cx, cy: target.cy, bidx: target.bidx, floor: -1,
+          returnAt: { x: target.b.doorX, y: target.b.doorY },
+        };
+        const lvl2 = sandbox.generateIndoorLevel(coord2);
+        const dup = (lvl2.npcs || []).find(n => n.kind === "captive"
+                                              && n.captiveQuestId === q.id);
+        check("captive does not double-spawn in a sibling cellar", !dup);
+        // clean up so later tests don't see the synthetic quest
+        api.G.quests = api.G.quests.filter(qq => qq.id !== q.id);
+      }
+    }
+    // ---- Castle pocket-branch ----
+    // CASTLE_GATE on a Surface chunk should warp the player into the
+    // Castle branch keyed by the surface (cx,cy), at interior (0,0).
+    if (sandbox.generateCastleLevel) {
+      // make sure we're on a Surface chunk before we plant the gate
+      sandbox.enterLevel("Surface", 1, "edge", { cx: 0, cy: 0 });
+      const startBranch = api.G.branch;
+      const startCoord = { cx: api.G.surfaceCoord.cx, cy: api.G.surfaceCoord.cy };
+      // stamp a CASTLE_GATE onto the current surface chunk at a known
+      // walkable cell and step onto it
+      const Tcastle = 31, Texit = 32;
+      const gx = 5, gy = 5;
+      api.G.level.tiles[gy][gx] = 1; // FLOOR underfoot so move succeeds
+      api.G.player.x = gx; api.G.player.y = gy;
+      api.G.level.tiles[gy][gx + 1] = Tcastle;
+      // walk one tile right -- the move handler runs the gate trigger
+      api.tryMovePlayer(1, 0);
+      check("stepping on a CASTLE_GATE enters the Castle branch",
+            api.G.branch === "Castle");
+      check("Castle entry records the owning surface chunk",
+            api.G.castleCoord &&
+            api.G.castleCoord.sx === startCoord.cx &&
+            api.G.castleCoord.sy === startCoord.cy);
+      // walk west off the edge of (0,0) and confirm we land in (-1,0)
+      api.G.player.x = 0; api.G.player.y = 10;
+      api.tryMovePlayer(-1, 0);
+      check("walking off the west edge of Castle (0,0) lands in (-1,0)",
+            api.G.branch === "Castle" &&
+            api.G.castleCoord && api.G.castleCoord.icx === -1 &&
+            api.G.castleCoord.icy === 0);
+      // walk back east into (0,0) so the next test has a clean state
+      api.G.player.x = api.MAP_W - 1; api.G.player.y = 10;
+      api.tryMovePlayer(1, 0);
+      check("walking back east returns to Castle interior (0,0)",
+            api.G.castleCoord && api.G.castleCoord.icx === 0);
+      // stamp an EXIT_GATE and step on it; should return to surface
+      api.G.level.tiles[2][2] = Texit;
+      api.G.player.x = 1; api.G.player.y = 2;
+      api.tryMovePlayer(1, 0);
+      check("EXIT_GATE returns the player to the Surface",
+            api.G.branch === "Surface" &&
+            api.G.surfaceCoord.cx === startCoord.cx &&
+            api.G.surfaceCoord.cy === startCoord.cy);
+      check("Castle state is cleared after exiting",
+            api.G.castleCoord === null && api.G.castleReturn === null);
+      // restore branch / coord so following tests aren't confused
+      if (startBranch !== "Surface") {
+        api.G.branch = startBranch;
+      }
+    }
     // descend into one via tryDescend and confirm we hit the Indoors branch
     let foundStair = null, foundChunk = null;
     outer: for (let cx = -2; cx <= 2; cx++) {

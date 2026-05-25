@@ -103,7 +103,35 @@ const T = { WALL: 0, FLOOR: 1, STAIRS_DOWN: 2, STAIRS_UP: 3,
             DEEP_WATER: 29,
             // a teleporter cell -- step on to warp to a destination
             // (cx, cy, x, y) stored on lvl.teleporters
-            TELEPORTER: 30 };
+            TELEPORTER: 30,
+            // CASTLE_GATE: painted on a Surface chunk. Stepping on it
+            // teleports the player into the Castle pocket-branch
+            // indexed by the surface chunk coord -- so the gate at
+            // Surface (3,-2) leads to Castle:3,-2 at interior chunk
+            // (0,0).  The castle's interior is a chunked grid in its
+            // own right (walk to icx+1 etc), painted in the editor.
+            CASTLE_GATE: 31,
+            // EXIT_GATE: painted inside a Castle interior. Stepping
+            // on it pops the player back to the Surface chunk the
+            // castle belongs to, at the cell that the entering gate
+            // occupied (stashed in G.castleReturn on entry).
+            EXIT_GATE: 32,
+            // HEARTH: the player's home center (build with B). Stepping
+            // on it fully heals HP/MP. New runs spawn at the hearth's
+            // surface chunk. Capped at one per save -- claiming a home.
+            HEARTH: 33,
+            // BED: lie down (s) to sleep until full HP/MP. Built.
+            BED: 34,
+            // PLAYER_CHEST: persistent storage that survives runs.
+            // Contents stored under crawlweb.playerHome.chestSlots.
+            PLAYER_CHEST: 35,
+            // PLAYER_SIGN: a sign with a message the player wrote.
+            PLAYER_SIGN: 36,
+            // FORGE: a smouldering fire-pit / anvil setup. Walkable.
+            // Bumping a blacksmith NPC standing next to one trades
+            // wood + stone for a weapon upgrade.
+            FORGE: 37,
+          };
 
 /* the difficulty depth of the current level: depth in the Dungeon,
  * or, in a branch, the Dungeon depth it was entered from plus the
@@ -661,10 +689,14 @@ function pickLayout(branch, depth) {
  * biome's signature terrain is sprinkled on top. */
 /* the world's biome at world coordinate (wx,wy). Deterministic --
  * the same coord always returns the same biome -- so chunks meet
- * seamlessly. Coords are quantised to give coherent regions a few
- * tiles wide. */
+ * seamlessly. Coords are quantised onto a coarse grid so each biome
+ * region spans roughly half to three-quarters of a chunk -- big
+ * enough that a forest reads as a forest, not as scattered trees. */
 function biomeAtWorld(wx, wy) {
-  const bx = Math.floor(wx / 9), by = Math.floor(wy / 6);
+  // biome cells are 42x21 tiles -- about 3/4 of a chunk in each
+  // direction. A chunk (56x26) usually holds 1-2 biome regions, not
+  // a mosaic. Tweak these divisors to grow / shrink biome size.
+  const bx = Math.floor(wx / 42), by = Math.floor(wy / 21);
   // a cheap 2D hash -> 0..1
   let k = (bx * 73856093) ^ (by * 19349663);
   k = (k >>> 0) % 1000;
@@ -1208,36 +1240,41 @@ function generateIndoorLevel(coord) {
       buildingItems.push(makeScrollItem(c.x, c.y));
     }
   }
-  // captives for active rescue quests targeting this exact (chunk,
-  // building, floor) tuple. Placed as a friendly NPC the player can
-  // bump to "rescue" -- which flips the quest's `rescued` flag.
+  // captives for active rescue quests targeting this (chunk, floor).
+  // The quest's hook only names the region + building TYPE, not the
+  // specific building, and chunks routinely hold several buildings
+  // with cellars -- so we match on (cx, cy, floor) and lock the
+  // captive to the FIRST cellar the player descends into.  After
+  // that, q.captiveCellarBidx pins the spawn so other cellars in the
+  // same chunk don't double-spawn the same captive on later visits.
   const npcs = [];
   if (G && G.quests && coord) {
     for (const q of G.quests) {
       if (q.status !== "active" || q.type !== "rescue") continue;
       const ra = q.rescueAt;
       if (!ra) continue;
-      if (ra.cx === coord.cx && ra.cy === coord.cy &&
-          ra.bidx === coord.bidx && ra.floor === floor) {
-        // pick a free FLOOR cell in a non-return room
-        const free = [];
-        for (let i = 0; i < rooms.length; i++) {
-          if (rooms[i].x <= rx && rx < rooms[i].x + rooms[i].w &&
-              rooms[i].y <= ry && ry < rooms[i].y + rooms[i].h) continue;
-          for (const c of pickInteriorCells(tiles, rooms[i])) free.push(c);
-        }
-        const spot = free.length ? free[ri(0, free.length - 1)]
-                                  : { x: rx + 1, y: ry };
-        npcs.push({
-          x: spot.x, y: spot.y,
-          name: q.captiveName + " (captive)",
-          glyph: "@", colour: "LIGHTCYAN",
-          kind: "captive",
-          tile: pickNpcTile("captive"),
-          captiveQuestId: q.id,
-        });
-        break;
+      if (ra.cx !== coord.cx || ra.cy !== coord.cy) continue;
+      if (ra.floor !== floor) continue;
+      if (q.captiveCellarBidx == null) q.captiveCellarBidx = coord.bidx;
+      if (q.captiveCellarBidx !== coord.bidx) continue;
+      // pick a free FLOOR cell in a non-return room
+      const free = [];
+      for (let i = 0; i < rooms.length; i++) {
+        if (rooms[i].x <= rx && rx < rooms[i].x + rooms[i].w &&
+            rooms[i].y <= ry && ry < rooms[i].y + rooms[i].h) continue;
+        for (const c of pickInteriorCells(tiles, rooms[i])) free.push(c);
       }
+      const spot = free.length ? free[ri(0, free.length - 1)]
+                                : { x: rx + 1, y: ry };
+      npcs.push({
+        x: spot.x, y: spot.y,
+        name: q.captiveName + " (captive)",
+        glyph: "@", colour: "LIGHTCYAN",
+        kind: "captive",
+        tile: pickNpcTile("captive"),
+        captiveQuestId: q.id,
+      });
+      break;
     }
   }
 
@@ -1267,6 +1304,64 @@ function generateIndoorLevel(coord) {
     indoorFloor: floor,
     buildings: [buildingMirror], npcs,
     buildingMons, buildingItems,
+    surfaceCoord: null,
+  };
+}
+
+/* ----- Castle pocket-branch -----
+ *
+ * A castle is keyed by the Surface chunk it belongs to (sx, sy). Its
+ * interior is a chunked grid in its own right -- (icx, icy) coords
+ * with edge transitions like the Surface -- so the castle takes ONE
+ * tile on the world map but can be many chunks across inside.
+ *
+ * Painted castle chunks are loaded verbatim from
+ * `Editor:Castle:<sx>,<sy>:<icx>,<icy>:<floor>`. Unpainted chunks
+ * fall back to a procedural stone courtyard so the player can walk
+ * between painted areas without hitting unreachable voids.
+ */
+function generateCastleLevel(coord) {
+  const c = coord || { sx: 0, sy: 0, icx: 0, icy: 0, floor: 0 };
+  const sx = c.sx | 0, sy = c.sy | 0;
+  const icx = c.icx | 0, icy = c.icy | 0;
+  const floor = c.floor | 0;
+  // editor override takes precedence
+  const custom = loadCustomCastleChunk(sx, sy, icx, icy, floor);
+  if (custom) {
+    const lvl = buildCustomLevel(custom, "Castle", icx, icy, floor);
+    lvl.castleCoord = { sx, sy, icx, icy };
+    lvl.indoorFloor = floor;
+    return lvl;
+  }
+  // procedural courtyard: stone-tiled walkway with scattered standing
+  // stones for visual interest. Edges stay open so the player can
+  // cross into the neighbouring interior chunk.
+  const tiles = [];
+  for (let y = 0; y < MAP_H; y++) tiles.push(new Array(MAP_W).fill(T.FLOOR));
+  // scatter a handful of standing stones away from the edges so a
+  // pure-courtyard chunk still has some texture
+  const seed = (sx * 73856093) ^ (sy * 19349663) ^
+               (icx * 83492791) ^ (icy * 73856093) ^ floor;
+  const rng = (() => { let s = (seed >>> 0) || 1;
+    return () => (s = (s * 1664525 + 1013904223) >>> 0) / 0x100000000; })();
+  const decor = 4 + Math.floor(rng() * 6);
+  for (let i = 0; i < decor; i++) {
+    const x = 3 + Math.floor(rng() * (MAP_W - 6));
+    const y = 3 + Math.floor(rng() * (MAP_H - 6));
+    if (tiles[y][x] === T.FLOOR) tiles[y][x] = T.STANDING_STONE;
+  }
+  const rooms = [{ x: 1, y: 1, w: MAP_W - 2, h: MAP_H - 2,
+                   cx: MAP_W >> 1, cy: MAP_H >> 1 }];
+  return {
+    tiles, rooms,
+    branch: "Castle", depth: 1, diff: 2,
+    entrances: [], orbCell: null, traps: [], shop: null,
+    vaultCount: 0, vaultMons: [], vaultItems: [], tileArt: {},
+    isCave: false, altarGod: null,
+    castleCoord: { sx, sy, icx, icy },
+    indoorFloor: floor,
+    buildings: [], npcs: [], buildingMons: [], buildingItems: [],
+    poiCells: [], teleporters: {},
     surfaceCoord: null,
   };
 }
@@ -1302,6 +1397,9 @@ function pickNpcTile(kind) {
   } else if (kind === "king") {
     // a wise / regal silhouette -- magic elder + officials lean kingly
     prefixes = ["magic-elder", "elder-man", "official", "robbed-elder"];
+  } else if (kind === "blacksmith") {
+    // burly worker / fighter silhouettes for the smith
+    prefixes = ["fighter-man", "worker-man", "farmer-man", "man"];
   } else {
     // questgiver, default
     prefixes = ["man", "woman", "elder-man", "elder-woman",
@@ -1714,6 +1812,291 @@ function loadCustomChunkData(cx, cy, floor) {
   return all["Editor:" + cx + "," + cy + ":" + (floor || 0)] || null;
 }
 
+/* ---- Build mode: player paints tiles into the live chunk ----
+ *
+ * Press B in-game to open. Click a brush, click the map to place.
+ * Right-click erases to FLOOR. Edits are applied to G.level.tiles
+ * immediately AND snapshotted to crawlweb.playerHome so they survive
+ * deaths / new runs. Costs in materials are checked in phase 3+.
+ */
+const BUILD_BRUSHES = [
+  { t: 1,  name: "Floor",   glyph: ".", costs: {},          tileKey: "floor",       tileScope: "dngn", desc: "erase / floor" },
+  { t: 0,  name: "Wall",    glyph: "#", costs: { stone: 1 }, tileKey: "wall",        tileScope: "dngn" },
+  { t: 4,  name: "Door",    glyph: "+", costs: { wood: 2 },  tileKey: "door_closed", tileScope: "dngn" },
+  { t: 8,  name: "Tree",    glyph: "&", costs: { wood: 1 },  tileKey: "tree",        tileScope: "dngn" },
+  { t: 33, name: "Hearth",  glyph: "H", costs: { wood: 5, stone: 5 }, oneOnly: "hearth", tileKey: "campsite", tileScope: "dngn" },
+  { t: 34, name: "Bed",     glyph: "b", costs: { wood: 3 } },
+  { t: 35, name: "Chest",   glyph: "c", costs: { wood: 2, stone: 1 }, tileKey: "chest", tileScope: "item" },
+  { t: 36, name: "Sign",    glyph: "s", costs: { wood: 1 },  tileKey: "signpost",    tileScope: "dngn" },
+  { t: 26, name: "Flowers", glyph: '"', costs: {},           tileKey: "flowers",     tileScope: "dngn" },
+  { t: 6,  name: "Water",   glyph: "~", costs: {},           tileKey: "water",       tileScope: "dngn" },
+  { t: 22, name: "Signpost",glyph: "s", costs: { wood: 2 },  tileKey: "signpost",    tileScope: "dngn" },
+  { t: 19, name: "Camp",    glyph: "c", costs: { wood: 2 },  tileKey: "campsite",    tileScope: "dngn" },
+  { t: 37, name: "Forge",   glyph: "F", costs: { wood: 3, stone: 5 }, tileKey: "forge", tileScope: "dngn" },
+];
+
+/* resolve a build brush's preview image path from the manifest. Some
+ * keys are arrays of variants -- use the first. Returns null if the
+ * brush has no image (e.g. Bed -- falls back to ASCII glyph). */
+function brushImage(b) {
+  if (!b || !b.tileKey || !MANIFEST) return null;
+  const scope = (b.tileScope === "item") ? MANIFEST.item
+              : (b.tileScope === "dngn") ? MANIFEST.dngn
+              : MANIFEST.dngn;
+  if (!scope) return null;
+  const v = scope[b.tileKey];
+  if (Array.isArray(v)) return v[0] || null;
+  return v || null;
+}
+function getMaterials() {
+  const h = ensurePlayerHome();
+  return h.materials || { wood: 0, stone: 0 };
+}
+function canAfford(brush) {
+  const mats = getMaterials();
+  for (const k in (brush.costs || {})) {
+    if ((mats[k] | 0) < brush.costs[k]) return false;
+  }
+  return true;
+}
+function spendCosts(costs) {
+  if (!costs) return;
+  const h = ensurePlayerHome();
+  h.materials = h.materials || { wood: 0, stone: 0 };
+  for (const k in costs) {
+    h.materials[k] = Math.max(0, (h.materials[k] | 0) - costs[k]);
+  }
+  savePlayerHome(h);
+}
+function openBuildMode() {
+  if (!G || G.over) return;
+  G.buildMode = true;
+  G.buildBrush = G.buildBrush || BUILD_BRUSHES[0];
+  renderBuildHud();
+  const hud = document.getElementById("build-hud");
+  if (hud) hud.classList.remove("hidden");
+  const cv = document.getElementById("map-canvas");
+  if (cv) cv.classList.add("in-build-mode");
+  logMsg("Build mode: pick a brush, click to place. (B / Esc closes)", "sys");
+  render();
+}
+function closeBuildMode() {
+  if (!G) return;
+  G.buildMode = false;
+  const hud = document.getElementById("build-hud");
+  if (hud) hud.classList.add("hidden");
+  const cv = document.getElementById("map-canvas");
+  if (cv) cv.classList.remove("in-build-mode");
+  render();
+}
+function toggleBuildMode() {
+  if (G && G.buildMode) closeBuildMode();
+  else openBuildMode();
+}
+function renderBuildHud() {
+  const matsEl = document.getElementById("build-materials");
+  const brushesEl = document.getElementById("build-brushes");
+  if (!matsEl || !brushesEl) return;
+  const mats = getMaterials();
+  matsEl.innerHTML = "<b>Wood:</b> " + (mats.wood | 0) +
+                     " &nbsp; <b>Stone:</b> " + (mats.stone | 0);
+  const h = ensurePlayerHome();
+  brushesEl.innerHTML = "";
+  for (const b of BUILD_BRUSHES) {
+    const btn = document.createElement("button");
+    btn.className = "build-brush";
+    if (G.buildBrush && G.buildBrush.t === b.t) btn.classList.add("active");
+    const affordable = canAfford(b);
+    const oneOnly = b.oneOnly === "hearth" && h.hearth;
+    if (!affordable || oneOnly) btn.classList.add("cant");
+    const costText = Object.keys(b.costs || {}).length
+      ? Object.entries(b.costs).map(([k, v]) => v + k[0]).join(" ")
+      : "free";
+    const img = brushImage(b);
+    const preview = img
+      ? '<img class="brush-img" src="tiles/' + img + '" alt="">'
+      : '<span class="glyph">' + b.glyph + '</span>';
+    btn.innerHTML = preview + b.name + '<br><span class="cost">' +
+                    (oneOnly ? "placed" : costText) + '</span>';
+    btn.addEventListener("click", () => {
+      if (oneOnly) {
+        logMsg("Hearth already placed -- you can only have one home.", "dim");
+        return;
+      }
+      G.buildBrush = b;
+      renderBuildHud();
+    });
+    brushesEl.appendChild(btn);
+  }
+}
+/* paint one cell with the current brush. erase = true sets it to
+ * FLOOR (the universal "undo"). Returns true if the cell changed.
+ * Erasing a TREE yields wood; erasing a WALL in the Dungeon (or in
+ * build mode on any non-player wall) yields stone. */
+function paintBuildCell(lx, ly, erase) {
+  if (!G.buildMode) return false;
+  if (lx < 0 || ly < 0 || lx >= MAP_W || ly >= MAP_H) return false;
+  const brush = erase
+    ? BUILD_BRUSHES[0]    // floor / erase
+    : G.buildBrush || BUILD_BRUSHES[0];
+  // can't paint over the player's tile
+  if (G.player.x === lx && G.player.y === ly && brush.t !== T.FLOOR) {
+    logMsg("Can't build under your own feet.", "dim");
+    return false;
+  }
+  // one-only enforcement (hearth)
+  const home = ensurePlayerHome();
+  if (brush.oneOnly === "hearth" && home.hearth) return false;
+  // affordability
+  if (!erase && !canAfford(brush)) {
+    logMsg("Not enough materials for " + brush.name + ".", "dim");
+    return false;
+  }
+  // erasing trees / walls yields materials so the player has reason
+  // to chop / mine in build mode
+  if (erase) {
+    const old = G.level.tiles[ly][lx];
+    if (old === T.TREE) {
+      home.materials = home.materials || { wood: 0, stone: 0 };
+      home.materials.wood = (home.materials.wood | 0) + 1;
+      savePlayerHome(home);
+      logMsg("You chop the tree. +1 wood.", "good");
+    } else if (old === T.WALL) {
+      home.materials = home.materials || { wood: 0, stone: 0 };
+      home.materials.stone = (home.materials.stone | 0) + 1;
+      savePlayerHome(home);
+      logMsg("You quarry the wall. +1 stone.", "good");
+    }
+  }
+  // figure out the current chunk coord (Surface) or use 0,0 otherwise
+  let chunkCx = 0, chunkCy = 0;
+  if (G.branch === "Surface" && G.surfaceCoord) {
+    chunkCx = G.surfaceCoord.cx; chunkCy = G.surfaceCoord.cy;
+  } else if (G.branch === "Castle" && G.castleCoord) {
+    // castles: build mode operates on the interior chunk too
+    chunkCx = G.castleCoord.icx; chunkCy = G.castleCoord.icy;
+  }
+  // apply to live tiles
+  G.level.tiles[ly][lx] = brush.t;
+  // record on player home (Surface only for now -- the persistence
+  // path is Surface-shaped)
+  if (G.branch === "Surface") {
+    snapshotPlayerChunk(chunkCx, chunkCy, 0, [{ x: lx, y: ly, t: brush.t }]);
+  }
+  // claim a hearth if that's what we placed
+  if (brush.t === T.HEARTH) {
+    home.hearth = { cx: chunkCx, cy: chunkCy, x: lx, y: ly };
+    savePlayerHome(home);
+    logMsg("You set the Hearth. This chunk is now your home.", "good");
+  }
+  // a sign: prompt for the message to engrave on it
+  if (brush.t === T.PLAYER_SIGN && typeof prompt === "function") {
+    const msg = prompt("Write on the sign:", "Welcome home.");
+    if (msg != null) {
+      home.signs = home.signs || {};
+      const k = chunkCx + "," + chunkCy + ":" + lx + "," + ly;
+      home.signs[k] = String(msg).slice(0, 120);   // cap to keep storage small
+      savePlayerHome(home);
+    }
+  }
+  // pay for it
+  if (!erase) spendCosts(brush.costs);
+  renderBuildHud();
+  return true;
+}
+
+/* ---- Player Home: persistent across runs ----
+ *
+ * The player paints tiles into a chunk via build mode (B key). Those
+ * changes are snapshotted into localStorage under `crawlweb.playerHome`
+ * and re-applied every time the player walks back into that chunk --
+ * across deaths, across new games, forever. Distinct namespace from
+ * the editor's Editor: prefix so author and player don't collide.
+ */
+const PLAYER_HOME_KEY = "crawlweb.playerHome";
+function loadPlayerHome() {
+  if (typeof localStorage === "undefined") return null;
+  let raw;
+  try { raw = localStorage.getItem(PLAYER_HOME_KEY); }
+  catch (e) { return null; }
+  if (!raw) return null;
+  try { return JSON.parse(raw); } catch (e) { return null; }
+}
+function savePlayerHome(data) {
+  if (typeof localStorage === "undefined") return;
+  try { localStorage.setItem(PLAYER_HOME_KEY, JSON.stringify(data)); }
+  catch (e) { /* quota / disabled */ }
+}
+function ensurePlayerHome() {
+  let h = loadPlayerHome();
+  if (!h) {
+    h = {
+      chunks: {},            // "cx,cy:floor" -> { tiles: [[]] }
+      hearth: null,          // { cx, cy, x, y } once placed
+      materials: { wood: 0, stone: 0 },
+      chestSlots: [],        // persistent chest inventory (across runs)
+      signs: {},             // "cx,cy:x,y" -> "message text"
+    };
+  }
+  return h;
+}
+function loadPlayerChunkPatch(cx, cy, floor) {
+  const h = loadPlayerHome();
+  if (!h || !h.chunks) return null;
+  const key = (cx | 0) + "," + (cy | 0) + ":" + (floor | 0);
+  return h.chunks[key] || null;
+}
+/* apply a player-home patch to a freshly-built level's tile array.
+ * Only overwrites cells the player explicitly painted, so procedural
+ * features the player didn't touch stay intact. */
+function applyPlayerHomePatch(lvl, patch) {
+  if (!lvl || !patch || !patch.tiles) return;
+  for (let y = 0; y < MAP_H && y < patch.tiles.length; y++) {
+    for (let x = 0; x < MAP_W && x < patch.tiles[y].length; x++) {
+      const t = patch.tiles[y][x];
+      if (t === -1 || t == null) continue;   // -1 = "not painted"
+      lvl.tiles[y][x] = t | 0;
+    }
+  }
+}
+/* called after build mode commits edits: snapshot the chunk's tiles
+ * (only the cells the player has painted) into localStorage. */
+function snapshotPlayerChunk(cx, cy, floor, paintedCells) {
+  const h = ensurePlayerHome();
+  const key = (cx | 0) + "," + (cy | 0) + ":" + (floor | 0);
+  const existing = h.chunks[key] || { tiles: null };
+  // start a sparse 2D array of -1 (= not painted), or use the existing
+  // patch as the base
+  const tiles = existing.tiles || (() => {
+    const t = [];
+    for (let y = 0; y < MAP_H; y++) t.push(new Array(MAP_W).fill(-1));
+    return t;
+  })();
+  for (const c of paintedCells) {
+    if (c.y < 0 || c.y >= MAP_H || c.x < 0 || c.x >= MAP_W) continue;
+    tiles[c.y][c.x] = c.t | 0;
+  }
+  h.chunks[key] = { tiles, savedAt: Date.now() };
+  savePlayerHome(h);
+}
+
+/* Castle pocket-branch: a chunk-editor save keyed by the owning
+ * Surface chunk (sx, sy), the INTERIOR chunk coord within the castle
+ * (icx, icy), and a floor (0 / -1 / +1). Stored under the same
+ * crawlweb.customChunks bag as Surface saves, with a distinct prefix. */
+function loadCustomCastleChunk(sx, sy, icx, icy, floor) {
+  if (typeof localStorage === "undefined") return null;
+  let raw;
+  try { raw = localStorage.getItem("crawlweb.customChunks"); }
+  catch (e) { return null; }
+  if (!raw) return null;
+  let all;
+  try { all = JSON.parse(raw); } catch (e) { return null; }
+  const key = "Editor:Castle:" + sx + "," + sy +
+              ":" + icx + "," + icy + ":" + (floor || 0);
+  return all[key] || null;
+}
+
 /* turn a chunk-editor snapshot into a level object the game can use.
  * Skips the procedural niceties (rooms, vault detection, biome scatter)
  * -- the editor is responsible for what's on the canvas. */
@@ -1750,6 +2133,7 @@ function buildCustomLevel(snap, branch, cx, cy, floor) {
         glyph: "@",
         colour: e.npcKind === "king" ? "YELLOW"
               : e.npcKind === "shopkeeper" ? "LIGHTGREEN"
+              : e.npcKind === "blacksmith" ? "LIGHTRED"
               : "LIGHTCYAN",
         kind: e.npcKind || "questgiver",
         tile: pickNpcTile(e.npcKind || "questgiver"),
@@ -1818,6 +2202,11 @@ function ensureSurfaceChunk(cx, cy) {
   const custom = loadCustomChunkData(cx, cy, 0);
   const lvl = custom ? buildCustomLevel(custom, "Surface", cx, cy)
                      : newLevel("Surface", 1, 2, { cx, cy });
+  // player-home overlay: stamp the player's own painted tiles ON TOP
+  // of the procedural / editor chunk, so a player-built home survives
+  // the procedural respawn / level regeneration.
+  const patch = loadPlayerChunkPatch(cx, cy, 0);
+  if (patch) applyPlayerHomePatch(lvl, patch);
   const monsters = spawnMonsters(lvl);
   // hostile mobs placed inside ruined / haunted buildings
   for (const bm of (lvl.buildingMons || [])) {
@@ -2032,6 +2421,10 @@ function newLevel(branch, depth, diff, coord) {
   // Indoors levels (cellars / upper floors) have their own pipeline -- a
   // small partitioned space, not the full chunk/cave generator
   if (branch === "Indoors") return generateIndoorLevel(coord);
+  // Castle pocket-branch: each interior chunk is either loaded verbatim
+  // from a chunk-editor save, or filled with a procedural stone
+  // courtyard so unpainted chunks still walkable.
+  if (branch === "Castle") return generateCastleLevel(coord);
 
   const tiles = [];
   for (let y = 0; y < MAP_H; y++) {
@@ -2168,7 +2561,7 @@ function newLevel(branch, depth, diff, coord) {
   if (branch !== "Surface" && depth < BRANCHES[branch].levels) {
     tiles[lastRoom.cy][lastRoom.cx] = T.STAIRS_DOWN;
   }
-  // the Orb of Zot rests in a real room at the Dungeon's bottom
+  // the Crown rests in a real room at the Dungeon's bottom
   let orbCell = null;
   if (branch === "D" && depth === BRANCHES.D.levels) {
     const realRooms = rooms.filter(r => !r.isVault);
@@ -2726,6 +3119,369 @@ function speciesTrait(sp) {
 /* does player p carry trait `id`? */
 function traitIs(p, id) {
   return !!(p && p.trait && p.trait.id === id);
+}
+
+/* ---- Time of day ----
+ *
+ * A 300-turn loop split into four phases (dawn, day, dusk, night).
+ * Only the Surface and Castle branches see it -- the underworld is
+ * windowless. Drives a screen-tint overlay, the stealth night bonus,
+ * and NPC "sleeping" state at night.
+ */
+// a full day-night cycle is 2400 turns. At a slow walk that's ~40
+// chunk crossings -- a real adventure, not a flicker. Dawn is brief,
+// day dominates, dusk is brief, night gets a long quiet stretch so
+// stealth gameplay has time to breathe.
+const DAY_LENGTH = 2400;
+const PHASES = ["dawn", "day", "dusk", "night"];
+function timeOfDay() {
+  const t = ((G && G.turn) || 0) % DAY_LENGTH;
+  if (t <  300) return { phase: "dawn",  t };       //  300t dawn
+  if (t < 1500) return { phase: "day",   t };       // 1200t day (bulk)
+  if (t < 1800) return { phase: "dusk",  t };       //  300t dusk
+  return               { phase: "night", t };       //  600t night
+}
+function isOutdoors(branch) {
+  return branch === "Surface" || branch === "Castle";
+}
+function timeLabel() {
+  return timeOfDay().phase;
+}
+
+/* ---- Moon phase ----
+ *
+ * An 8-day lunar cycle (one phase per in-game day). New moon = 0,
+ * full moon = 4, then waning back to 0. Drawn as an emoji disc at
+ * the top of the map, and ties into stealth: bright moonlight at
+ * night makes sneaking harder, a new moon makes it easier.
+ */
+const MOON_GLYPHS  = ["🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘"];
+const MOON_NAMES   = ["new", "waxing crescent", "first quarter",
+                      "waxing gibbous", "full", "waning gibbous",
+                      "last quarter", "waning crescent"];
+function moonPhase() {
+  const day = Math.floor(((G && G.turn) || 0) / DAY_LENGTH);
+  return ((day % 8) + 8) % 8;
+}
+function moonPhaseName(i) { return MOON_NAMES[(i | 0) % 8] || "new"; }
+
+/* ---- Blacksmith ----
+ *
+ * Bumping a blacksmith NPC offers to forge an edge onto the player's
+ * equipped weapon. Costs wood + stone (heat + heft). Each smith visit
+ * stacks a small permanent str-bonus on the weapon, capped to keep
+ * runaway scaling out of the picture.
+ */
+const SMITH_WOOD_COST = 4;
+const SMITH_STONE_COST = 6;
+const SMITH_MAX_UPGRADES = 5;
+function blacksmithService(npc) {
+  const p = G.player;
+  if (!p.weapon) {
+    logMsg(npc.name + ": \"Bring me a blade first.\"", "dim");
+    return;
+  }
+  const home = ensurePlayerHome();
+  home.materials = home.materials || { wood: 0, stone: 0 };
+  const haveWood = home.materials.wood | 0;
+  const haveStone = home.materials.stone | 0;
+  const upgrades = (p.weapon.smithLevel | 0);
+  if (upgrades >= SMITH_MAX_UPGRADES) {
+    logMsg(npc.name + ": \"That edge'll cut iron now. Nothing more I can do.\"",
+           "dim");
+    return;
+  }
+  if (haveWood < SMITH_WOOD_COST || haveStone < SMITH_STONE_COST) {
+    logMsg(npc.name + ': "I\'ll re-edge that blade for ' +
+           SMITH_WOOD_COST + ' wood and ' + SMITH_STONE_COST +
+           ' stone. You\'ve got ' + haveWood + 'w / ' + haveStone +
+           's. Come back when you can pay."', "warn");
+    return;
+  }
+  // pay + upgrade. Bump the weapon's str so damage rises but not by
+  // a wild amount -- +1 per upgrade.
+  home.materials.wood -= SMITH_WOOD_COST;
+  home.materials.stone -= SMITH_STONE_COST;
+  savePlayerHome(home);
+  p.weapon.smithLevel = upgrades + 1;
+  p.weapon.str = (p.weapon.str | 0) + 1;
+  if (!/forged/i.test(p.weapon.name)) {
+    p.weapon.name = p.weapon.name + " (forged)";
+  } else {
+    // already labelled forged -- bump the suffix to (forged x N)
+    p.weapon.name = p.weapon.name.replace(/\s*\(forged.*\)$/, "") +
+                    " (forged x" + p.weapon.smithLevel + ")";
+  }
+  logMsg(npc.name + ": \"That'll bite better.\" Your " + p.weapon.name +
+         " gleams hot from the forge.", "good");
+  sfx("hit");
+  flashDamage();
+}
+
+/* ---- Night raids ----
+ *
+ * On the player's home Surface chunk at night, low-tier hostiles
+ * occasionally drift in from a chunk edge. They wake hostile and
+ * pathfind to the player -- which means your built walls and doors
+ * actually earn their keep, since the existing monster AI already
+ * respects passability and opens (or stalls at) closed doors.
+ *
+ * Roll every 200 turns at night, ~40% chance. One mob per attempt.
+ */
+function maybeNightRaid() {
+  if (!G || !isOutdoors(G.branch)) return;
+  if (G.over || G.camping) return;
+  if (timeOfDay().phase !== "night") return;
+  if ((G.turn % 200) !== 0) return;
+  const home = loadPlayerHome();
+  if (!home || !home.hearth) return;
+  const sc = G.surfaceCoord;
+  if (!sc || sc.cx !== home.hearth.cx || sc.cy !== home.hearth.cy) return;
+  if (!chance(0.4)) return;
+  // tier-1 surface mob -- enough to be a real threat, not a slog
+  const pool = (DATA && DATA.monsters || []).filter(m =>
+    m.tier === 1 &&
+    (m.biome === "surface_humanoid" || m.biome === "surface_animal"));
+  if (!pool.length) return;
+  const def = pick(pool);
+  // find a passable spawn cell on the chunk's perimeter, away from
+  // the player and the hearth so the raid HAS to approach
+  const candidates = [];
+  const addIf = (x, y) => {
+    if (!G.level.tiles[y]) return;
+    if (!passable(G.level, x, y)) return;
+    if (Math.abs(x - G.player.x) + Math.abs(y - G.player.y) < 12) return;
+    candidates.push({ x, y });
+  };
+  for (let x = 0; x < MAP_W; x++) {
+    addIf(x, 0); addIf(x, MAP_H - 1);
+  }
+  for (let y = 0; y < MAP_H; y++) {
+    addIf(0, y); addIf(MAP_W - 1, y);
+  }
+  if (!candidates.length) return;
+  const spot = pick(candidates);
+  const mon = makeMonster(def, spot.x, spot.y);
+  mon.awake = true;       // they know you're here -- this is a raid
+  G.monsters.push(mon);
+  logMsg("A " + def.name + " drifts in from the dark, hunting...", "warn");
+  sfx("hurt");
+}
+/* nighttime visibility cost from moonlight. Only matters outdoors at
+ * night; the full moon (+lit) makes you visible, a new moon (dark)
+ * gives you the best cover. */
+function moonStealthMod() {
+  if (!G || !isOutdoors(G.branch)) return 0;
+  if (timeOfDay().phase !== "night") return 0;
+  const p = moonPhase();
+  if (p === 4) return -2;             // full -- bright as day
+  if (p === 3 || p === 5) return -1;  // gibbous
+  if (p === 0) return  2;             // new -- pitch dark
+  if (p === 1 || p === 7) return  1;  // crescent
+  return 0;                            // quarters
+}
+
+/* ---- Real-time mode ----
+ *
+ * Optional flip from the default turn-based loop. When on, a tick
+ * fires every REALTIME_TICK_MS and calls endTurn() so the world
+ * advances even when the player stands still -- monsters close in,
+ * food drains, day passes. The player still moves per-keypress and
+ * each keypress still ends a turn; this layer just makes "doing
+ * nothing" cost time. Paused while any overlay / prompt is open so
+ * you don't get killed mid-inventory.
+ */
+const REALTIME_TICK_MS = 600;
+let realtimeIntervalId = null;
+function isAnyOverlayOpen() {
+  return !!(helpOpen || invOpen || shopOpen || mapOpen || questListOpen ||
+            npcOpen || (G && G.buildMode) ||
+            awaitingQuaff || awaitingRead || awaitingCast);
+}
+function realtimeTick() {
+  if (!G || G.over) return;
+  if (isAnyOverlayOpen()) return;
+  // a real-time tick is one world turn -- monsters act, statuses
+  // decrement, day/night advances, food drains, etc.
+  endTurn();
+  render();
+}
+function setRealtime(on) {
+  if (!G) return;
+  G.realtime = !!on;
+  if (realtimeIntervalId) {
+    clearInterval(realtimeIntervalId);
+    realtimeIntervalId = null;
+  }
+  if (G.realtime) {
+    realtimeIntervalId = setInterval(realtimeTick, REALTIME_TICK_MS);
+  }
+  // visually mark the canvas so the player knows the timer is live
+  if (typeof document !== "undefined") {
+    const cv = document.getElementById("map-canvas");
+    if (cv) {
+      if (G.realtime) cv.classList.add("realtime-on");
+      else cv.classList.remove("realtime-on");
+    }
+  }
+  // persist preference
+  if (typeof localStorage !== "undefined") {
+    try { localStorage.setItem("crawlweb.realtime", G.realtime ? "1" : "0"); }
+    catch (e) { /* ignore */ }
+  }
+}
+function toggleRealtime() {
+  setRealtime(!(G && G.realtime));
+  logMsg("Real-time mode " + (G.realtime ? "ON -- the world moves on its own."
+                                          : "OFF -- turn-based."),
+         G.realtime ? "warn" : "sys");
+  render();
+}
+
+/* ---- Stealth ----
+ *
+ * Stealth is a per-turn opposed check between the player and every
+ * monster within sight: success means sleeping mobs don't wake, awake
+ * mobs lose track and revert to wandering. Adjacent mobs that act
+ * also roll. If any monster wins its roll, stealth breaks and you
+ * "reappear" (everything in sight is now actively aware of you).
+ *
+ * stealthScore(p) = 4 + dex/3 + species bonus + job bonus + buffs.
+ * Mostly matches DCSS canon (Spriggans sneak, Centaurs clop).
+ */
+const STEALTH_SPECIES_BONUS = {
+  SP_SPRIGGAN: 5, SP_HALFLING: 3, SP_FELID: 3, SP_OCTOPODE: 3,
+  SP_KOBOLD: 2, SP_VAMPIRE: 2, SP_DEEP_ELF: 1, SP_DEMONSPAWN: 1,
+  SP_HIGH_ELF: 1, SP_SLUDGE_ELF: 1, SP_TENGU: 1, SP_REVENANT: 2,
+  SP_POLTERGEIST: 3, SP_VINE_STALKER: 2,
+  SP_NAGA: -2, SP_CENTAUR: -2, SP_GALE_CENTAUR: -2,
+  SP_TROLL: -2, SP_MINOTAUR: -1, SP_GARGOYLE: -1, SP_ARMATAUR: -1,
+  SP_MAYFLYTAUR: -1, SP_FORMICID: -1, SP_ONI: -1,
+};
+const STEALTH_JOB_BONUS = {
+  JOB_STALKER: 4, JOB_BRIGAND: 4, JOB_HEXSLINGER: 3,
+  JOB_HUNTER: 2, JOB_ENCHANTER: 2, JOB_ALCHEMIST: 1,
+  JOB_ARTIFICER: 1, JOB_WANDERER: 1, JOB_WARPER: 1,
+  JOB_FIGHTER: -1, JOB_GLADIATOR: -1, JOB_BERSERKER: -2,
+  JOB_MONK: -1, JOB_PRIEST: -1, JOB_DEATH_KNIGHT: -1,
+  JOB_REAVER: -1, JOB_CHAOS_KNIGHT: -1,
+};
+function stealthScore(p) {
+  if (!p) return 0;
+  const dexBonus = Math.floor((p.dex | 0) / 3);
+  const spId = (p.species && p.species.id) || "";
+  const jbId = (p.job && p.job.id) || "";
+  const spB = STEALTH_SPECIES_BONUS[spId] || 0;
+  const jbB = STEALTH_JOB_BONUS[jbId] || 0;
+  // hauling a corpse is heavy and bloody -- noisier by 3
+  const bodyPenalty = p.carriedBody ? -3 : 0;
+  // night cover: outdoors at night, you get a +3 to stealth.
+  // Indoors/dungeon is windowless, no time-of-day bonus.
+  let timeBonus = 0;
+  if (G && isOutdoors(G.branch)) {
+    const ph = timeOfDay().phase;
+    if (ph === "night") timeBonus = 3;
+    else if (ph === "dusk" || ph === "dawn") timeBonus = 1;
+  }
+  // moonlight modifier at night -- full moon hurts, new moon helps
+  const moonMod = moonStealthMod();
+  return 4 + dexBonus + spB + jbB + bodyPenalty + timeBonus + moonMod;
+}
+
+/* drop the corpse currently slung over the player's shoulder onto
+ * the cell underfoot (or a passable neighbour). Bound to D. */
+function dropCarriedBody() {
+  const p = G.player;
+  if (!p.carriedBody) {
+    logMsg("You're not carrying anything to drop.", "dim");
+    return false;
+  }
+  // can't drop on top of an existing item -- shove it to a neighbour
+  let dx = p.x, dy = p.y;
+  if ((G.items || []).some(i => i.x === dx && i.y === dy)) {
+    const DIRS = [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];
+    let placed = false;
+    for (const d of DIRS) {
+      const nx = p.x + d[0], ny = p.y + d[1];
+      if (passable(G.level, nx, ny) &&
+          !G.items.some(i => i.x === nx && i.y === ny)) {
+        dx = nx; dy = ny; placed = true; break;
+      }
+    }
+    if (!placed) {
+      logMsg("Nowhere to set the body down.", "dim");
+      return false;
+    }
+  }
+  const body = p.carriedBody;
+  G.items.push({
+    key: "corpse",
+    name: body.name,
+    corpseName: body.fromKill ? body.name.replace(/'s body$/, "") : body.name,
+    tile: body.tile, fromKill: body.fromKill || null,
+    x: dx, y: dy,
+    glyph: "%", colour: "ETC_BLOOD",
+  });
+  p.carriedBody = null;
+  logMsg("You set the body down.", "sys");
+  sfx("body");
+  return true;
+}
+
+/* odds (0..1) that a given monster spots a stealthed player this
+ * turn. Closer + higher-HD = riskier; bigger stealthScore = safer.
+ * Distance 1 is dangerous but not certain (a stealthed roll-by). */
+function stealthFailChance(p, mon, dist) {
+  const hd = (mon && mon.def && mon.def.hd) || 1;
+  const ss = stealthScore(p);
+  const proximity = Math.max(0, 6 - dist);   // 0..5 closer
+  let chance = (hd - ss + 2 + proximity) / 25;
+  if (chance < 0.02) chance = 0.02;
+  if (chance > 0.6) chance = 0.6;
+  return chance;
+}
+
+/* enter / exit stealth. Bound to `H`. */
+function tryStealth() {
+  const p = G.player;
+  if (p.stealthed) {
+    p.stealthed = false;
+    logMsg("You stop sneaking.", "dim");
+    endTurn();
+    return true;
+  }
+  if ((p.stealthCD | 0) > 0) {
+    logMsg("You're still too rattled to slip away (" +
+           p.stealthCD + ").", "dim");
+    return false;
+  }
+  if (p.berserkTurns > 0) {
+    logMsg("You can't sneak while berserk.", "dim");
+    return false;
+  }
+  p.stealthed = true;
+  logMsg("You melt into the shadows. (stealth " +
+         stealthScore(p) + ")", "good");
+  // monsters that can't currently see you forget about you immediately
+  for (const m of G.monsters) {
+    if (m.awake && (!G.visible[m.y] || !G.visible[m.y][m.x])) {
+      m.awake = false;
+    }
+  }
+  sfx("sneak");
+  endTurn();
+  return true;
+}
+
+/* break stealth from any source (spotted, attacked, loud action).
+ * `reason` is shown in the log. */
+function breakStealth(reason) {
+  const p = G.player;
+  if (!p.stealthed) return;
+  p.stealthed = false;
+  p.stealthCD = 4;       // brief lockout so you can't immediately re-stealth
+  if (reason) logMsg(reason, "bad");
+  flashDamage();
 }
 
 /* ---------- status effects (poison / slow / haste) ---------- */
@@ -3295,6 +4051,8 @@ function startGame(species, job) {
     appearance: rollItemAppearance(),     // per-run consumable labels
     id: { potion: {}, scroll: {} },        // identified subtypes
     surfaceCoord: { cx: 0, cy: 0 },        // current Surface chunk
+    castleCoord: null,                     // {sx,sy,icx,icy} while inside a castle
+    castleReturn: null,                    // {cx,cy,x,y} surface cell to return to
     quests: [],                            // active / completed quests
     trackedQuest: null,                    // id of the compass-tracked quest
   };
@@ -3342,6 +4100,15 @@ function startGame(species, job) {
     hasteTurns: 0,
     paralyzedTurns: 0,
     confusedTurns: 0,
+    // stealth: stat-driven sneak mode. H toggles. Breaks on spotted
+    // / attack / loud quaff. stealthCD is a brief cooldown after
+    // breaking so you can't immediately retoggle.
+    stealthed: false,
+    stealthCD: 0,
+    // carrying a backstab victim's body -- capacity ONE. Drops with D.
+    // Hauling the corpse costs -3 to stealth (heavy, dripping).
+    carriedBody: null,
+    species, job,                       // keep refs so stealthScore can read .id
     kills: 0,
   };
   applyJobKit(player, job);          // background-specific starting gear
@@ -3364,10 +4131,30 @@ function startGame(species, job) {
 
   buildSpellButtons();   // an action button per spell the player knows
 
-  enterLevel("D", 1, "up");
-  logMsg("Welcome, " + player.name + ". Descend the Dungeon's " +
-         TRUNK_LEVELS + " floors to the Orb of Zot; the side branches " +
-         "off it hold extra danger and loot.", "sys");
+  // restore real-time mode preference from a prior session
+  if (typeof localStorage !== "undefined") {
+    try {
+      const saved = localStorage.getItem("crawlweb.realtime");
+      if (saved === "1") setRealtime(true);
+    } catch (e) { /* ignore */ }
+  }
+
+  // if the player has a hearth from a prior run, spawn there instead
+  // of dropping into D:1. The world resumes from your home.
+  const home = loadPlayerHome();
+  if (home && home.hearth) {
+    const hc = home.hearth;
+    G.surfaceCoord = { cx: hc.cx | 0, cy: hc.cy | 0 };
+    enterLevel("Surface", 1, "cell:" + (hc.x | 0) + "," + (hc.y | 0),
+               { cx: hc.cx | 0, cy: hc.cy | 0 });
+    logMsg("Welcome home, " + player.name + ". Your hearth burns.", "good");
+  } else {
+    enterLevel("D", 1, "up");
+    logMsg("Welcome, " + player.name + ". Descend the Dungeon's " +
+           TRUNK_LEVELS + " floors to the Crown; the side branches " +
+           "off it hold extra danger and loot. Press B to build a home.",
+           "sys");
+  }
   showScreen("game");
   const cv = document.getElementById("map-canvas");
   if (cv.focus) cv.focus();
@@ -3469,6 +4256,11 @@ function levelLabel(branch, depth) {
     const f = (G && typeof G.indoorFloor === "number") ? G.indoorFloor : -1;
     return f < 0 ? "Cellar " + f : "Upper floor +" + f;
   }
+  if (branch === "Castle") {
+    const cc = (G && G.castleCoord) || { sx: 0, sy: 0, icx: 0, icy: 0 };
+    return "Castle (" + cc.sx + "," + cc.sy +
+           ") interior (" + cc.icx + "," + cc.icy + ")";
+  }
   return (branch === "D" ? "D" : BRANCHES[branch].name) + ":" + depth;
 }
 
@@ -3537,17 +4329,27 @@ function levelKey(branch, depth, coord) {
     const c = coord || { cx: 0, cy: 0, bidx: 0, floor: -1 };
     return "Indoors:" + c.cx + "," + c.cy + ":" + c.bidx + ":" + c.floor;
   }
+  if (branch === "Castle") {
+    const c = coord || { sx: 0, sy: 0, icx: 0, icy: 0, floor: 0 };
+    return "Castle:" + c.sx + "," + c.sy +
+           ":" + c.icx + "," + c.icy + ":" + (c.floor || 0);
+  }
   return branch + ":" + depth;
 }
 
 function enterLevel(branch, depth, arriveAt, coord) {
   // compute the cache key for the level we're LEAVING. Surface uses
   // surfaceCoord, Indoors uses surfaceReturn + indoorFloor (so the
-  // same building-floor pair always restores the same stash).
+  // same building-floor pair always restores the same stash), and
+  // Castle uses castleCoord + indoorFloor.
   let leavingCoord = G.surfaceCoord;
   if (G.branch === "Indoors" && G.surfaceReturn) {
     leavingCoord = { cx: G.surfaceReturn.cx, cy: G.surfaceReturn.cy,
                      bidx: G.surfaceReturn.bidx, floor: G.indoorFloor };
+  } else if (G.branch === "Castle" && G.castleCoord) {
+    leavingCoord = { sx: G.castleCoord.sx, sy: G.castleCoord.sy,
+                     icx: G.castleCoord.icx, icy: G.castleCoord.icy,
+                     floor: G.indoorFloor | 0 };
   }
   if (G.level) {
     G.levels[levelKey(G.branch, G.depth, leavingCoord)] = {
@@ -3566,9 +4368,31 @@ function enterLevel(branch, depth, arriveAt, coord) {
     G.indoorFloor = (coord && typeof coord.floor === "number")
       ? coord.floor : -1;
   }
-  // Indoors uses the full coord (cx,cy,bidx,floor); other branches use
-  // surfaceCoord (or the bare branch:depth fallback inside levelKey)
-  const lookupCoord = (branch === "Indoors") ? coord : G.surfaceCoord;
+  if (branch === "Castle") {
+    G.indoorFloor = (coord && typeof coord.floor === "number")
+      ? coord.floor : 0;
+    G.castleCoord = {
+      sx: (coord && coord.sx) | 0,
+      sy: (coord && coord.sy) | 0,
+      icx: (coord && coord.icx) | 0,
+      icy: (coord && coord.icy) | 0,
+    };
+    // record where on the Surface we came from, so an EXIT_GATE knows
+    // where to drop the player back. Only set on the FIRST entry --
+    // subsequent edge transitions inside the castle keep the return
+    // point pinned to the entry gate cell.
+    if (coord && coord.returnAt && !G.castleReturn) {
+      G.castleReturn = {
+        cx: G.castleCoord.sx, cy: G.castleCoord.sy,
+        x: coord.returnAt.x | 0, y: coord.returnAt.y | 0,
+      };
+    }
+  }
+  // Indoors uses the full coord (cx,cy,bidx,floor); Castle uses
+  // (sx,sy,icx,icy,floor); other branches use surfaceCoord (or the
+  // bare branch:depth fallback inside levelKey).
+  const lookupCoord = (branch === "Indoors" || branch === "Castle")
+    ? coord : G.surfaceCoord;
   const key = levelKey(branch, depth, lookupCoord);
   const cached = G.levels[key];
   if (cached) {
@@ -3623,7 +4447,7 @@ function enterLevel(branch, depth, arriveAt, coord) {
       G.visible.push(new Array(MAP_W).fill(false));
       G.seen.push(new Array(MAP_W).fill(false));
     }
-    // the Orb of Zot rests at the bottom of the Dungeon trunk;
+    // the Crown rests at the bottom of the Dungeon trunk;
     // newLevel reserved its cell and kept terrain clear of it
     G.orbPos = lvl.orbCell || null;
     placePlayerAt(arriveAt);
@@ -3636,7 +4460,7 @@ function enterLevel(branch, depth, arriveAt, coord) {
   }
   computeFOV();
   if (G.orbPos) {
-    logMsg("The Orb of Zot glimmers somewhere on this floor!", "warn");
+    logMsg("The Crown glints somewhere on this floor!", "warn");
   }
   for (const e of (G.level.entrances || [])) {
     logMsg("A passage here leads down to the " +
@@ -3723,9 +4547,14 @@ function playerAttack(mon) {
       }
     }
   }
-  if (!attackRoll(playerToHit(p), mon.ev + 1)) {
+  // sneak attack: striking from stealth (against an unaware target)
+  // guarantees the blow lands and bumps damage. Hitting from stealth
+  // always breaks it -- you're now in plain view, weapon swinging.
+  const fromStealth = p.stealthed && !mon.awake;
+  if (!fromStealth && !attackRoll(playerToHit(p), mon.ev + 1)) {
     logMsg("You miss the " + mon.name + ".", "dim");
     sfx("miss");
+    if (p.stealthed) breakStealth("The " + mon.name + " sees your strike.");
     return;
   }
   sfx("hit");
@@ -3740,7 +4569,16 @@ function playerAttack(mon) {
   if (p.god === "GOD_TROG") dam += 2 + Math.floor(p.piety / 50);
   if (p.mightTurns > 0) dam = Math.round(dam * 1.3);
   if (p.berserkTurns > 0) dam = Math.round(dam * 1.5);   // Trog's berserk
-  dam = applyAC(dam, mon.ac);
+  if (fromStealth) {
+    // backstab: +75% damage, ignore most of the target's AC
+    dam = Math.round(dam * 1.75) + ri(2, 5);
+    logMsg("You backstab the " + mon.name + "!", "good");
+    sfx("backstab");
+    dam = applyAC(dam, Math.max(0, mon.ac - 4));
+  } else {
+    dam = applyAC(dam, mon.ac);
+  }
+  if (p.stealthed) breakStealth(null);
   mon.hp -= dam;
   showHitArrow(mon.x, mon.y, p.x, p.y);
   if (mon.hp <= 0) {
@@ -3749,7 +4587,36 @@ function playerAttack(mon) {
       addEffect(mon.x, mon.y, MANIFEST.effect.cloud_smoke, 900);
     }
     logMsg("You kill the " + mon.name + "!", "good");
+    const killedAtX = mon.x, killedAtY = mon.y;
+    const killedName = mon.name;
+    const killedTile = mon.tile;
+    // a backstab kill rewards the sneak: +50% XP and a small piety
+    // bump on top of the normal kill bookkeeping inside killMonster
+    const backstabBonusXP = fromStealth
+      ? Math.max(1, Math.round((mon.def.exp || 1) * 0.5)) : 0;
     killMonster(mon);
+    if (backstabBonusXP) gainXP(backstabBonusXP);
+    // a backstab leaves a body. Drop a corpse item the player can
+    // pick up (capacity 1) and stash elsewhere -- hides evidence,
+    // moves the trail.  Only on stealth kills, only if the tile is
+    // not already occupied by another item.
+    if (fromStealth) {
+      const occupied = (G.items || []).some(it =>
+        it.x === killedAtX && it.y === killedAtY);
+      if (!occupied) {
+        G.items.push({
+          key: "corpse",
+          name: killedName + "'s body",
+          corpseName: killedName,
+          tile: killedTile,
+          fromKill: true,
+          x: killedAtX, y: killedAtY,
+          glyph: "%", colour: "ETC_BLOOD",
+        });
+        logMsg("The " + killedName + " crumples. Press g to carry the body.",
+               "dim");
+      }
+    }
     // a Vampire drinks the victim's blood -- heal a little on a kill
     if (traitIs(p, "bloodthirst") && p.hp < p.hpMax) {
       const heal = ri(2, 6);
@@ -3978,15 +4845,74 @@ function tryMovePlayer(dx, dy) {
     pickupUnderfootHint();
     return true;
   }
+  // edge of a Castle interior chunk -- step into the adjacent
+  // (icx, icy). Unpainted neighbours auto-generate a stone courtyard
+  // so the player can always walk forward.
+  if (G.branch === "Castle" && G.castleCoord &&
+      (nx < 0 || ny < 0 || nx >= MAP_W || ny >= MAP_H)) {
+    const dxSign = nx < 0 ? -1 : (nx >= MAP_W ? 1 : 0);
+    const dySign = ny < 0 ? -1 : (ny >= MAP_H ? 1 : 0);
+    const cc = G.castleCoord;
+    const next = {
+      sx: cc.sx, sy: cc.sy,
+      icx: cc.icx + dxSign, icy: cc.icy + dySign,
+      floor: G.indoorFloor | 0,
+    };
+    enterLevel("Castle", 1, "edge", next);
+    G.player.x = (nx + MAP_W) % MAP_W;
+    G.player.y = (ny + MAP_H) % MAP_H;
+    nudgeToPassable(G.player);
+    logMsg("You move deeper into the castle (" +
+           next.icx + "," + next.icy + ").", "sys");
+    return true;
+  }
   if (nx < 0 || ny < 0 || nx >= MAP_W || ny >= MAP_H) return false;
   // a friendly NPC standing on the target tile -- bumping opens
   // their dialog instead of an attack (shop UI for shopkeepers,
-  // instant rescue for captives)
+  // instant rescue for captives). Captives stay rescuable. A
+  // STEALTHED bump against any other NPC is a sneak kill: the
+  // body drops as an item the player can hoist; nearby neutral
+  // guards who later spot the corpse turn the whole keep hostile.
   const npc = (G.npcs || []).find(n => n.x === nx && n.y === ny);
+  if (npc && p.stealthed && npc.kind !== "captive") {
+    cancelWalk(); cancelRest();
+    logMsg("You sneak up and silence the " + npc.name + ".", "bad");
+    sfx("backstab");
+    G.npcs = G.npcs.filter(n => n !== npc);
+    // a body the player can carry away. wasNpc tags it as a murder
+    // victim -- guards passing it turn hostile.
+    G.items.push({
+      key: "corpse",
+      name: npc.name + "'s body",
+      corpseName: npc.name,
+      tile: npc.tile || null,
+      fromKill: true, wasNpc: true,
+      x: npc.x, y: npc.y,
+      glyph: "%", colour: "ETC_BLOOD",
+    });
+    // murdering a questgiver / king / shopkeeper fails their open quest
+    // -- the dead can't pay you. The quest stays in the log as failed
+    // so the player can see what they sacrificed.
+    if (npc.questId) {
+      const q = G.quests.find(x => x.id === npc.questId);
+      if (q && q.status === "active") {
+        q.status = "failed";
+        q.failedReason = "questgiver murdered";
+        logMsg("Quest \"" + (q.type || "task") +
+               "\" with " + npc.name + " fails -- the dead don't pay.",
+               "warn");
+      }
+    }
+    breakStealth(null);
+    flashDamage();
+    return true;
+  }
   if (npc) {
     cancelWalk(); cancelRest();
     if (npc.kind === "shopkeeper") {
       setShop(true, npc);
+    } else if (npc.kind === "blacksmith") {
+      blacksmithService(npc);
     } else if (npc.kind === "king") {
       openNPCDialog(npc);
     } else if (npc.kind === "child") {
@@ -4275,6 +5201,88 @@ function tryMovePlayer(dx, dy) {
     }
     logMsg("The runes flicker, but no destination answers.", "dim");
     cancelWalk();
+  } else if (here === T.CASTLE_GATE && G.branch === "Surface") {
+    // step into the castle's pocket interior. The castle is keyed by
+    // the surface chunk coord; we land at interior (0,0).
+    const sc = G.surfaceCoord || { cx: 0, cy: 0 };
+    logMsg("The gate looms open -- you step inside.", "sys");
+    sfx("descend");
+    cancelWalk(); cancelRest();
+    G.castleReturn = null;  // fresh entry -- record where we came from
+    enterLevel("Castle", 1, "cell:" + ((MAP_W >> 1) | 0) +
+                            "," + ((MAP_H - 3) | 0),
+      { sx: sc.cx, sy: sc.cy, icx: 0, icy: 0, floor: 0,
+        returnAt: { x: p.x, y: p.y } });
+    return true;
+  } else if (here === T.HEARTH) {
+    // your own hearth: a full rest, free of cost. Skip if already full.
+    if (p.hp >= p.hpMax && p.mp >= p.mpMax) {
+      logMsg("Your hearth burns warm; you're already whole.", "dim");
+    } else {
+      p.hp = p.hpMax;
+      p.mp = p.mpMax;
+      p.food = p.foodMax;
+      logMsg("You rest by your hearth -- fully restored.", "good");
+      sfx("levelup");
+      cancelWalk();
+    }
+  } else if (here === T.BED) {
+    // a built bed: same effect as hearth-rest (heal to full)
+    if (p.hp < p.hpMax || p.mp < p.mpMax) {
+      p.hp = p.hpMax; p.mp = p.mpMax;
+      logMsg("You sleep deeply. You wake refreshed.", "good");
+      sfx("descend");
+      cancelWalk();
+    } else {
+      logMsg("You're not tired enough to sleep.", "dim");
+    }
+  } else if (here === T.PLAYER_SIGN) {
+    const home = ensurePlayerHome();
+    const k = (G.surfaceCoord ? G.surfaceCoord.cx : 0) + "," +
+              (G.surfaceCoord ? G.surfaceCoord.cy : 0) +
+              ":" + p.x + "," + p.y;
+    const msg = (home.signs && home.signs[k]) || "(blank sign)";
+    logMsg('Sign: "' + msg + '"', "sys");
+    cancelWalk();
+  } else if (here === T.PLAYER_CHEST) {
+    // your home chest -- persistent storage. The big feature in
+    // Phase 1: dump the body you're carrying so guards never find it.
+    const home = ensurePlayerHome();
+    home.chestSlots = home.chestSlots || [];
+    if (p.carriedBody) {
+      home.chestSlots.push({
+        kind: "body",
+        name: p.carriedBody.name,
+        corpseName: p.carriedBody.corpseName,
+        wasNpc: !!p.carriedBody.wasNpc,
+        savedAt: Date.now(),
+      });
+      logMsg("You stash " + p.carriedBody.name +
+             " in your chest. Hidden forever.", "good");
+      sfx("body");
+      p.carriedBody = null;
+      savePlayerHome(home);
+    } else {
+      const n = home.chestSlots.length;
+      logMsg("Your chest holds " + n + " item" +
+             (n === 1 ? "" : "s") +
+             (n ? " (stashed bodies / loot)" : "") + ".", "sys");
+    }
+    cancelWalk();
+  } else if (here === T.EXIT_GATE && G.branch === "Castle") {
+    // leave the castle, returning to the surface cell that owned the
+    // entry gate (or to (1,1) of the home chunk as a fallback).
+    const ret = G.castleReturn || { cx: (G.castleCoord && G.castleCoord.sx) | 0,
+                                    cy: (G.castleCoord && G.castleCoord.sy) | 0,
+                                    x: 1, y: 1 };
+    logMsg("You step back through the gate.", "sys");
+    sfx("descend");
+    cancelWalk(); cancelRest();
+    G.castleReturn = null;
+    G.castleCoord = null;
+    enterLevel("Surface", 1, "cell:" + (ret.x | 0) + "," + (ret.y | 0),
+      { cx: ret.cx | 0, cy: ret.cy | 0 });
+    return true;
   } else if (here === T.WISHING_WELL) {
     if (isDrained) { logMsg("The wishing well is silent now.", "dim"); cancelWalk(); cancelRest(); return true; }
     // a fey well: high-variance outcome. Heals BIG, drops a gold
@@ -4477,6 +5485,24 @@ function doPickup() {
       G.items.push(lootItem);
       doPickup();
     }
+    return true;
+  }
+  if (it.key === "corpse") {
+    if (p.carriedBody) {
+      logMsg("You already carry a body -- drop it first (D).", "dim");
+      return false;
+    }
+    p.carriedBody = {
+      name: it.name || ((it.corpseName || "thing") + "'s body"),
+      corpseName: it.corpseName || null,
+      tile: it.tile || null,
+      fromKill: it.fromKill || null,
+      wasNpc: !!it.wasNpc,
+    };
+    G.items.splice(idx, 1);
+    logMsg("You hoist the " + p.carriedBody.name +
+           " onto your shoulder.", "good");
+    sfx("body");
     return true;
   }
   if (it.key === "gold") {
@@ -5149,6 +6175,28 @@ function stepIndoorFloor(delta) {
   return true;
 }
 
+/* step one floor up or down inside a Castle interior, keeping the
+ * same (icx, icy) interior chunk coord. Mirrors stepIndoorFloor. */
+function stepCastleFloor(delta) {
+  if (!G.castleCoord) return false;
+  const here = G.indoorFloor | 0;
+  const next = here + delta;
+  const cc = G.castleCoord;
+  const coord = {
+    sx: cc.sx, sy: cc.sy,
+    icx: cc.icx, icy: cc.icy,
+    floor: next,
+    returnAt: { x: G.player.x, y: G.player.y },
+  };
+  const arrive = delta > 0 ? "down" : "up";
+  enterLevel("Castle", 1, arrive, coord);
+  logMsg(delta > 0
+    ? "You climb to a higher floor of the castle."
+    : "You descend deeper into the castle.", "sys");
+  sfx("descend");
+  return true;
+}
+
 function tryDescend() {
   const t = G.level.tiles[G.player.y][G.player.x];
   if (t === T.STAIRS_DOWN) {
@@ -5160,6 +6208,9 @@ function tryDescend() {
     // a stair on an indoor floor takes you one floor lower; floor 0
     // returns you to the Surface on the cell you originally took
     if (G.branch === "Indoors") { stepIndoorFloor(-1); return true; }
+    // a stair inside a Castle interior chunk steps down one floor in
+    // the same (icx, icy) interior coord
+    if (G.branch === "Castle") { stepCastleFloor(-1); return true; }
     enterLevel(G.branch, G.depth + 1, "up");
     logMsg("You descend to " + levelLabel(G.branch, G.depth) + ".", "sys");
     sfx("descend");
@@ -5195,6 +6246,8 @@ function tryAscend() {
   }
   // a stair on an indoor floor takes you one floor higher
   if (G.branch === "Indoors") { stepIndoorFloor(+1); return true; }
+  // a stair in a Castle steps up one interior floor
+  if (G.branch === "Castle") { stepCastleFloor(+1); return true; }
   if (G.depth > 1) {
     enterLevel(G.branch, G.depth - 1, "down");
     logMsg("You climb to " + levelLabel(G.branch, G.depth) + ".", "sys");
@@ -5233,8 +6286,37 @@ function tryAscend() {
 function monsterAct(mon) {
   const p = G.player;
   // neutral guards / watchmen wander idly and never pursue the player.
-  // They turn hostile only via playerAttack (struck) or chest theft.
+  // They turn hostile only via playerAttack (struck), chest theft, or
+  // discovering a murdered NPC's body in their line of sight.
   if (mon.neutral) {
+    // first: scan visible corpses for evidence of murder. A guard
+    // catching sight of a `wasNpc` body raises the alarm: it turns
+    // hostile, wakes, and all guards in the same squad follow suit.
+    for (const it of (G.items || [])) {
+      if (it.key !== "corpse" || !it.wasNpc) continue;
+      const d = Math.max(Math.abs(it.x - mon.x), Math.abs(it.y - mon.y));
+      if (d > FOV_RADIUS) continue;
+      if (!losClear(G.level, mon.x, mon.y, it.x, it.y)) continue;
+      mon.neutral = false; mon.awake = true;
+      logMsg("The " + mon.name + " sees " + (it.name || "a body") +
+             " -- MURDER! Guards close in!", "bad");
+      sfx("alert");
+      flashDamage();
+      // alert other neutrals in the same chest watch / patrol
+      for (const o of G.monsters) {
+        if (o === mon || !o.neutral) continue;
+        if (o.guardsChest && mon.guardsChest &&
+            o.guardsChest.x === mon.guardsChest.x &&
+            o.guardsChest.y === mon.guardsChest.y) {
+          o.neutral = false; o.awake = true;
+        } else if (Math.max(Math.abs(o.x - mon.x),
+                            Math.abs(o.y - mon.y)) <= FOV_RADIUS) {
+          // nearby guards hear the shout
+          o.neutral = false; o.awake = true;
+        }
+      }
+      return;  // guard spent its turn raising the alarm
+    }
     // mostly stand still; sometimes take a step in a random cardinal
     if (chance(0.6)) return;
     const DIRS = [[1,0],[-1,0],[0,1],[0,-1]];
@@ -5260,6 +6342,12 @@ function monsterAct(mon) {
   const dist = Math.max(Math.abs(mon.x - p.x), Math.abs(mon.y - p.y));
   if (!mon.awake) {
     if (dist <= FOV_RADIUS && G.visible[mon.y][mon.x]) {
+      // a stealthed player must roll past the wake check, too
+      if (p.stealthed) {
+        const fc = stealthFailChance(p, mon, dist);
+        if (!chance(fc)) return;        // monster fails to notice
+        breakStealth("The " + mon.name + " spots you! You reappear.");
+      }
       mon.awake = true;
       if (G.visible[mon.y][mon.x]) {
         logMsg("The " + mon.name + " notices you.", "warn");
@@ -5377,7 +6465,19 @@ function runWorld() {
 /* called after every player action that consumes a turn */
 function endTurn() {
   if (G.over) { render(); return; }
+  const prevPhase = timeOfDay().phase;
   G.turn++;
+  const newPhase = timeOfDay().phase;
+  if (newPhase !== prevPhase && G && isOutdoors(G.branch)) {
+    const TRANSITION_MSG = {
+      dawn:  "Dawn breaks. Pale light reaches you.",
+      day:   "The sun climbs high.",
+      dusk:  "Dusk pools in the shadows.",
+      night: "Night closes in. Stay sharp.",
+    };
+    logMsg(TRANSITION_MSG[newPhase] || ("The light shifts to " + newPhase + "."),
+           "sys");
+  }
   const pp = G.player;
   if (pp.mightTurns > 0) {
     pp.mightTurns--;
@@ -5410,6 +6510,27 @@ function endTurn() {
   if (pp.confusedTurns > 0) {
     pp.confusedTurns--;
     if (pp.confusedTurns === 0) logMsg("Your head clears.", "good");
+  }
+  if (pp.stealthCD > 0) pp.stealthCD--;
+  // night raid roll -- a wandering hostile drifts to the home chunk
+  maybeNightRaid();
+  // stealth maintenance: while sneaking, every nearby visible monster
+  // gets a per-turn chance to detect us. Distance and HD swing the
+  // odds.  First detection wins -- stealth breaks and that monster
+  // becomes aware.
+  if (pp.stealthed) {
+    for (const m of G.monsters) {
+      if (!m || m.neutral) continue;
+      const dist = Math.max(Math.abs(m.x - pp.x), Math.abs(m.y - pp.y));
+      if (dist > FOV_RADIUS) continue;
+      if (!G.visible[m.y] || !G.visible[m.y][m.x]) continue;
+      const fc = stealthFailChance(pp, m, dist);
+      if (chance(fc)) {
+        m.awake = true;
+        breakStealth("The " + m.name + " spots you! You reappear.");
+        break;
+      }
+    }
   }
   // monsters carry their own statuses too
   for (const m of [...G.monsters]) {
@@ -5496,6 +6617,27 @@ function gameOver(won, killer) {
   }
   G.over = true;
   G.won = won;
+  // halt the real-time tick so it doesn't keep advancing the world
+  // while the death / win screen is showing
+  if (realtimeIntervalId) {
+    clearInterval(realtimeIntervalId);
+    realtimeIntervalId = null;
+  }
+  // a corpse the player was carrying drops at their feet on death --
+  // a small atmospheric touch for the post-mortem
+  if (!won && pl && pl.carriedBody && G.items && G.level) {
+    G.items.push({
+      key: "corpse",
+      name: pl.carriedBody.name,
+      corpseName: pl.carriedBody.corpseName,
+      tile: pl.carriedBody.tile,
+      fromKill: pl.carriedBody.fromKill,
+      wasNpc: pl.carriedBody.wasNpc,
+      x: pl.x, y: pl.y,
+      glyph: "%", colour: "ETC_BLOOD",
+    });
+    pl.carriedBody = null;
+  }
   clearSave();             // the run is finished -- nothing to resume
   sfx(won ? "win" : "death");
   const p = G.player;
@@ -5520,8 +6662,9 @@ function gameOver(won, killer) {
     : levelLabel(G.branch, G.depth);
   const lines = [];
   lines.push(won
-    ? `You reached the <b>Orb of Zot</b> at the bottom of the ` +
-      `Dungeon and escaped with it. A genuine win.<br>`
+    ? `You took up the <b>Crown</b> at the bottom of the ` +
+      `Dungeon and placed it upon your head. ` +
+      `You are <b>${p.name}, King of the Depths</b>.<br>`
     : `Slain by a <b>${killer}</b> in ${regionLastSeen}.<br>`);
   lines.push(`<span class="stat">${p.name}</span>` +
     ` &nbsp;&middot;&nbsp; XL ${p.xl}` +
@@ -5545,7 +6688,7 @@ function gameOver(won, killer) {
 }
 
 function checkWin() {
-  // stepping onto the Orb of Zot wins the run
+  // stepping onto the Crown crowns you king and wins the run
   const orb = G.orbPos;
   if (orb && G.player.x === orb.x && G.player.y === orb.y) {
     gameOver(true, null);
@@ -5590,6 +6733,13 @@ function tileGlyph(t) {
     case T.WATER: return { ch: "~", col: "#5a9ed5" };
     case T.DEEP_WATER: return { ch: "~", col: "#1a3e6e" };
     case T.TELEPORTER: return { ch: "T", col: "#b986ff" };
+    case T.CASTLE_GATE: return { ch: "=", col: "#ffd24a" };
+    case T.EXIT_GATE: return { ch: "=", col: "#88c0ff" };
+    case T.HEARTH: return { ch: "H", col: "#ff8a3a" };
+    case T.BED: return { ch: "b", col: "#a866cc" };
+    case T.PLAYER_CHEST: return { ch: "C", col: "#c8a060" };
+    case T.PLAYER_SIGN: return { ch: "s", col: "#cccc88" };
+    case T.FORGE: return { ch: "F", col: "#ff6622" };
     case T.LAVA: return { ch: "~", col: "#d2562a" };
     case T.TREE: return { ch: "&", col: "#3c7a3c" };
     case T.ALTAR: return { ch: "_", col: "#d8d8a0" };
@@ -5984,6 +7134,30 @@ function render() {
         } else if (t === T.TELEPORTER) {
           drawCell(ctx, floorBase, null, null, sx, sy);
           rel = "dngn/gateways/abyssal_stair.png";  // re-use the rune disc
+        } else if (t === T.CASTLE_GATE) {
+          drawCell(ctx, floorBase, null, null, sx, sy);
+          rel = "dngn/gate_closed_middle.png";
+        } else if (t === T.EXIT_GATE) {
+          drawCell(ctx, floorBase, null, null, sx, sy);
+          rel = "dngn/gate_open_middle.png";
+        } else if (t === T.HEARTH) {
+          // hearth = warm fire. Reuse the campsite tile -- visually
+          // identical and already preloaded.
+          drawCell(ctx, floorBase, null, null, sx, sy);
+          rel = dn.campsite || null;
+        } else if (t === T.BED) {
+          drawCell(ctx, floorBase, null, null, sx, sy);
+          rel = null;     // no good sprite -- fall back to glyph "b"
+        } else if (t === T.PLAYER_CHEST) {
+          // reuse the chest item sprite for the player-built chest
+          drawCell(ctx, floorBase, null, null, sx, sy);
+          rel = im.chest || null;
+        } else if (t === T.PLAYER_SIGN) {
+          drawCell(ctx, floorBase, null, null, sx, sy);
+          rel = dn.signpost || null;
+        } else if (t === T.FORGE) {
+          drawCell(ctx, floorBase, null, null, sx, sy);
+          rel = dn.forge || null;
         }
         const g = tileGlyph(t);
         drawCell(ctx, rel, g.ch, g.col, sx, sy);
@@ -6115,15 +7289,33 @@ function render() {
       // friendly NPCs (questgivers, shopkeepers, captives, children).
       // Each NPC was stamped with a specific tile at gen time; falls
       // back to the halfling sprite if the npc bundle isn't loaded.
+      // At NIGHT (outdoors only), most NPCs are asleep -- rendered
+      // dimmer with a 'zZ' over their head, no barks, easy backstab.
       const barkBubbles = [];   // collect; draw after sprites so they sit on top
+      const npcsAsleep = isOutdoors(G.branch) &&
+                         timeOfDay().phase === "night";
       for (const n of (data.npcs || [])) {
         const wx = cxBase + n.x, wy = cyBase + n.y;
         if (!inViewWorld(wx, wy)) continue;
         if (cellRoofed(wx, wy)) continue;
+        const asleep = npcsAsleep && n.kind !== "captive" &&
+                       n.kind !== "king";  // kings keep watch
+        if (asleep) ctx.globalAlpha = 0.55;
         drawCell(ctx, n.tile || mm.MONS_HALFLING, n.glyph || "@",
                  colourHex(n.colour || "WHITE"),
                  (wx - camX) * TILE, (wy - camY) * TILE);
-        if (n.barkText && n.barkExpireTurn > G.turn) {
+        if (asleep) {
+          ctx.globalAlpha = 1.0;
+          ctx.save();
+          ctx.font = "bold 12px monospace";
+          ctx.textBaseline = "top";
+          ctx.fillStyle = "#9be0ff";
+          ctx.shadowColor = "#000";
+          ctx.shadowBlur = 2;
+          ctx.fillText("zZ", (wx - camX) * TILE + 1, (wy - camY) * TILE);
+          ctx.restore();
+        }
+        if (!asleep && n.barkText && n.barkExpireTurn > G.turn) {
           barkBubbles.push({ wx, wy, text: n.barkText });
         }
       }
@@ -6241,9 +7433,24 @@ function render() {
                (wxOf(G.orbPos.x) - camX) * TILE,
                (wyOf(G.orbPos.y) - camY) * TILE);
     }
-    // player
-    drawCell(ctx, G.playerTile, "@", "#ffffff",
-             (wxOf(p.x) - camX) * TILE, (wyOf(p.y) - camY) * TILE);
+    // player -- dimmed when sneaking, full alpha otherwise
+    if (p.stealthed) ctx.globalAlpha = 0.45;
+    const ppx = (wxOf(p.x) - camX) * TILE;
+    const ppy = (wyOf(p.y) - camY) * TILE;
+    drawCell(ctx, G.playerTile, "@", "#ffffff", ppx, ppy);
+    if (p.stealthed) ctx.globalAlpha = 1.0;
+    // small red "%" badge over the player's shoulder when hauling a
+    // body, so you don't forget you're walking around with evidence
+    if (p.carriedBody) {
+      ctx.save();
+      ctx.font = "bold 16px monospace";
+      ctx.textBaseline = "top";
+      ctx.fillStyle = "#cc2222";
+      ctx.shadowColor = "#000";
+      ctx.shadowBlur = 3;
+      ctx.fillText("%", ppx + TILE - 14, ppy + 2);
+      ctx.restore();
+    }
 
     // transient effects (blood arrows, smoke clouds) -- drawn last so
     // they sit on top of everything; expired entries get filtered out
@@ -6263,6 +7470,83 @@ function render() {
         }
       }
       G.transientEffects = live;
+    }
+
+    // time-of-day tint: a translucent fill over the whole viewport
+    // pushes the canvas warm at dawn / dusk and cold + dark at night.
+    // Only outdoor branches (Surface, Castle interior) get the tint;
+    // the Dungeon and Indoors stay neutral.
+    if (isOutdoors(G.branch)) {
+      const ph = timeOfDay().phase;
+      let tint = null;
+      if (ph === "dawn")  tint = "rgba(255, 170, 120, 0.18)";
+      else if (ph === "dusk")  tint = "rgba(255, 130,  60, 0.22)";
+      else if (ph === "night") tint = "rgba( 20,  40,  90, 0.38)";
+      if (tint) {
+        ctx.save();
+        ctx.fillStyle = tint;
+        ctx.fillRect(0, 0, VIEW_W * TILE, VIEW_H * TILE);
+        ctx.restore();
+      }
+      // lit hearths + beds at night: warm halo around each, so your
+      // home reads as a glowing pocket of safety in the dark. Only
+      // drawn when the tint is active (dusk / night).
+      if (ph === "dusk" || ph === "night") {
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        for (let yy = camY; yy < camY + VIEW_H; yy++) {
+          for (let xx = camX; xx < camX + VIEW_W; xx++) {
+            let lx = xx, ly = yy;
+            let tile = -1;
+            if (G.branch === "Surface") {
+              const ccx = Math.floor(xx / MAP_W), ccy = Math.floor(yy / MAP_H);
+              const lxm = xx - ccx * MAP_W, lym = yy - ccy * MAP_H;
+              const dd = chunkData(ccx, ccy);
+              if (dd && dd.level && dd.level.tiles) {
+                tile = dd.level.tiles[lym] && dd.level.tiles[lym][lxm];
+              }
+            } else if (G.level && G.level.tiles[yy]) {
+              tile = G.level.tiles[yy][xx];
+            }
+            if (tile !== T.HEARTH && tile !== T.BED && tile !== T.FORGE) continue;
+            const cxp = (xx - camX) * TILE + (TILE >> 1);
+            const cyp = (yy - camY) * TILE + (TILE >> 1);
+            const r = tile === T.HEARTH ? 60
+                    : tile === T.FORGE ? 70 : 36;
+            const halo = ctx.createRadialGradient(cxp, cyp, 4, cxp, cyp, r);
+            halo.addColorStop(0,
+              tile === T.HEARTH ? "rgba(255, 180,  80, 0.55)"
+            : tile === T.FORGE  ? "rgba(255, 120,  40, 0.65)"
+                                : "rgba(180, 160, 220, 0.30)");
+            halo.addColorStop(1, "rgba(0, 0, 0, 0)");
+            ctx.fillStyle = halo;
+            ctx.fillRect(cxp - r, cyp - r, r * 2, r * 2);
+          }
+        }
+        ctx.restore();
+      }
+      // moon disc -- top-centre of the viewport, alpha keyed to phase
+      // of day so it fades during noon and dominates at night
+      const mp = moonPhase();
+      const moonAlpha = ph === "night" ? 1.0
+                      : ph === "dusk"  ? 0.85
+                      : ph === "dawn"  ? 0.55
+                      : 0.30;          // faint daytime moon
+      const mx = (VIEW_W * TILE) >> 1;
+      const my = 22;
+      ctx.save();
+      ctx.globalAlpha = moonAlpha;
+      // a soft halo behind the moon so it reads on bright tiles
+      const grd = ctx.createRadialGradient(mx, my, 4, mx, my, 28);
+      grd.addColorStop(0, "rgba(255, 245, 210, 0.55)");
+      grd.addColorStop(1, "rgba(255, 245, 210, 0)");
+      ctx.fillStyle = grd;
+      ctx.fillRect(mx - 30, my - 30, 60, 60);
+      ctx.font = "28px serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(MOON_GLYPHS[mp], mx, my);
+      ctx.restore();
     }
 
     // mouse hover: highlight the tile and describe what is on it.
@@ -6373,7 +7657,9 @@ function renderSidebar() {
     `<div class="name">${p.name}</div>` +
     `<div class="sub">XL ${p.xl} &middot; ` +
     `${levelLabel(G.branch, G.depth)} &middot; ` +
-    `${BRANCHES[G.branch].name} &middot; turn ${G.turn}</div>` +
+    (BRANCHES[G.branch] ? BRANCHES[G.branch].name : G.branch) +
+    ` &middot; turn ${G.turn} &middot; ${timeLabel()} ` +
+    MOON_GLYPHS[moonPhase()] + `</div>` +
     `<canvas id="sb-doll" class="sb-doll" width="64" height="64"></canvas>` +
     `<canvas id="sb-doll" class="sb-doll" width="64" height="64"></canvas>` +
     `<hr>` +
@@ -6406,6 +7692,15 @@ function renderSidebar() {
     (p.poisonTurns > 0 ? `<div class="val" style="color:#9f6">Poisoned (${p.poisonTurns})</div>` : "") +
     (p.paralyzedTurns > 0 ? `<div class="val" style="color:#f99">Paralysed (${p.paralyzedTurns})</div>` : "") +
     (p.confusedTurns > 0 ? `<div class="val" style="color:#fc9">Confused (${p.confusedTurns})</div>` : "") +
+    (p.stealthed
+      ? `<div class="val" style="color:#9be0ff">Sneaking (stealth ${stealthScore(p)})</div>`
+      : "") +
+    (p.carriedBody
+      ? `<div class="val" style="color:#cc4040">Carrying: ${p.carriedBody.name} (D drops)</div>`
+      : "") +
+    (G.realtime
+      ? `<div class="val" style="color:#ffaa66">Real-time mode</div>`
+      : "") +
     `<hr>` +
     `<div><span class="lbl">Potions</span><span class="val">` +
     `${sidebarLabel("potion","heal")} ${packCount("potion", "heal")} &middot; ` +
@@ -6434,7 +7729,9 @@ function renderSidebar() {
     compassHTML() +
     `<div class="sub" style="margin-top:6px">` +
     `q quaff &middot; r read &middot; i inv &middot; Q quests &middot; ` +
-    `<b style="color:#ffd24a">M world map</b>` +
+    `<b style="color:#ffd24a">M world map</b> &middot; ` +
+    `<b style="color:#9be0ff">H sneak</b> &middot; ` +
+    `<b style="color:#cc8080">D drop body</b>` +
     (p.spells.length ? ` &middot; z cast` : "") +
     (p.god ? ` &middot; a invoke` : ` &middot; p pray`) + `</div>` +
     (function () {
@@ -6658,7 +7955,7 @@ function describeUnderfoot() {
     return displayName(it);
   }
   if (G.orbPos && p.x === G.orbPos.x && p.y === G.orbPos.y) {
-    return "the Orb of Zot";
+    return "the Crown";
   }
   switch (G.level.tiles[p.y][p.x]) {
     case T.STAIRS_DOWN: return "a staircase down (press >)";
@@ -6744,7 +8041,7 @@ function describeTileAt(x, y) {
       return displayName(it);
     }
     if (G.orbPos && G.orbPos.x === lx && G.orbPos.y === ly) {
-      return "the Orb of Zot";
+      return "the Crown";
     }
   }
   const trap = (chunkLvl.traps || []).find(
@@ -7030,14 +8327,22 @@ function startCamp() {
     return;
   }
   const pp = G.player;
-  if (pp.hp >= pp.hpMax && pp.mp >= pp.mpMax) {
+  // sleeping at home: on a HEARTH or BED, you bed down until dawn
+  // even if you're already healed. A time-skip for waiting out the
+  // moon, a hostile phase, or a tracked NPC's schedule.
+  const here = (G.level && G.level.tiles[pp.y] && G.level.tiles[pp.y][pp.x]) | 0;
+  const atHome = here === T.HEARTH || here === T.BED;
+  if (!atHome && pp.hp >= pp.hpMax && pp.mp >= pp.mpMax) {
     logMsg("You are already fully rested.", "dim");
     render();
     return;
   }
   G.camping = true;
   G.campStartTurn = G.turn;
-  logMsg("You set up camp and rest.", "sys");
+  G.campSleepUntilDawn = !!atHome;
+  logMsg(atHome
+    ? "You bed down. Sleeping until dawn..."
+    : "You set up camp and rest.", "sys");
   restTimer = setTimeout(stepRest, 30);
 }
 
@@ -7171,15 +8476,16 @@ function makeQuestForNPC(npc) {
       q = { id, giver, type: "rescue",
             rescueAt: { cx: site.cx, cy: site.cy,
                         bidx: site.bidx, floor: -1 },
+            captiveCellarBidx: null,
             captiveName, kin,
             count: 1, progress: 0, rescued: false,
             reward: { gold: ri(70, 130) },
             status: "active",
             hook: "My " + kin + " " + captiveName +
-                  " was taken into the cellar of the " + site.type +
-                  " at " + regionNameFor(site.cx, site.cy) +
+                  " was taken to a cellar at " +
+                  regionNameFor(site.cx, site.cy) +
                   " (" + site.cx + "," + site.cy +
-                  "). Bring them home." };
+                  "). Search the cellars there -- bring them home." };
       q.greeting = pick(QUEST_GREETINGS);
       G.quests.push(q);
       npc.questId = id;
@@ -7486,10 +8792,12 @@ function renderNPCDialog() {
         it.key === q.target.key && it.sub === q.target.sub);
       html += `<p>You ${has ? "carry one" : "do not carry one"}.</p>`;
     } else if (q.type === "rescue") {
-      html += `<p>The captive is held in the cellar at ` +
+      html += `<p>The captive is held in a cellar somewhere at ` +
               `${regionNameFor(q.rescueAt.cx, q.rescueAt.cy)} ` +
               `(${q.rescueAt.cx},${q.rescueAt.cy}). ` +
-              (q.rescued ? "You've freed them!" : "Find them, free them.") +
+              (q.rescued
+                ? "You've freed them!"
+                : "Check every cellar in the region.") +
               `</p>`;
     } else if (q.type === "retrieve") {
       const has = (G.player.pack || []).some(it =>
@@ -7662,6 +8970,22 @@ function renderWorldMap() {
         ctx.strokeRect(px + 0.5, py + 0.5, cell - 2, cell - 2);
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(px + (cell >> 1) - 1, py + (cell >> 1) - 1, 3, 3);
+      }
+      // player's hearth marker -- a small orange circle so the player
+      // can always find their way home from the world map
+      const hh = (function () {
+        const h = loadPlayerHome();
+        return h && h.hearth ? h.hearth : null;
+      })();
+      if (hh && hh.cx === cx && hh.cy === cy && cell >= 8) {
+        ctx.fillStyle = "#ff8a3a";
+        ctx.beginPath();
+        ctx.arc(px + (cell >> 1), py + (cell >> 1),
+                Math.max(3, Math.floor(cell / 4)), 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#fff1c0";
+        ctx.lineWidth = 1;
+        ctx.stroke();
       }
       if (trackedQ) {
         const ta = trackedQ.type === "rescue" && !trackedQ.rescued
@@ -7838,17 +9162,38 @@ function stepRest() {
   const pp = G.player;
   if (G.monsters.some(m => G.visible[m.y] && G.visible[m.y][m.x])) {
     G.camping = false;
+    G.campSleepUntilDawn = false;
     logMsg("Your rest is broken -- enemies are near!", "warn");
     render();
     return;
   }
-  if (pp.hp >= pp.hpMax && pp.mp >= pp.mpMax) {
+  // sleeping-at-home: stop only when the world reaches dawn AND we're
+  // fully rested. Cap at one full day (2400 turns) so a starting-at-
+  // dawn sleep doesn't immediately exit.
+  if (G.campSleepUntilDawn) {
+    const ph = timeOfDay().phase;
+    const elapsed = G.turn - G.campStartTurn;
+    if (ph === "dawn" && pp.hp >= pp.hpMax && pp.mp >= pp.mpMax && elapsed > 60) {
+      G.camping = false;
+      G.campSleepUntilDawn = false;
+      logMsg("You wake at dawn, fully rested.", "good");
+      render();
+      return;
+    }
+    if (elapsed >= 2400) {
+      // safety: don't sleep more than a full day
+      G.camping = false;
+      G.campSleepUntilDawn = false;
+      logMsg("You wake stiff -- a full day has passed.", "dim");
+      render();
+      return;
+    }
+  } else if (pp.hp >= pp.hpMax && pp.mp >= pp.mpMax) {
     G.camping = false;
     logMsg("You break camp, fully rested.", "good");
     render();
     return;
-  }
-  if (G.turn - G.campStartTurn >= 500) {
+  } else if (G.turn - G.campStartTurn >= 500) {
     // a hard cap so a stuck status (e.g. permanent poison vs regen)
     // can't camp the player forever
     G.camping = false;
@@ -7858,7 +9203,8 @@ function stepRest() {
   }
   endTurn();
   if (G.over) { G.camping = false; return; }
-  restTimer = setTimeout(stepRest, 20);
+  // when sleeping at home, tick faster so the day passes visibly
+  restTimer = setTimeout(stepRest, G.campSleepUntilDawn ? 4 : 20);
 }
 
 /* walk the queued path one tile at a time, pausing for animation,
@@ -8051,6 +9397,9 @@ function doAction(act) {
     case "music": toggleSound(); render(); break;
     case "map": if (mapOpen) closeWorldMap(); else openWorldMap(); break;
     case "quests": if (questListOpen) closeQuestList(); else openQuestList(); break;
+    case "build": toggleBuildMode(); break;
+    case "sneak": if (tryStealth()) render(); break;
+    case "realtime": toggleRealtime(); break;
     default:
       if (act && act.indexOf("spell:") === 0) {
         if (castSpell(act.slice(6))) endTurn(); else render();
@@ -8158,6 +9507,19 @@ function onCanvasClick(e) {
   const tx = camX + Math.floor((e.clientX - rect.left) / rect.width * VIEW_W);
   const ty = camY + Math.floor((e.clientY - rect.top) / rect.height * VIEW_H);
   const isSurface = G.branch === "Surface";
+  // build mode: click paints, right-click erases. Convert Surface
+  // world coord back to chunk-local for the paint call.
+  if (G.buildMode) {
+    let lx = tx, ly = ty;
+    if (isSurface && G.surfaceCoord) {
+      lx = tx - G.surfaceCoord.cx * MAP_W;
+      ly = ty - G.surfaceCoord.cy * MAP_H;
+    }
+    if (lx < 0 || ly < 0 || lx >= MAP_W || ly >= MAP_H) return;
+    const erase = e.button === 2 || e.shiftKey;
+    if (paintBuildCell(lx, ly, erase)) render();
+    return;
+  }
   if (!isSurface && (tx < 0 || ty < 0 || tx >= MAP_W || ty >= MAP_H)) {
     return;
   }
@@ -8374,6 +9736,22 @@ function onKey(e) {
     case "m": case "M":
       toggleSound(); render();
       e.preventDefault(); break;
+    case "H":
+      if (tryStealth()) render();
+      e.preventDefault(); break;
+    case "D":
+      if (dropCarriedBody()) { endTurn(); render(); }
+      else render();
+      e.preventDefault(); break;
+    case "b": case "B":
+      toggleBuildMode();
+      e.preventDefault(); break;
+    case "t": case "T":
+      toggleRealtime();
+      e.preventDefault(); break;
+    case "Escape":
+      if (G && G.buildMode) { closeBuildMode(); e.preventDefault(); }
+      break;
     default: break;
   }
 }
@@ -8483,6 +9861,21 @@ const SFX = {
                    (f, i) => tone(f, 0.17, "triangle", 0.14, i * 0.13)),
   death:   () => { tone(200, 0.5, "sawtooth", 0.16);
                    tone(90, 0.7, "sawtooth", 0.14, 0.1); },
+  // soft slow whisper as you melt into shadow
+  sneak:   () => { tone(220, 0.18, "sine", 0.06);
+                   tone(160, 0.22, "sine", 0.05, 0.08); },
+  // short sharp metallic stab (sneak attack)
+  backstab:() => { tone(900, 0.04, "square", 0.10);
+                   tone(420, 0.08, "triangle", 0.13, 0.03); },
+  // heavy thump of a body hitting the floor
+  body:    () => { tone(110, 0.16, "sawtooth", 0.14);
+                   tone(70, 0.20, "sawtooth", 0.10, 0.05); },
+  // klaxon -- alternating two-tone urgency, ~0.6s. Used when a guard
+  // discovers a murdered NPC and the keep goes hostile.
+  alert:   () => { [0, 0.16, 0.32, 0.48].forEach(t => {
+                    tone(820, 0.10, "square", 0.16, t);
+                    tone(560, 0.10, "square", 0.14, t + 0.08);
+                  }); },
 };
 
 function sfx(name) {
@@ -8701,6 +10094,11 @@ async function boot() {
   canvas.addEventListener("mousemove", onCanvasHover);
   canvas.addEventListener("mouseleave", () => {
     if (hoverTile) { hoverTile = null; if (G && !G.over) render(); }
+  });
+  // right-click = erase while in build mode. Suppress the browser
+  // context menu so the click reaches our handler cleanly.
+  canvas.addEventListener("contextmenu", (e) => {
+    if (G && G.buildMode) { e.preventDefault(); onCanvasClick(e); }
   });
   document.getElementById("action-bar").addEventListener("click", (e) => {
     const btn = e.target.closest("button");

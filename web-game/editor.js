@@ -22,7 +22,7 @@ const T = {
   WELL:16, SHRINE:17, GRAVE:18, CAMPSITE:19, IDOL:20, MANA_NODE:21,
   SIGNPOST:22, BEACON:23, WISHING_WELL:24, STANDING_STONE:25,
   FLOWERS:26, LECTERN:27, FRUIT_CACHE:28, DEEP_WATER:29,
-  TELEPORTER:30,
+  TELEPORTER:30, CASTLE_GATE:31, EXIT_GATE:32,
 };
 
 // the terrain brushes shown in the palette grid
@@ -54,6 +54,8 @@ const TILE_BRUSHES = [
   { t: T.IDOL,          glyph: "i",  col: "#cc4444", name: "idol"   },
   { t: T.WISHING_WELL,  glyph: "W",  col: "#9ae0ff", name: "wish"   },
   { t: T.TELEPORTER,    glyph: "T",  col: "#b986ff", name: "telep"  },
+  { t: T.CASTLE_GATE,   glyph: "=",  col: "#ffd24a", name: "cstgate" },
+  { t: T.EXIT_GATE,     glyph: "=",  col: "#88c0ff", name: "exitgate"},
 ];
 
 // editor state
@@ -71,7 +73,13 @@ const STATE = {
   brush: TILE_BRUSHES[0],   // default floor
   artBrush: null,           // selected art override (or null)
   tool: "paint",            // paint, erase, entity, fill
+  // which branch we're authoring: "Surface" uses cx/cy/floor, "Castle"
+  // uses sx/sy/icx/icy/floor (the castle's owning surface chunk plus
+  // an interior chunk coord -- castles take one Surface tile but are
+  // a chunked pocket-grid inside).
+  branch: "Surface",
   cx: 0, cy: 0, floor: 0,
+  sx: 0, sy: 0, icx: 0, icy: 0,
   paintMode: null,          // "left" | "right" while dragging
   // undo / redo stacks of full {tiles, tileArt, teleporters, entities}
   // snapshots, capped so memory doesn't run away
@@ -598,23 +606,41 @@ function openNpcDialogModal(npc) {
  * ============================================================= */
 
 function chunkKey() {
+  if (STATE.branch === "Castle") {
+    return "Editor:Castle:" + STATE.sx + "," + STATE.sy +
+           ":" + STATE.icx + "," + STATE.icy + ":" + (STATE.floor | 0);
+  }
   return "Editor:" + STATE.cx + "," + STATE.cy + ":" + STATE.floor;
 }
 
 function snapshot() {
-  return {
-    cx: STATE.cx, cy: STATE.cy, floor: STATE.floor,
+  const base = {
+    branch: STATE.branch,
+    floor: STATE.floor,
     tiles: STATE.tiles, tileArt: STATE.tileArt,
     teleporters: STATE.teleporters,
     entities: STATE.entities,
     savedAt: Date.now(),
   };
+  if (STATE.branch === "Castle") {
+    base.sx = STATE.sx; base.sy = STATE.sy;
+    base.icx = STATE.icx; base.icy = STATE.icy;
+  } else {
+    base.cx = STATE.cx; base.cy = STATE.cy;
+  }
+  return base;
 }
 
 function loadSnapshot(snap) {
   if (!snap || !Array.isArray(snap.tiles)) return false;
-  STATE.cx = snap.cx | 0; STATE.cy = snap.cy | 0;
+  STATE.branch = snap.branch === "Castle" ? "Castle" : "Surface";
   STATE.floor = snap.floor | 0;
+  if (STATE.branch === "Castle") {
+    STATE.sx = snap.sx | 0; STATE.sy = snap.sy | 0;
+    STATE.icx = snap.icx | 0; STATE.icy = snap.icy | 0;
+  } else {
+    STATE.cx = snap.cx | 0; STATE.cy = snap.cy | 0;
+  }
   STATE.tiles = makeBlankTiles();
   for (let y = 0; y < MAP_H && y < snap.tiles.length; y++) {
     for (let x = 0; x < MAP_W && x < snap.tiles[y].length; x++) {
@@ -624,10 +650,34 @@ function loadSnapshot(snap) {
   STATE.tileArt = snap.tileArt ? { ...snap.tileArt } : {};
   STATE.teleporters = snap.teleporters ? { ...snap.teleporters } : {};
   STATE.entities = Array.isArray(snap.entities) ? snap.entities.slice() : [];
-  document.getElementById("ed-cx").value = STATE.cx;
-  document.getElementById("ed-cy").value = STATE.cy;
-  document.getElementById("ed-floor").value = String(STATE.floor);
+  syncCoordInputs();
   return true;
+}
+
+/* push STATE.* into the visible coord inputs and toggle which set
+ * (surface cx/cy vs castle sx/sy/icx/icy) is shown. */
+function syncCoordInputs() {
+  const b = STATE.branch === "Castle" ? "Castle" : "Surface";
+  const sel = document.getElementById("ed-branch");
+  if (sel) sel.value = b;
+  const surfRow = document.getElementById("ed-surface-coords");
+  const castleRow = document.getElementById("ed-castle-coords");
+  if (surfRow)   surfRow.style.display   = b === "Surface" ? "" : "none";
+  if (castleRow) castleRow.style.display = b === "Castle"  ? "" : "none";
+  const cx = document.getElementById("ed-cx");
+  const cy = document.getElementById("ed-cy");
+  if (cx) cx.value = STATE.cx;
+  if (cy) cy.value = STATE.cy;
+  const sx = document.getElementById("ed-sx");
+  const sy = document.getElementById("ed-sy");
+  const icx = document.getElementById("ed-icx");
+  const icy = document.getElementById("ed-icy");
+  if (sx) sx.value = STATE.sx;
+  if (sy) sy.value = STATE.sy;
+  if (icx) icx.value = STATE.icx;
+  if (icy) icy.value = STATE.icy;
+  const fl = document.getElementById("ed-floor");
+  if (fl) fl.value = String(STATE.floor);
 }
 
 function saveToGame() {
@@ -763,6 +813,22 @@ function init() {
     (e) => { STATE.cy = parseInt(e.target.value, 10) || 0; });
   document.getElementById("ed-floor").addEventListener("change",
     (e) => { STATE.floor = parseInt(e.target.value, 10) || 0; });
+  // Branch picker -- toggles between Surface (cx,cy) and Castle
+  // (sx,sy + icx,icy) coord groups.
+  const branchSel = document.getElementById("ed-branch");
+  if (branchSel) {
+    branchSel.addEventListener("change", (e) => {
+      STATE.branch = e.target.value === "Castle" ? "Castle" : "Surface";
+      syncCoordInputs();
+      setStatus("Branch: " + STATE.branch);
+    });
+  }
+  for (const [id, key] of
+       [["ed-sx","sx"],["ed-sy","sy"],["ed-icx","icx"],["ed-icy","icy"]]) {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener("input",
+      (e) => { STATE[key] = parseInt(e.target.value, 10) || 0; });
+  }
   document.getElementById("ed-save").addEventListener("click", saveToGame);
   document.getElementById("ed-clear").addEventListener("click", clearChunk);
   document.getElementById("ed-export").addEventListener("click", downloadJSON);
