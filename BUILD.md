@@ -30,10 +30,12 @@ python build_desktop.py
 ```
 
 PyInstaller's `--onefile` mode packs the Python interpreter, the
-desktop launcher, every HTML/JS/CSS/JSON file, and the entire `tiles/`
-tree into a single ~30 MB `CrawlWeb.exe`.  At launch the binary
-extracts to a temp folder, serves itself on a private localhost port,
-and opens Microsoft Edge `--app` (or Chrome fallback) pointed at it.
+desktop launcher, every HTML/JS/CSS/JSON file (including the chunk
+editor: `editor.html`/`editor.js`/`editor.css`), and the entire
+`tiles/` tree into a single ~31 MB `CrawlWeb.exe`.  At launch the
+binary extracts to a temp folder, serves itself on a private localhost
+port, and opens Microsoft Edge `--app` (or Chrome fallback) pointed at
+it.
 
 Smoke-test the bundle:
 

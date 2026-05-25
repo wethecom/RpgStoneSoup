@@ -1093,6 +1093,9 @@ async function main() {
                                   name: "test", qty: 1 });
       } else if (q.type === "rescue") {
         q.rescued = true;
+      } else if (q.type === "retrieve") {
+        api.G.player.pack.push({ key: "quest_item", questRelic: true,
+          questId: q.id, name: q.relic, qty: 1 });
       }
       sandbox.turnInQuest(qid);
       check("turning in a completed quest pays the reward",

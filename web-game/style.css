@@ -178,6 +178,18 @@ option:checked { background: #2a4055; color: #fff; }
 /* inventory overlay list */
 .inv-body { font-size: 14px; line-height: 1.85; }
 .inv-body .inv-row { display: flex; gap: 10px; }
+/* clickable rows light up on hover -- inventory uses, shop buys/sells */
+.inv-body .inv-row.inv-clickable {
+  cursor: pointer;
+  padding: 2px 6px;
+  margin: 0 -6px;
+  border-radius: 3px;
+  transition: background 80ms ease;
+}
+.inv-body .inv-row.inv-clickable:hover {
+  background: #2a4055;
+  color: #fff;
+}
 .inv-body .inv-slot {
   color: #8a8a98; min-width: 130px; text-transform: uppercase;
   font-size: 12px; letter-spacing: 1px;
@@ -232,6 +244,12 @@ option:checked { background: #2a4055; color: #fff; }
      uses every available pixel instead of leaving a black gap */
   width: 100%;
   height: auto;
+  transition: box-shadow 80ms ease, border-color 80ms ease;
+}
+/* damage-flash overlay -- short red ring when the player takes a hit */
+.map.hit-flash {
+  border-color: #ff3333;
+  box-shadow: inset 0 0 24px rgba(255, 40, 40, 0.55);
 }
 
 /* clickable action buttons -- a full-width strip below the canvas +
@@ -315,6 +333,7 @@ option:checked { background: #2a4055; color: #fff; }
 .bar.hp.low > span { background: linear-gradient(#e55, #a22); }
 .bar.mp > span { background: linear-gradient(#46c, #239); }
 .bar.xp > span { background: linear-gradient(#c9c, #847); }
+.bar.food > span { background: linear-gradient(#d8a060, #8c5a28); }
 .bar-label {
   position: absolute; top: 0; left: 0; width: 100%; text-align: center;
   font-size: 11px; line-height: 17px; color: #fff;
@@ -337,6 +356,11 @@ option:checked { background: #2a4055; color: #fff; }
 .log .msg-sys { color: #8fbce0; }
 .log .msg-dim { color: #777; }
 .log .turn-sep { color: #333; }
+/* recency fade -- the latest few lines are full strength, anything
+   older fades so the player's eye lands on the new events first */
+.log > div { opacity: 0.55; transition: opacity 100ms ease; }
+.log > div:nth-last-child(-n+3) { opacity: 1; }
+.log > div:nth-last-child(n+4):nth-last-child(-n+8) { opacity: 0.78; }
 
 .provenance {
   margin-top: 8px;

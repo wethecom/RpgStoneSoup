@@ -25,7 +25,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 
 # static files the running game fetches / loads
 DATA_FILES = ["index.html", "game.js", "style.css",
-              "game-data.json", "vaults.json"]
+              "game-data.json", "vaults.json",
+              "editor.html", "editor.js", "editor.css"]
 DATA_DIRS = ["tiles"]
 
 

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crawl Web — Chunk Editor</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="editor.css">
+</head>
+<body>
+<div id="app">
+
+  <header class="ed-header">
+    <h1>Chunk&nbsp;Editor</h1>
+    <a href="index.html" class="ed-back">&larr;&nbsp;Game</a>
+    <span id="ed-status" class="ed-status"></span>
+  </header>
+
+  <div class="ed-layout">
+
+    <!-- LEFT: palette -->
+    <aside class="ed-palette">
+      <div class="ed-section">
+        <label class="ed-label">Current brush</label>
+        <div id="ed-brush-preview" class="ed-brush-preview"></div>
+      </div>
+
+      <div class="ed-section">
+        <label class="ed-label">Coord</label>
+        <div class="ed-row">
+          cx: <input id="ed-cx" type="number" value="0" step="1" style="width:60px">
+          cy: <input id="ed-cy" type="number" value="0" step="1" style="width:60px">
+        </div>
+        <div class="ed-row">
+          Floor: <select id="ed-floor">
+            <option value="0">Surface (0)</option>
+            <option value="-1">Cellar (-1)</option>
+            <option value="-2">Sub-cellar (-2)</option>
+            <option value="1">Upper floor (+1)</option>
+            <option value="2">Attic (+2)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="ed-section">
+        <label class="ed-label">Tools</label>
+        <div class="ed-row">
+          <button data-tool="paint"     class="ed-tool active">Paint</button>
+          <button data-tool="erase"     class="ed-tool">Erase&nbsp;(floor)</button>
+          <button data-tool="entity"    class="ed-tool">Entity</button>
+          <button data-tool="fill"      class="ed-tool">Fill</button>
+        </div>
+      </div>
+
+      <div class="ed-section">
+        <label class="ed-label">Tile brush</label>
+        <div id="ed-tile-palette" class="ed-tile-grid"></div>
+      </div>
+
+      <div class="ed-section">
+        <label class="ed-label">Entity to drop</label>
+        <select id="ed-entity-kind">
+          <optgroup label="Hostile monsters">
+            <option value="mon:MONS_RAT">Rat</option>
+            <option value="mon:MONS_BAT">Bat</option>
+            <option value="mon:MONS_ORC">Orc</option>
+            <option value="mon:MONS_GOBLIN">Goblin</option>
+            <option value="mon:MONS_KOBOLD">Kobold</option>
+            <option value="mon:MONS_BANDIT">Bandit</option>
+          </optgroup>
+          <optgroup label="Knights / guards (neutral)">
+            <option value="mon:MONS_WATCHMAN">Watchman</option>
+            <option value="mon:MONS_TOWN_GUARD">Town guard</option>
+            <option value="mon:MONS_KNIGHT">Knight</option>
+            <option value="mon:MONS_SERGEANT">Sergeant</option>
+            <option value="mon:MONS_CAPTAIN">Captain</option>
+            <option value="mon:MONS_PALADIN">Paladin</option>
+            <option value="mon:MONS_BLACK_KNIGHT">Black knight</option>
+          </optgroup>
+          <optgroup label="Bosses">
+            <option value="mon:MONS_BOSS_VAMPIRE">Vampire lord</option>
+            <option value="mon:MONS_BOSS_LICH">Ancient lich</option>
+            <option value="mon:MONS_BOSS_BLACK_DEMON">Black demon</option>
+            <option value="mon:MONS_BOSS_FOUR_HEADED_DRAGON">Four-headed dragon</option>
+          </optgroup>
+          <optgroup label="Friendly NPCs">
+            <option value="npc:questgiver">Questgiver (man / woman)</option>
+            <option value="npc:shopkeeper">Shopkeeper</option>
+            <option value="npc:king">King (gives major quest)</option>
+            <option value="npc:child">Child (ambient)</option>
+          </optgroup>
+          <optgroup label="Items">
+            <option value="item:gold">Gold pile</option>
+            <option value="item:chest">Treasure chest</option>
+            <option value="item:key">Iron key</option>
+            <option value="item:heal">Potion of healing</option>
+            <option value="item:might">Potion of might</option>
+            <option value="item:teleport">Scroll of teleportation</option>
+            <option value="item:food:ration">Ration</option>
+            <option value="item:food:fruit">Fruit</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="ed-section">
+        <label class="ed-label">Storage</label>
+        <div class="ed-row">
+          <button id="ed-save"     class="ed-btn">Save to game</button>
+          <button id="ed-clear"    class="ed-btn">Clear chunk</button>
+        </div>
+        <div class="ed-row">
+          <button id="ed-export"   class="ed-btn">Download JSON</button>
+          <button id="ed-import"   class="ed-btn">Import JSON</button>
+          <input id="ed-import-file" type="file" accept=".json" style="display:none">
+        </div>
+        <div class="ed-row">
+          <button id="ed-list"     class="ed-btn">List saved</button>
+          <button id="ed-delete"   class="ed-btn">Delete this chunk</button>
+        </div>
+        <div id="ed-saved-list" class="ed-saved-list"></div>
+      </div>
+
+      <div class="ed-section">
+        <label class="ed-label">Teleporter destination</label>
+        <div class="ed-row">
+          <button id="ed-tp-clear" class="ed-btn">Reset (prompt next paint)</button>
+        </div>
+        <div id="ed-tp-status" class="ed-hint" style="margin-top:4px"></div>
+      </div>
+
+      <div class="ed-section ed-hint">
+        Click + drag to paint &middot; right-click to erase &middot;
+        Custom chunks override the game's procedural generation at
+        their coord. Open the game and walk to (cx,cy) to test.
+        Painting a TELEPORTER cell prompts for destination once -- it
+        sticks until you reset it.
+        Dropping an NPC opens a dialog editor; click the NPC again
+        with the Entity tool to re-edit its speech.
+        <b>Ctrl+Z</b> undo &middot; <b>Ctrl+Y</b> redo.
+      </div>
+    </aside>
+
+    <!-- RIGHT: canvas -->
+    <div class="ed-canvas-wrap">
+      <canvas id="ed-canvas" width="1456" height="676"></canvas>
+      <div id="ed-cursor-info" class="ed-cursor-info"></div>
+    </div>
+
+  </div>
+
+  <!-- Custom modal for NPC name + multi-line dialog -->
+  <div id="ed-modal" class="ed-modal hidden">
+    <div class="ed-modal-panel">
+      <h2 id="ed-modal-title">Set NPC dialog</h2>
+      <label class="ed-label" for="ed-modal-name">Name</label>
+      <input id="ed-modal-name" type="text" placeholder="(blank = random village name)">
+      <label class="ed-label" for="ed-modal-dialog">Dialog (multi-line)</label>
+      <textarea id="ed-modal-dialog" rows="6" placeholder="Stranger! These walls have seen better days..."></textarea>
+      <div class="ed-modal-actions">
+        <button id="ed-modal-ok" class="ed-btn">OK</button>
+        <button id="ed-modal-cancel" class="ed-btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script src="editor.js"></script>
+</body>
+</html>
