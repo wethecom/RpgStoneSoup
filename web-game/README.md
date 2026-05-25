@@ -39,14 +39,15 @@ To ship it as a single double-click executable that needs no Python:
 
 ```sh
 pip install pyinstaller
-python web-game/build_desktop.py      # -> web-game/dist/CrawlWeb.exe
+python web-game/build_desktop.py      # -> web-game/dist/RpgStoneSoup.exe
 ```
 
-`CrawlWeb.exe` packs the HTML / JS / JSON and the whole `tiles/` folder
-inside itself; it only relies on the Chromium browser the machine
-already has (Edge ships with Windows). Re-run `build_desktop.py` after
-regenerating data so the bundle stays current. Verify a build without
-opening a window with `CrawlWeb.exe --selftest`.
+`RpgStoneSoup.exe` packs the HTML / JS / JSON and the whole `tiles/`
+folder inside itself; it only relies on the Chromium browser the
+machine already has (Edge ships with Windows). Re-run
+`build_desktop.py` after regenerating data so the bundle stays
+current. Verify a build without opening a window with
+`RpgStoneSoup.exe --selftest`.
 
 ## How to play
 
@@ -175,7 +176,7 @@ glyph automatically.
 - `GOALS.md` — the project goals / roadmap checklist.
 - `index.html`, `style.css`, `game.js` — the game itself.
 - `desktop.py` — runs the game in its own chromeless window.
-- `build_desktop.py` — bundles it into `dist/CrawlWeb.exe` (PyInstaller).
+- `build_desktop.py` — bundles it into `dist/RpgStoneSoup.exe` (PyInstaller).
 - `test_headless.js` — a headless smoke test that loads `game.js` in a
   stubbed DOM and plays full games (a competent BFS agent) to verify
   level generation, FOV, combat, descent, tile loading and win/lose all

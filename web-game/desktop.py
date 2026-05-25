@@ -11,7 +11,7 @@ window. Edge's engine is Chromium, the same engine CEF embeds.
 
 When bundled by build_desktop.py the static files travel inside the
 executable and are served from the PyInstaller extraction folder, so
-CrawlWeb.exe is a single double-click app.
+RpgStoneSoup.exe is a single double-click app.
 """
 
 from __future__ import annotations
@@ -25,7 +25,7 @@ import sys
 import tempfile
 import threading
 
-WINDOW_TITLE = "Crawl Web"
+WINDOW_TITLE = "RPG Stone Soup"
 
 
 def web_dir() -> str:
@@ -72,7 +72,7 @@ def find_browser() -> str | None:
 
 def selftest() -> int:
     """Verify the bundle end to end without opening a window: serve the
-    files and fetch them back. Run as `CrawlWeb.exe --selftest`; the
+    files and fetch them back. Run as `RpgStoneSoup.exe --selftest`; the
     result is written to a temp file since a windowed exe has no
     console. Returns a process exit code."""
     import urllib.request

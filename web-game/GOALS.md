@@ -129,8 +129,8 @@ its own simplifications instead of the export:
   change weapon or armour.
 - [x] **Desktop app** — `desktop.py` runs the game in its own
   chromeless Edge / Chrome window; `build_desktop.py` bundles it into
-  a single standalone `CrawlWeb.exe` (PyInstaller) that needs no
-  Python. `CrawlWeb.exe --selftest` verifies a build headlessly.
+  a single standalone `RpgStoneSoup.exe` (PyInstaller) that needs no
+  Python. `RpgStoneSoup.exe --selftest` verifies a build headlessly.
 - [x] **Inventory & underfoot** — `i` opens a proper inventory panel
   (weapon, armour, ring, wand, quiver, potions, scrolls, gold, spells,
   religion); the sidebar always shows a "Here: …" line naming the item

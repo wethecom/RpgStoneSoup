@@ -1,4 +1,4 @@
-# Contributing to Crawl Web
+# Contributing to RPG Stone Soup
 
 Pull requests welcome.  Quick rules:
 
@@ -12,7 +12,7 @@ Pull requests welcome.  Quick rules:
 2. **Build the desktop binary if you touched build glue.**
    ```
    python build_desktop.py
-   web-game/dist/CrawlWeb.exe --selftest
+   web-game/dist/RpgStoneSoup.exe --selftest
    ```
 
 3. **License:** all contributions are GPL-2.0-or-later, matching DCSS.

@@ -4,7 +4,7 @@
     pip install pyinstaller
     python web-game/build_desktop.py
 
-Produces web-game/dist/CrawlWeb.exe (Windows) -- a self-contained app
+Produces web-game/dist/RpgStoneSoup.exe (Windows) -- a self-contained app
 that needs no Python. The HTML / JS / JSON and the whole tiles/ folder
 are packed inside the executable; desktop.py serves them locally and
 opens them in a chromeless Edge / Chrome window. The browser engine is
@@ -48,7 +48,7 @@ def main() -> int:
     args = [
         sys.executable, "-m", "PyInstaller",
         "--noconfirm", "--onefile", "--windowed",
-        "--name", "CrawlWeb",
+        "--name", "RpgStoneSoup",
         "--distpath", os.path.join(HERE, "dist"),
         "--workpath", os.path.join(HERE, "build"),
         "--specpath", HERE,
@@ -63,7 +63,8 @@ def main() -> int:
     rc = subprocess.call(args)
     if rc == 0:
         exe = os.path.join(HERE, "dist",
-                           "CrawlWeb.exe" if os.name == "nt" else "CrawlWeb")
+                           "RpgStoneSoup.exe" if os.name == "nt"
+                           else "RpgStoneSoup")
         print(f"\nbuilt {exe}")
     return rc
 

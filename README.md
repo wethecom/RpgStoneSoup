@@ -6,8 +6,7 @@ export.  It plays in JavaScript in a chromeless browser window, loading
 its monster definitions, vault recipes and tile sheets from the same
 files DCSS ships.
 
-The binary stays `CrawlWeb.exe` (historic name); the game brands as
-**RPG Stone Soup** in-window.
+The binary is **`RpgStoneSoup.exe`** and the window brands as **RPG Stone Soup**.
 
 ![RPG Stone Soup](docs/screenshot.png)
 
@@ -88,11 +87,11 @@ pip install pyinstaller pillow
 python build_desktop.py
 ```
 
-The bundled binary lands in `web-game/dist/CrawlWeb.exe`.  Run it from
+The bundled binary lands in `web-game/dist/RpgStoneSoup.exe`.  Run it from
 anywhere -- everything is packed inside (Python, the HTML / JS / CSS,
 the editor, and the full ~29 MB rltiles asset tree).
 
-A pre-built `CrawlWeb.exe` lives in `release/` for one-double-click
+A pre-built `RpgStoneSoup.exe` lives in `release/` for one-double-click
 play.
 
 ## Tests
@@ -153,15 +152,15 @@ web-game/
     roof/             building roof variants
     manifest.json     tile-key -> path map (editor search index)
   desktop.py          chromeless-browser launcher (Edge --app fallback Chrome)
-  build_desktop.py    PyInstaller wrapper -> CrawlWeb.exe
+  build_desktop.py    PyInstaller wrapper -> RpgStoneSoup.exe
   build_game_data.py  rebuilds game-data.json from DCSS source/
   build_vaults.py     rebuilds vaults.json from DCSS source/dat/des/
   build_tiles.py      rebuilds tiles/manifest.json + copies images
   test_headless.js    pure-Node test harness
 
 release/
-  CrawlWeb.exe        pre-built standalone (~31 MB)
-  Play CrawlWeb.bat   one-click launcher
+  RpgStoneSoup.exe        pre-built standalone (~31 MB)
+  Play RpgStoneSoup.bat   one-click launcher
   README.txt          end-user readme
 ```
 

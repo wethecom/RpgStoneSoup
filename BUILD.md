@@ -32,7 +32,7 @@ python build_desktop.py
 PyInstaller's `--onefile` mode packs the Python interpreter, the
 desktop launcher, every HTML/JS/CSS/JSON file (including the chunk
 editor: `editor.html`/`editor.js`/`editor.css`), and the entire
-`tiles/` tree into a single ~31 MB `CrawlWeb.exe`.  At launch the
+`tiles/` tree into a single ~31 MB `RpgStoneSoup.exe`.  At launch the
 binary extracts to a temp folder, serves itself on a private localhost
 port, and opens Microsoft Edge `--app` (or Chrome fallback) pointed at
 it.
@@ -40,7 +40,7 @@ it.
 Smoke-test the bundle:
 
 ```
-web-game\dist\CrawlWeb.exe --selftest
+web-game\dist\RpgStoneSoup.exe --selftest
 ```
 
 That runs the same data-integrity checks the headless test does but
@@ -88,8 +88,8 @@ python build_tiles.py       # rebuilds tiles/manifest.json + copies images
 ```
 cd ..
 mkdir release
-cp web-game/dist/CrawlWeb.exe release/
-# write a README.txt + Play CrawlWeb.bat
+cp web-game/dist/RpgStoneSoup.exe release/
+# write a README.txt + Play RpgStoneSoup.bat
 powershell -Command "Compress-Archive -Path 'release/*' \
-    -DestinationPath 'CrawlWeb-release.zip' -Force"
+    -DestinationPath 'RpgStoneSoup-release.zip' -Force"
 ```
