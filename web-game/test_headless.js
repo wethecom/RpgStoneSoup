@@ -159,7 +159,7 @@ src += `
   tryStealth, stealthScore, dropCarriedBody,
   timeOfDay, timeLabel, DAY_LENGTH,
   paintBuildCell, ensurePlayerHome, savePlayerHome, loadPlayerHome,
-  toggleBuildMode, openBuildMode, closeBuildMode,
+  toggleBuildMode, openBuildMode, closeBuildMode, harvestRate,
   setRealtime, toggleRealtime, REALTIME_TICK_MS,
   moonPhase, moonPhaseName, moonStealthMod,
   maybeNightRaid,
@@ -345,12 +345,36 @@ async function main() {
     const refused = api.paintBuildCell(5, 6, false);
     check("paintBuildCell refuses when materials insufficient",
           refused === false && G.level.tiles[6][5] === 1);
-    // erasing a wall should yield stone
+    // erasing a ROCK with a PICKAXE almost always yields stone (95%
+  // rate); 25 tries is plenty to see at least one success.
+    const savedWeapon = G.player.weapon;
+    G.player.weapon = { name: "pickaxe", dice: 1, sides: 8, acc: 1, str: 2 };
     const before = api.loadPlayerHome().materials.stone | 0;
-    api.paintBuildCell(5, 5, true);    // erase the wall we just placed
-    const after = api.loadPlayerHome().materials.stone | 0;
-    check("erasing a wall yields +1 stone",
-          after === before + 1);
+    let gotOne = false;
+    for (let i = 0; i < 25 && !gotOne; i++) {
+      G.level.tiles[5][5] = 38;   // T.ROCK
+      api.paintBuildCell(5, 5, true);
+      gotOne = api.loadPlayerHome().materials.stone > before;
+    }
+    check("quarrying rock with a pickaxe yields stone", gotOne);
+    G.player.weapon = savedWeapon;
+    // harvest-rate math: proper tools win their material, wrong
+    // tools struggle, bare hands are weak across the board
+    check("axe outperforms bare hand on wood",
+          api.harvestRate("hand-axe", "wood") > api.harvestRate("", "wood"));
+    check("pickaxe outperforms bare hand on stone",
+          api.harvestRate("pickaxe", "stone") > api.harvestRate("", "stone"));
+    check("club is worse than knife on trees",
+          api.harvestRate("mace", "wood") < api.harvestRate("dagger", "wood"));
+    check("club beats knife on stone",
+          api.harvestRate("mace", "stone") > api.harvestRate("dagger", "stone"));
+    // erasing a WALL must NOT yield stone now
+    G.level.tiles[7][5] = 0;   // T.WALL
+    const beforeW = api.loadPlayerHome().materials.stone | 0;
+    api.paintBuildCell(5, 7, true);
+    const afterW = api.loadPlayerHome().materials.stone | 0;
+    check("erasing a built wall does NOT yield stone",
+          afterW === beforeW);
   }
   api.closeBuildMode();
   check("buildMode flag flips off", !G.buildMode);

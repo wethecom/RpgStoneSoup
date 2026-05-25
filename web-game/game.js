@@ -131,6 +131,11 @@ const T = { WALL: 0, FLOOR: 1, STAIRS_DOWN: 2, STAIRS_UP: 3,
             // Bumping a blacksmith NPC standing next to one trades
             // wood + stone for a weapon upgrade.
             FORGE: 37,
+            // ROCK: a raw quarryable boulder. Mountain-biome scatter
+            // and dungeon stone pockets. The ONLY tile that yields
+            // stone in build mode -- built/structural walls are
+            // untouchable so castles and shops stay intact.
+            ROCK: 38,
           };
 
 /* the difficulty depth of the current level: depth in the Dungeon,
@@ -743,8 +748,9 @@ function surfaceLayout(tiles, blockers, coord) {
         if (chance(0.28)) tiles[y][x] = T.WATER;
         else if (chance(0.15)) tiles[y][x] = T.TREE;
       } else if (b === "mountains" && !isSpawn && chance(0.10)) {
-        // sparse boulders, never solid walls
-        tiles[y][x] = T.WALL;
+        // sparse boulders -- the ONLY tile that yields stone when
+        // quarried in build mode. Built walls stay untouchable.
+        tiles[y][x] = T.ROCK;
       } else if (b === "lake" && chance(0.55)) {
         // deep middle of the lake when all 4 neighbours are also lake
         // biome; shallow rim when only some are -- gives lakes a
@@ -1833,6 +1839,7 @@ const BUILD_BRUSHES = [
   { t: 22, name: "Signpost",glyph: "s", costs: { wood: 2 },  tileKey: "signpost",    tileScope: "dngn" },
   { t: 19, name: "Camp",    glyph: "c", costs: { wood: 2 },  tileKey: "campsite",    tileScope: "dngn" },
   { t: 37, name: "Forge",   glyph: "F", costs: { wood: 3, stone: 5 }, tileKey: "forge", tileScope: "dngn" },
+  { t: 38, name: "Rock",    glyph: "*", costs: { stone: 1 }, tileKey: "standing_stone", tileScope: "dngn", desc: "place a quarryable boulder" },
 ];
 
 /* resolve a build brush's preview image path from the manifest. Some
@@ -1952,29 +1959,70 @@ function paintBuildCell(lx, ly, erase) {
     logMsg("Not enough materials for " + brush.name + ".", "dim");
     return false;
   }
-  // erasing trees / walls yields materials so the player has reason
-  // to chop / mine in build mode
-  if (erase) {
-    const old = G.level.tiles[ly][lx];
-    if (old === T.TREE) {
-      home.materials = home.materials || { wood: 0, stone: 0 };
-      home.materials.wood = (home.materials.wood | 0) + 1;
-      savePlayerHome(home);
-      logMsg("You chop the tree. +1 wood.", "good");
-    } else if (old === T.WALL) {
-      home.materials = home.materials || { wood: 0, stone: 0 };
-      home.materials.stone = (home.materials.stone | 0) + 1;
-      savePlayerHome(home);
-      logMsg("You quarry the wall. +1 stone.", "good");
-    }
-  }
-  // figure out the current chunk coord (Surface) or use 0,0 otherwise
+  // current chunk coord (Surface) -- needed for snapshot calls below
   let chunkCx = 0, chunkCy = 0;
   if (G.branch === "Surface" && G.surfaceCoord) {
     chunkCx = G.surfaceCoord.cx; chunkCy = G.surfaceCoord.cy;
   } else if (G.branch === "Castle" && G.castleCoord) {
-    // castles: build mode operates on the interior chunk too
     chunkCx = G.castleCoord.icx; chunkCy = G.castleCoord.icy;
+  }
+  // erasing trees / rocks yields materials so the player has reason
+  // to chop / quarry in build mode. Solid WALLs (buildings, castles,
+  // shop fronts, dungeon stone) are deliberately NOT erasable -- you
+  // can't carve through a shop or a castle keep.  Yield is gated on
+  // the player's WEAPON: axe / pickaxe drop materials almost every
+  // try; bare hands chip away slowly; the wrong tool barely scratches.
+  if (erase) {
+    const old = G.level.tiles[ly][lx];
+    if (old === T.WALL) {
+      logMsg("You can't break a built wall. Find rocks to quarry.", "dim");
+      return false;
+    }
+    const wpn = (G.player.weapon && G.player.weapon.name) || "";
+    if (old === T.TREE) {
+      const rate = harvestRate(wpn, "wood");
+      if (chance(rate)) {
+        home.materials = home.materials || { wood: 0, stone: 0 };
+        home.materials.wood = (home.materials.wood | 0) + 1;
+        savePlayerHome(home);
+        logMsg("You chop the tree. +1 wood.", "good");
+        // tree is felled only on a success -- otherwise it stays
+        G.level.tiles[ly][lx] = T.FLOOR;
+      } else {
+        logMsg(wpn
+          ? "Your " + wpn + " glances off the bark. (Try an axe.)"
+          : "You can barely dent the bark with your bare hands.",
+          "dim");
+        return false;     // tile stays a tree, no paint cycle
+      }
+    } else if (old === T.ROCK) {
+      const rate = harvestRate(wpn, "stone");
+      if (chance(rate)) {
+        home.materials = home.materials || { wood: 0, stone: 0 };
+        home.materials.stone = (home.materials.stone | 0) + 1;
+        savePlayerHome(home);
+        logMsg("You quarry the rock. +1 stone.", "good");
+        G.level.tiles[ly][lx] = T.FLOOR;
+      } else {
+        logMsg(wpn
+          ? "Your " + wpn + " can't crack the rock. (Try a pickaxe.)"
+          : "The rock doesn't budge for fingers alone.",
+          "dim");
+        return false;
+      }
+    }
+    // skip the rest of the painting cycle for these cases -- we
+    // already handled tile mutation above
+    if (old === T.TREE || old === T.ROCK) {
+      // snapshot to player home so the felled tree / quarried rock
+      // persists across visits, even outside our normal paint loop
+      if (G.branch === "Surface") {
+        snapshotPlayerChunk(chunkCx, chunkCy, 0,
+          [{ x: lx, y: ly, t: T.FLOOR }]);
+      }
+      renderBuildHud();
+      return true;
+    }
   }
   // apply to live tiles
   G.level.tiles[ly][lx] = brush.t;
@@ -2750,12 +2798,12 @@ function carveCorridor(tiles, x1, y1, x2, y2) {
 function passable(lvl, x, y) {
   if (x < 0 || y < 0 || x >= MAP_W || y >= MAP_H) return false;
   const t = lvl.tiles[y][x];
-  // walls, any closed door / gate, lava and trees block movement;
+  // walls, rocks, any closed door / gate, lava and trees block movement;
   // water is wadeable
   return t !== T.WALL && t !== T.DOOR && t !== T.DOOR_LOCKED &&
          t !== T.DOOR_STEEL && t !== T.GATE &&
          t !== T.LAVA && t !== T.TREE &&
-         t !== T.STANDING_STONE &&
+         t !== T.STANDING_STONE && t !== T.ROCK &&
          t !== T.DEEP_WATER;
 }
 
@@ -3165,6 +3213,40 @@ function moonPhase() {
 }
 function moonPhaseName(i) { return MOON_NAMES[(i | 0) % 8] || "new"; }
 
+/* ---- Tool-based harvesting ----
+ *
+ * Right-click chop/quarry is now an opposed roll: your weapon decides
+ * the chance per attempt. A bare hand barely chips a tree; a proper
+ * hand-axe (from the smith) drops one in two swings. Stone is the
+ * opposite story -- blunt tools and dedicated pickaxes win, swords
+ * and knives barely scratch it.
+ */
+function harvestRate(weaponName, material) {
+  const w = (weaponName || "").toLowerCase();
+  if (material === "wood") {
+    if (/pickaxe/.test(w)) return 0.55;        // OK -- has an edge
+    if (/\baxe\b|hatchet/.test(w)) return 0.90; // PROPER TOOL
+    if (/sword|scimitar|sabre|katana|falchion|broadsword|cutlass/.test(w))
+      return 0.40;
+    if (/dagger|knife|stiletto|shiv|rapier/.test(w)) return 0.25;
+    if (/club|mace|maul|flail|hammer|morningstar/.test(w))
+      return 0.10;                             // blunt -- bad for trees
+    if (/staff|whip|bow|sling/.test(w)) return 0.08;
+    return 0.15;                                // bare hands
+  }
+  if (material === "stone") {
+    if (/pickaxe/.test(w)) return 0.95;        // PROPER TOOL
+    if (/hammer|maul/.test(w)) return 0.55;
+    if (/club|mace|flail|morningstar/.test(w)) return 0.30;
+    if (/\baxe\b|hatchet/.test(w)) return 0.40;
+    if (/sword|scimitar|sabre|katana|falchion|broadsword|cutlass/.test(w))
+      return 0.15;
+    if (/dagger|knife|stiletto|shiv|rapier/.test(w)) return 0.08;
+    return 0.05;                                // bare hands -- very slow
+  }
+  return 0;
+}
+
 /* ---- Blacksmith ----
  *
  * Bumping a blacksmith NPC offers to forge an edge onto the player's
@@ -3175,47 +3257,98 @@ function moonPhaseName(i) { return MOON_NAMES[(i | 0) % 8] || "new"; }
 const SMITH_WOOD_COST = 4;
 const SMITH_STONE_COST = 6;
 const SMITH_MAX_UPGRADES = 5;
+const SMITH_AXE_WOOD = 3, SMITH_AXE_STONE = 4;
+const SMITH_PICK_WOOD = 2, SMITH_PICK_STONE = 8;
 function blacksmithService(npc) {
   const p = G.player;
-  if (!p.weapon) {
-    logMsg(npc.name + ": \"Bring me a blade first.\"", "dim");
-    return;
-  }
   const home = ensurePlayerHome();
   home.materials = home.materials || { wood: 0, stone: 0 };
   const haveWood = home.materials.wood | 0;
   const haveStone = home.materials.stone | 0;
-  const upgrades = (p.weapon.smithLevel | 0);
-  if (upgrades >= SMITH_MAX_UPGRADES) {
-    logMsg(npc.name + ": \"That edge'll cut iron now. Nothing more I can do.\"",
+  if (typeof prompt !== "function") {
+    logMsg(npc.name + ": \"Come back when there's daylight to work in.\"",
            "dim");
     return;
   }
-  if (haveWood < SMITH_WOOD_COST || haveStone < SMITH_STONE_COST) {
-    logMsg(npc.name + ': "I\'ll re-edge that blade for ' +
-           SMITH_WOOD_COST + ' wood and ' + SMITH_STONE_COST +
-           ' stone. You\'ve got ' + haveWood + 'w / ' + haveStone +
-           's. Come back when you can pay."', "warn");
+  const choice = prompt(
+    npc.name + " — The Forge\n\n" +
+    "You have: " + haveWood + " wood, " + haveStone + " stone.\n\n" +
+    "1) Edge weapon (+1 dmg)   [" + SMITH_WOOD_COST + "w + " + SMITH_STONE_COST + "s]\n" +
+    "2) Forge a hand-axe        [" + SMITH_AXE_WOOD + "w + " + SMITH_AXE_STONE + "s]\n" +
+    "3) Forge a pickaxe         [" + SMITH_PICK_WOOD + "w + " + SMITH_PICK_STONE + "s]\n" +
+    "(or cancel)",
+    "1");
+  if (choice == null || !choice.trim()) {
+    logMsg(npc.name + " grunts. \"Suit yourself.\"", "dim");
     return;
   }
-  // pay + upgrade. Bump the weapon's str so damage rises but not by
-  // a wild amount -- +1 per upgrade.
-  home.materials.wood -= SMITH_WOOD_COST;
-  home.materials.stone -= SMITH_STONE_COST;
-  savePlayerHome(home);
-  p.weapon.smithLevel = upgrades + 1;
-  p.weapon.str = (p.weapon.str | 0) + 1;
-  if (!/forged/i.test(p.weapon.name)) {
-    p.weapon.name = p.weapon.name + " (forged)";
-  } else {
-    // already labelled forged -- bump the suffix to (forged x N)
-    p.weapon.name = p.weapon.name.replace(/\s*\(forged.*\)$/, "") +
-                    " (forged x" + p.weapon.smithLevel + ")";
+  const c = choice.trim()[0];
+  if (c === "1") {
+    if (!p.weapon) {
+      logMsg(npc.name + ": \"Bring me a blade first.\"", "dim");
+      return;
+    }
+    const upgrades = (p.weapon.smithLevel | 0);
+    if (upgrades >= SMITH_MAX_UPGRADES) {
+      logMsg(npc.name + ": \"That edge'll cut iron now. Nothing more I can do.\"",
+             "dim");
+      return;
+    }
+    if (haveWood < SMITH_WOOD_COST || haveStone < SMITH_STONE_COST) {
+      logMsg(npc.name + ": \"Not enough for an edge. Try again later.\"", "warn");
+      return;
+    }
+    home.materials.wood -= SMITH_WOOD_COST;
+    home.materials.stone -= SMITH_STONE_COST;
+    savePlayerHome(home);
+    p.weapon.smithLevel = upgrades + 1;
+    p.weapon.str = (p.weapon.str | 0) + 1;
+    if (!/forged/i.test(p.weapon.name)) {
+      p.weapon.name = p.weapon.name + " (forged)";
+    } else {
+      p.weapon.name = p.weapon.name.replace(/\s*\(forged.*\)$/, "") +
+                      " (forged x" + p.weapon.smithLevel + ")";
+    }
+    logMsg(npc.name + ": \"That'll bite better.\" Your " + p.weapon.name +
+           " gleams hot from the forge.", "good");
+    sfx("hit");
+    flashDamage();
+    return;
   }
-  logMsg(npc.name + ": \"That'll bite better.\" Your " + p.weapon.name +
-         " gleams hot from the forge.", "good");
-  sfx("hit");
-  flashDamage();
+  if (c === "2") {
+    if (haveWood < SMITH_AXE_WOOD || haveStone < SMITH_AXE_STONE) {
+      logMsg(npc.name + ": \"Not enough for an axe. Bring more.\"", "warn");
+      return;
+    }
+    home.materials.wood -= SMITH_AXE_WOOD;
+    home.materials.stone -= SMITH_AXE_STONE;
+    savePlayerHome(home);
+    p.pack.push({ key: "weapon", weapon: {
+      name: "hand-axe", dice: 1, sides: 10, acc: 2, str: 2, isTool: true,
+    } });
+    logMsg(npc.name + ": \"Hand-axe. Drop a tree in one swing.\" (added to pack)",
+           "good");
+    sfx("hit");
+    return;
+  }
+  if (c === "3") {
+    if (haveWood < SMITH_PICK_WOOD || haveStone < SMITH_PICK_STONE) {
+      logMsg(npc.name + ": \"Not enough iron for a pick. Bring more stone.\"",
+             "warn");
+      return;
+    }
+    home.materials.wood -= SMITH_PICK_WOOD;
+    home.materials.stone -= SMITH_PICK_STONE;
+    savePlayerHome(home);
+    p.pack.push({ key: "weapon", weapon: {
+      name: "pickaxe", dice: 1, sides: 8, acc: 1, str: 2, isTool: true,
+    } });
+    logMsg(npc.name + ": \"Pickaxe. Splits stone like a melon.\" (added to pack)",
+           "good");
+    sfx("hit");
+    return;
+  }
+  logMsg(npc.name + " spits in the forge. \"Stop wasting my time.\"", "dim");
 }
 
 /* ---- Night raids ----
@@ -6740,6 +6873,7 @@ function tileGlyph(t) {
     case T.PLAYER_CHEST: return { ch: "C", col: "#c8a060" };
     case T.PLAYER_SIGN: return { ch: "s", col: "#cccc88" };
     case T.FORGE: return { ch: "F", col: "#ff6622" };
+    case T.ROCK: return { ch: "*", col: "#8a8a8a" };
     case T.LAVA: return { ch: "~", col: "#d2562a" };
     case T.TREE: return { ch: "&", col: "#3c7a3c" };
     case T.ALTAR: return { ch: "_", col: "#d8d8a0" };
@@ -7158,6 +7292,9 @@ function render() {
         } else if (t === T.FORGE) {
           drawCell(ctx, floorBase, null, null, sx, sy);
           rel = dn.forge || null;
+        } else if (t === T.ROCK) {
+          drawCell(ctx, floorBase, null, null, sx, sy);
+          rel = variantTile(dn.standing_stone, x, y) || null;
         }
         const g = tileGlyph(t);
         drawCell(ctx, rel, g.ch, g.col, sx, sy);
