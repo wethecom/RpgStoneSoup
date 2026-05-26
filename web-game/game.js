@@ -1246,6 +1246,25 @@ function generateIndoorLevel(coord) {
       buildingItems.push(makeScrollItem(c.x, c.y));
     }
   }
+  // upper floors of a mansion get furniture: a bed in each room, a
+  // study lectern, flower vases. The mansion's second storey reads as
+  // bedrooms + private spaces, not bare stone.
+  if (source && source.type === "mansion" && floor > 0) {
+    for (let ri4 = 0; ri4 < rooms.length; ri4++) {
+      const room = rooms[ri4];
+      const fcells = pickInteriorCells(tiles, room)
+        .filter(c => tiles[c.y][c.x] === T.FLOOR);
+      if (!fcells.length) continue;
+      // every upper-floor room is a bedroom
+      const bedCell = fcells.splice(ri(0, fcells.length - 1), 1)[0];
+      tiles[bedCell.y][bedCell.x] = T.BED;
+      // ground-and-attic: alternate other furniture
+      if (fcells.length && chance(0.5)) {
+        const c = fcells.splice(ri(0, fcells.length - 1), 1)[0];
+        tiles[c.y][c.x] = chance(0.4) ? T.LECTERN : T.FLOWERS;
+      }
+    }
+  }
   // captives for active rescue quests targeting this (chunk, floor).
   // The quest's hook only names the region + building TYPE, not the
   // specific building, and chunks routinely hold several buildings
@@ -1665,10 +1684,36 @@ function generateSurfaceBuildings(tiles, coord, blockers) {
       }
       // a manor / mansion's side rooms hold a mix of small stashes and
       // the occasional treasure chest -- mansions especially earn their
-      // exploration. Castles get the best chest odds.
+      // exploration. Castles get the best chest odds.  Mansions also
+      // gain themed furniture: a bed in a "bedroom" room, a lectern in
+      // a "study", a fruit cache in a "kitchen". Rooms are themed by
+      // round-robin index so the layout feels authored, not random.
       if (r.type === "manor" || r.type === "mansion") {
         const chestRoll = r.type === "mansion" ? 0.4 : 0.2;
         const chestTier = r.type === "mansion" ? 2 : 1;
+        // mansion-only: lay down 1-3 BEDs, a LECTERN, a FRUIT_CACHE,
+        // and FLOWERS in different rooms so the player sees the place
+        // is actually inhabited instead of bare-walled.
+        if (r.type === "mansion") {
+          const themes = ["bedroom", "study", "kitchen", "parlor"];
+          for (let ri3 = 1; ri3 < b.rooms.length; ri3++) {
+            const room = b.rooms[ri3];
+            const theme = themes[(ri3 - 1) % themes.length];
+            const furnCells = pickInteriorCells(tiles, room);
+            if (!furnCells.length) continue;
+            // pick one or two pieces per room
+            const tries = chance(0.6) ? 2 : 1;
+            for (let f = 0; f < tries && furnCells.length; f++) {
+              const c = furnCells.splice(ri(0, furnCells.length - 1), 1)[0];
+              let t = null;
+              if (theme === "bedroom") t = T.BED;
+              else if (theme === "study") t = chance(0.6) ? T.LECTERN : T.FLOWERS;
+              else if (theme === "kitchen") t = chance(0.55) ? T.FRUIT_CACHE : T.FLOWERS;
+              else t = T.FLOWERS;   // parlor
+              if (t != null) tiles[c.y][c.x] = t;
+            }
+          }
+        }
         for (let ri2 = 1; ri2 < b.rooms.length; ri2++) {
           const cells = pickInteriorCells(tiles, b.rooms[ri2]);
           if (!cells.length) continue;
